@@ -37,7 +37,7 @@ Esta aplicación controla actuadores y monitorea sensores conectados a un microc
 
 ---
 
-## 🧱 Organizacion carpetas
+## :file_folder: Organizacion carpetas
 
 ```plaintext
 src/
