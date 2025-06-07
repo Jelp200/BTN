@@ -4,13 +4,13 @@
 
 ## 📋 Indice
 
-1. [Descripción General](#descripcion-general)
-2. [Arquitectura del Sistema](#arquitectura-del-sistema)
-3. [Aplicación de Escritorio (C#)](#aplicación-de-escritorio-c)
-4. [Firmware del Microcontrolador (C)](#firmware-del-microcontrolador-c)
-5. [Interfaz Web (Astro + Tailwind + JS)](#interfaz-web-astro--tailwind--js)
-6. [Comunicación entre Módulos](#comunicación-entre-módulos)
-7. [Autores y Licencia](#autores-y-licencia)
+1. [Descripción General](docs/DescripcionGeneral.md)
+2. [Arquitectura del Sistema](docs/ArquitecturaDelSistema.md)
+3. [Aplicación de Escritorio (C#)](docs/AplicacionEscritorio.md)
+4. [Firmware del Microcontrolador (C)](docs/Firmware.md)
+5. [Interfaz Web (Astro + Tailwind + JS)](docs/InterfazWeb.md)
+6. [Comunicación entre Módulos](docs/ComunicacionEntreModulos.md)
+7. [Autores y Licencia](docs/Autores.md)
 
 ---
 
@@ -33,4 +33,20 @@ Esta aplicación controla actuadores y monitorea sensores conectados a un microc
 |   INTERFAZ WEB   |
 | (Astro/Tailwind) |
 └──────────────────┘
+```
+
+---
+
+## 🧱 Organizacion carpetas
+
+```plaintext
+src/
+├── app/
+├── docs/
+├── imgs/
+├── uC/
+|   ├── Codigos nuevos/
+|   └── Codigos originales/
+├── LICENSE/
+└── README.md/
 ```
