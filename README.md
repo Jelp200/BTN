@@ -53,7 +53,7 @@ src/
 
 ---
 
-## :absmiddle: Copiar proyecto
+## :shipit: Copiar proyecto
 
 ```sh
 git clone https://github.com/Jelp200/BTN.git
