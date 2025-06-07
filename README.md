@@ -40,8 +40,10 @@ Esta aplicación controla actuadores y monitorea sensores conectados a un microc
 ## :file_folder: Organizacion carpetas
 
 ```plaintext
-src/
+BTN/
 ├── app/
+|   ├── Diseno web/
+|   └── Escritorio/
 ├── docs/
 ├── imgs/
 ├── uC/
