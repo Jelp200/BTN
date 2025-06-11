@@ -1,0 +1,27 @@
+---
+// SelectedColorAndSmokeState.astro
+---
+
+<div class="mt-6 flex items-center gap-8">
+    <!-- Círculo de color de cabina -->
+    <div class="flex items-center gap-2">
+        <div
+            id="color-cabina"
+            class="w-28 h-28 rounded-full bg-[#000] transition-colors duration-300"
+            title="Último color seleccionado en LEDs"
+        >
+        </div>
+        <span class="text-sm text-gray-700 font-medium">Color cabina</span>
+    </div>
+
+    <!-- Círculo de estado de humo -->
+    <div class="flex items-center gap-2">
+        <div
+            id="estado-humo"
+            class="w-28 h-28 rounded-full bg-[#ff5757] opacity-50 transition-all duration-300"
+            title="Estado del detector de humo"
+        >
+        </div>
+        <span class="text-sm text-gray-700 font-medium">Detector de humo</span>
+    </div>
+</div>

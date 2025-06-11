@@ -1,0 +1,439 @@
+---
+//* IMPORTS
+import WindowsAndSelectorsButtons from "./WindowsAndSelectorsButtons.astro";
+import ControlButtonSection from "./ControlButtonSection.astro";
+import DivisorLine from "./DivisorLine.astro";
+import TwoColumnsSection from "./TwoColumnsSection.astro";
+import LedSection from "./LedSection.astro";
+import CabinStateAndButtonActions from "./CabinStateAndButtonActions.astro";
+import GraphicSection from "./GraphicSection.astro";
+import IndicatorSection from "./IndicatorSection.astro";
+import SelectedColorAndSmokeState from "./SelectedColorAndSmokeState.astro";
+---
+
+<!-- * CONTENEDOR PRINCIPAL * -->
+<div
+    class="panel-container w-full max-w-4xl bg-[#efefef] shadow-lg rounded-lg p-4"
+>
+    <!-- BOTONES DE PESTANAS + SELECTORES -->
+    <WindowsAndSelectorsButtons />
+
+    <!-- CONTENIDO DE SECCION CONTROLES -->
+    <div class="tab-content" data-tab-content="controles">
+        <!-- Seccion botones de control -->
+        <ControlButtonSection />
+
+        <DivisorLine />
+
+        <!-- Seccion de dos columnas -->
+        <TwoColumnsSection />
+
+        <DivisorLine />
+
+        <!-- Seccion de leds -->
+        <LedSection />
+
+        <DivisorLine />
+
+        <!-- Estado de Cabina + Botones de acción -->
+        <CabinStateAndButtonActions />
+    </div>
+
+    <!-- CONTENIDO DE SECCION GRAFICAS -->
+    <div class="tab-content hidden" data-tab-content="graficas">
+        <!-- Grafica  -->
+        <GraphicSection />
+
+        <DivisorLine />
+
+        <!-- Seccion indicadores -->
+        <IndicatorSection />
+
+        <DivisorLine />
+
+        <!-- Color seleccionado y estado del humo -->
+        <SelectedColorAndSmokeState />
+    </div>
+</div>
+
+<!-- CDN de Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+
+<!-- Script principal -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const panels = document.querySelectorAll(".panel-container");
+
+        panels.forEach((panel) => {
+            const tabButtons = panel.querySelectorAll("[data-tab]");
+            const tabContents = panel.querySelectorAll("[data-tab-content]");
+            const selects = panel.querySelectorAll("select");
+            const controlButtons = panel.querySelectorAll(".control-btn");
+            const ledButtons = panel.querySelectorAll(".led-button");
+
+            // Elementos del formulario de tiempo
+            const tiempoInput = panel.querySelector("#tiempo-input-form");
+            const tiempoMostrado = panel.querySelector("#tiempo-mostrado");
+            const btnEnviarTiempo = panel.querySelector("#btn-enviar-tiempo");
+
+            // Elementos de estado visual
+            const estadoCabina = panel.querySelector("#estado-cabina");
+            const colorCabina = panel.querySelector("#color-cabina");
+            const estadoHumo = panel.querySelector("#estado-humo");
+            let cabinaActiva = false;
+
+            // Función para actualizar hover en pestañas
+            function updateTabHover() {
+                tabButtons.forEach((btn) => {
+                    if (btn.classList.contains("active")) {
+                        btn.classList.remove("hover:bg-[#a6a6a6]");
+                    } else {
+                        btn.classList.add("hover:bg-[#a6a6a6]");
+                    }
+                });
+            }
+
+            // Función para actualizar hover en selectores
+            function updateSelectHover() {
+                selects.forEach((select) => {
+                    const isActive = select.value.includes("1");
+                    if (isActive) {
+                        select.style.transition = "none";
+                        select.style.backgroundColor =
+                            window.getComputedStyle(select).backgroundColor;
+                        select.classList.remove("hover:bg-[#a6a6a6]");
+                    } else {
+                        select.style.transition = "";
+                        select.style.backgroundColor = "";
+                        select.classList.add("hover:bg-[#a6a6a6]");
+                    }
+                });
+            }
+
+            // Manejo de pestañas
+            tabButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    tabButtons.forEach((btn) => {
+                        btn.classList.remove("bg-[#d9d9d9]", "text-black", "active");
+                        btn.classList.add("bg-[#efefef]", "text-black");
+                        btn.setAttribute("aria-selected", "false");
+                        btn.setAttribute("tabindex", "-1");
+                    });
+
+                    button.classList.remove("bg-[#efefef]", "text-black");
+                    button.classList.add("bg-[#d9d9d9]", "text-black", "active");
+                    button.setAttribute("aria-selected", "true");
+                    button.setAttribute("tabindex", "0");
+
+                    tabContents.forEach((content) =>
+                        content.classList.add("hidden")
+                    );
+                    const selectedTab = button.getAttribute("data-tab");
+                    const selectedContent = panel.querySelector(
+                        `[data-tab-content='${selectedTab}']`
+                    );
+
+                    if (selectedContent) {
+                        selectedContent.classList.remove("hidden");
+                        if (selectedTab === "graficas") {
+                            initGrafica(panel);
+                        }
+                    }
+
+                    updateTabHover();
+                    updateSelectHover();
+                });
+            });
+
+            // Eventos de cambio en selects
+            selects.forEach((select) => {
+                select.addEventListener("change", updateSelectHover);
+            });
+
+            // Toggle estado en botones de control
+            controlButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    btn.classList.toggle("bg-[#00bf63]");
+                    btn.classList.toggle("bg-[#d9d9d9]");
+                });
+            });
+
+            // Interacción del botón "Enviar Tiempo"
+            if (btnEnviarTiempo && tiempoInput && tiempoMostrado) {
+                tiempoInput.addEventListener("input", () => {
+                    let valor = parseInt(tiempoInput.value);
+                    if (!valor || valor < 0) {
+                        tiempoInput.value = 0;
+                        valor = 0;
+                    }
+                    tiempoMostrado.textContent = valor;
+                });
+
+                btnEnviarTiempo.addEventListener("click", () => {
+                    let valorMinutos = parseInt(tiempoInput.value);
+
+                    if (!valorMinutos || valorMinutos < 0) {
+                        alert("Por favor, ingrese un número válido y no negativo.");
+                        tiempoInput.value = 0;
+                        valorMinutos = 0;
+                    }
+
+                    tiempoMostrado.textContent = valorMinutos;
+
+                    const valorSegundos = Math.min(valorMinutos * 60, 300); // Máximo 5 minutos
+                    const graficaCanvas = panel.querySelector("#graficaPanel");
+
+                    if (graficaCanvas) {
+                        graficaCanvas.setAttribute("data-time-range", valorSegundos);
+
+                        if (cabinaActiva && graficaCanvas.chartInstance) {
+                            const chart = graficaCanvas.chartInstance;
+                            const labels = [];
+                            for (let i = 0; i < 10; i++) {
+                                labels.push(`${i * (valorSegundos / 10)}s`);
+                            }
+
+                            chart.data.labels = labels;
+                            chart.data.datasets[0].data = labels.map(() => Math.floor(Math.random() * 5));
+                            chart.update();
+                        }
+                    }
+                });
+            }
+
+            // Manejo de LEDs - Solo uno activo por fila
+            const botonHumo = panel.querySelector("[data-medicion='X']");
+            ledButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const row = button.getAttribute("data-row");
+
+                    // Desactivar otros LEDs en la misma fila
+                    ledButtons.forEach((led) => {
+                        if (led.getAttribute("data-row") === row && led !== button) {
+                            led.classList.remove("active-led");
+                            led.style.backgroundColor = led.getAttribute("data-inactive-color");
+                        }
+                    });
+
+                    const activeColor = button.getAttribute("data-active-color");
+                    const inactiveColor = button.getAttribute("data-inactive-color");
+
+                    // Activar/desactivar LED y actualizar color de cabina
+                    if (button.classList.contains("active-led")) {
+                        button.classList.remove("active-led");
+                        button.style.backgroundColor = inactiveColor;
+                        colorCabina.style.backgroundColor = "#d9d9d9"; // Valor por defecto
+                    } else {
+                        button.classList.add("active-led");
+                        button.style.backgroundColor = activeColor;
+                        colorCabina.style.backgroundColor = activeColor;
+                    }
+                });
+            });
+
+            // Botón Humo - Actualiza estado del detector
+            if (botonHumo && estadoHumo) {
+                botonHumo.addEventListener("click", () => {
+                    if (!cabinaActiva) {
+                        alert("La cabina debe estar activa antes de usar esta función.");
+                        return;
+                    }
+
+                    humoActivado = !humoActivado;
+
+                    if (humoActivado) {
+                        estadoHumo.style.backgroundColor = "#d9d9d9";
+                        estadoHumo.style.opacity = "1";
+                    } else {
+                        estadoHumo.style.backgroundColor = "#ccc";
+                        estadoHumo.style.opacity = "0.5";
+                    }
+                });
+            }
+
+            // Manejo de botones de medición (debajo de la gráfica)
+            const medicionBotones = panel.querySelectorAll(".medicion-btn");
+            const medicionTextos = panel.querySelectorAll(".medicion-texto");
+
+            if (medicionBotones.length > 0 && medicionTextos.length > 0) {
+                medicionBotones.forEach((boton, index) => {
+                    boton.addEventListener("click", () => {
+                        if (!cabinaActiva) {
+                            alert("Por favor, inicie la cabina antes de usar las mediciones.");
+                            return;
+                        }
+
+                        // Desactivar otros botones de medición
+                        medicionBotones.forEach((btn, i) => {
+                            if (btn !== boton) {
+                                btn.classList.remove("activo", "bg-[#00bf63]");
+                                btn.classList.add("bg-[#d9d9d9]");
+                                medicionTextos[i].textContent = "N/A";
+                            }
+                        });
+
+                        // Activar este botón y mostrar dato simulado
+                        boton.classList.remove("bg-[#d9d9d9]");
+                        boton.classList.add("bg-[#00bf63]", "activo");
+
+                        const nombre = boton.dataset.medicion;
+                        const textoElemento = medicionTextos[index];
+
+                        const valorSimulado = (Math.random() * 10).toFixed(1);
+                        textoElemento.textContent = `${valorSimulado} ${getUnidad(nombre)}`;
+                    });
+                });
+            }
+
+            // Botón Enviar Configuración - Inicia la cabina
+            const btnIniciar = panel.querySelector("#btn-enviar-configuracion");
+            if (btnIniciar && estadoCabina) {
+                btnIniciar.addEventListener("click", () => {
+                    if (!cabinaActiva) {
+                        cabinaActiva = true;
+                        estadoCabina.classList.remove("bg-[#d9d9d9]");
+                        estadoCabina.classList.add("bg-[#00bf63]");
+                        estadoCabina.textContent = "ACTIVA";
+                        alert("Sistema iniciado. ¡La cabina ha sido activada!");
+                    } else {
+                        alert("Ya está activa. No se puede enviar otra vez sin resetear.");
+                    }
+                });
+            }
+
+            // Botón Parar y Reset - Reinicia todo
+            const btnReset = panel.querySelector("#btn-parar-reset");
+            if (btnReset && estadoCabina) {
+                btnReset.addEventListener("click", () => {
+                    // Volver a estado inicial
+                    estadoCabina.classList.remove("bg-[#00bf63]");
+                    estadoCabina.classList.add("bg-[#d9d9d9]");
+                    estadoCabina.textContent = "INACTIVA";
+                    cabinaActiva = false;
+
+                    // Reiniciar controles
+                    controlButtons.forEach((btn) => {
+                        btn.classList.remove("bg-[#00bf63]");
+                        btn.classList.add("bg-[#d9d9d9]");
+                    });
+
+                    // Reiniciar gráfica si existe
+                    const graficaCanvas = panel.querySelector("#graficaPanel");
+                    if (graficaCanvas && graficaCanvas.chartInstance) {
+                        graficaCanvas.chartInstance.destroy();
+                    }
+
+                    // Limpiar datos de mediciones
+                    medicionTextos.forEach((txt) => {
+                        txt.textContent = "N/A";
+                    });
+
+                    // Reiniciar colores de LEDs
+                    ledButtons.forEach((led) => {
+                        led.classList.remove("active-led");
+                        led.style.backgroundColor = led.getAttribute("data-inactive-color");
+                    });
+
+                    // Reiniciar input de tiempo
+                    if (tiempoInput) {
+                        tiempoInput.value = 0;
+                    }
+
+                    alert("Sistema detenido. Todo ha sido reiniciado.");
+                });
+            }
+
+            setTimeout(updateTabHover, 0);
+            setTimeout(updateSelectHover, 0);
+        });
+    });
+
+    // Función para obtener unidad según medición
+    function getUnidad(medicion) {
+        switch (medicion) {
+            case "X": return "m";
+            case "T": return "°C";
+            case "CO2": return "ppm";
+            case "Y": return "m";
+            case "%H": return "%";
+            case "%O2": return "%";
+            case "Z": return "m";
+            case "UV": return "W/m²";
+            case "Son": return "dB";
+            default: return "";
+        }
+    }
+
+    // Función para inicializar gráfica con Chart.js
+    function initGrafica(panel) {
+        const graficaCanvas = panel.querySelector("#graficaPanel");
+        if (!graficaCanvas) return;
+
+        const existingChart = Chart.getChart(graficaCanvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        const ctx = graficaCanvas.getContext("2d");
+
+        const valorSegundos =
+            parseInt(graficaCanvas.getAttribute("data-time-range")) || 300;
+
+        const labels = [];
+        const maxPuntos = 10;
+
+        for (let i = 0; i < maxPuntos; i++) {
+            labels.push(`${i * (valorSegundos / maxPuntos)}s`);
+        }
+
+        const dataValues = labels.map(() => Math.floor(Math.random() * 5));
+
+        graficaCanvas.chartInstance = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "Sensor 1",
+                        data: dataValues,
+                        borderColor: "#000",
+                        backgroundColor: "rgba(0, 74, 173, 0.2)",
+                        tension: 0.3,
+                        pointRadius: 4,
+                        fill: true,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Tiempo (s)",
+                            color: "#333",
+                            font: { weight: "bold" },
+                        },
+                        grid: { color: "#ddd" },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Amplitud",
+                            color: "#333",
+                            font: { weight: "bold" },
+                        },
+                        grid: { color: "#ddd" },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: { color: "#333" },
+                    },
+                },
+            },
+        });
+    }
+</script>

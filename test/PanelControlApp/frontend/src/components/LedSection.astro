@@ -1,0 +1,176 @@
+---
+// LedSection.astro
+
+//* IMPORTS
+import LedButton from "./LedButton.astro";
+---
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
+    <!-- Grupo A - Luz cálida -->
+    <div class="space-y-2">
+        <h3 class="text-center font-semibold text-black">Luz cálida</h3>
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="C1"
+                colIndex="1"
+                rowIndex="1"
+                inactiveColor="#fd8c8c"
+                activeColor="#ff3131"
+            />
+            <LedButton
+                label="C2"
+                colIndex="2"
+                rowIndex="1"
+                inactiveColor="#f69c9c"
+                activeColor="#ff5757"
+            />
+            <LedButton
+                label="C3"
+                colIndex="3"
+                rowIndex="1"
+                inactiveColor="#ef955e"
+                activeColor="#f47527"
+            />
+            <LedButton
+                label="C4"
+                colIndex="4"
+                rowIndex="1"
+                inactiveColor="#ffd391"
+                activeColor="#ffbd59"
+            />
+            <LedButton
+                label="C5"
+                colIndex="5"
+                rowIndex="1"
+                inactiveColor="#fae692"
+                activeColor="#ffde59"
+            />
+        </div>
+    </div>
+
+    <!-- Grupo B - Luz fría -->
+    <div class="space-y-2">
+        <h3 class="text-center font-semibold text-black">Luz fría</h3>
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="F1"
+                colIndex="1"
+                rowIndex="2"
+                inactiveColor="#5b7ba6"
+                activeColor="#004aad"
+            />
+            <LedButton
+                label="F2"
+                colIndex="2"
+                rowIndex="2"
+                inactiveColor="#92a6ff"
+                activeColor="#5271ff"
+            />
+            <LedButton
+                label="F3"
+                colIndex="3"
+                rowIndex="2"
+                inactiveColor="#8ed3fa"
+                activeColor="#38b6ff"
+            />
+            <LedButton
+                label="F4"
+                colIndex="4"
+                rowIndex="2"
+                inactiveColor="#aa8be8"
+                activeColor="#6f31eb"
+            />
+            <LedButton
+                label="F5"
+                colIndex="5"
+                rowIndex="2"
+                inactiveColor="#bea8e8"
+                activeColor="#5500ff"
+            />
+        </div>
+    </div>
+
+    <!-- Grupo C - Luz neutra -->
+    <div class="space-y-2">
+        <h3 class="text-center font-semibold text-black">Luz neutra</h3>
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="N1"
+                colIndex="1"
+                rowIndex="3"
+                inactiveColor="#74b898"
+                activeColor="#00bf63"
+            />
+            <LedButton
+                label="N2"
+                colIndex="2"
+                rowIndex="3"
+                inactiveColor="#b0dd9d"
+                activeColor="#7ed957"
+            />
+            <LedButton
+                label="N3"
+                colIndex="3"
+                rowIndex="3"
+                inactiveColor="#d3f1ab"
+                activeColor="#c1ff72"
+            />
+            <LedButton
+                label="N4"
+                colIndex="4"
+                rowIndex="3"
+                inactiveColor="#b0fad4"
+                activeColor="#72ffb7"
+            />
+            <LedButton
+                label="N5"
+                colIndex="5"
+                rowIndex="3"
+                inactiveColor="#a2e1e4"
+                activeColor="#5ce1e6"
+            />
+        </div>
+    </div>
+
+    <!-- Grupo D - Otros -->
+    <div class="space-y-2">
+        <h3 class="text-center font-semibold text-black">Otros</h3>
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="Strobo"
+                colIndex="1"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+            />
+            <LedButton
+                label="Flash"
+                colIndex="2"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+            />
+            <LedButton
+                label="B+"
+                colIndex="3"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+            />
+            <LedButton
+                label="B-"
+                colIndex="4"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+            />
+            <LedButton
+                label="Off"
+                colIndex="5"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+            />
+        </div>
+    </div>
+</div>
