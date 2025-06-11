@@ -46,9 +46,14 @@ BTN/
 |   └── Escritorio/
 ├── docs/
 ├── imgs/
+|   └── DF/
+├── test/
+|   ├── BotoneraSerial/
+|   └── PanelControlApp/
 ├── uC/
 |   ├── Codigos nuevos/
 |   └── Codigos originales/
+├── .gitignore/
 ├── LICENSE/
 └── README.md/
 ```
