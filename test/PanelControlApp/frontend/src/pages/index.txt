@@ -1,0 +1,26 @@
+<html>
+	<head><title>Control Panel</title></head><body>
+		<h1>Panel de Control</h1>
+		<div id="controls">
+			<button onclick="activate(1)">Actuador 1</button>
+			<button onclick="activate(2)">Actuador 2</button>
+		</div>
+		<div id="sensor">Sensor: —</div>
+
+		<script type="module">
+			async function activate(id) {
+				await fetch(`/api/actuator/${id}`, { method: "POST" });
+				refreshSensor();
+			}
+			async function refreshSensor() {
+				const res = await fetch("/api/actuator/sensors");
+				const d = await res.json();
+				document.getElementById("sensor").textContent =
+					`Sensor: ${d.value.toFixed(2)} at ${new Date(d.timestamp).toLocaleTimeString()}`;
+			}
+			setInterval(refreshSensor, 2000);
+			refreshSensor();
+			window.activate = activate;
+		</script>
+	</body>
+</html>

@@ -1,0 +1,14 @@
+---
+const { label, colIndex, rowIndex, inactiveColor = "#e84e0e", activeColor = "#028647" } = Astro.props;
+---
+
+<button
+    class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors"
+    data-col={colIndex}
+    data-row={rowIndex}
+    data-inactive-color={inactiveColor}
+    data-active-color={activeColor}
+    style={`background-color: ${inactiveColor};`}
+>
+    {label}
+</button>
