@@ -1,0 +1,28 @@
+[
+  {
+    "ContainingType": "ActuatorController",
+    "Method": "Activate",
+    "RelativePath": "api/Actuator/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ActuatorController",
+    "Method": "GetSensors",
+    "RelativePath": "api/Actuator/sensors",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

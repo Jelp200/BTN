@@ -1,0 +1,13 @@
+---
+// ControlButton.astro
+
+const { label, icon, "data-codigo": dataCodigo } = Astro.props;
+---
+
+<button
+    class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all"
+    data-codigo={dataCodigo}
+>
+    <img src={`/icons/${icon}.svg`} alt={label} class="w-8 h-8 status-icon" />
+    <span>{label}</span>
+</button>

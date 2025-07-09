@@ -1,0 +1,18 @@
+---
+// IndicatorSection.astro
+
+import ControlIndicador from "./ControlIndicador.astro";
+---
+
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
+    <!-- Usamos el componente ControlButton -->
+    <ControlIndicador icon="x" medicion="23.5" />
+    <ControlIndicador icon="y" medicion="10.6" />
+    <ControlIndicador icon="z" medicion="5.6" />
+    <ControlIndicador icon="t" medicion="23.5 C" />
+    <ControlIndicador icon="h" medicion="7 W/m²" />
+    <ControlIndicador icon="uv" medicion="60 dB" />
+    <ControlIndicador icon="co2" medicion="0.4 mm/s" />
+    <ControlIndicador icon="o3" medicion="7 W/m²" />
+    <ControlIndicador icon="db" medicion="60 dB" />
+</div>

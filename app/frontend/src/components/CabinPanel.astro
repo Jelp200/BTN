@@ -1,0 +1,34 @@
+---
+//* IMPORTS
+import WindowsAndSelectorsButtons from "./WindowsAndSelectorsButtons.astro";
+import ControlButtonSection from "./ControlButtonSection.astro";
+import DivisorLine from "./DivisorLine.astro";
+import TwoColumnsSection from "./TwoColumnsSection.astro";
+import LedSection from "./LedSection.astro";
+import CabinStateAndButtonActions from "./CabinStateAndButtonActions.astro";
+import GraphicSection from "./GraphicSection.astro";
+import IndicatorSection from "./IndicatorSection.astro";
+import SelectedColorAndSmokeState from "./SelectedColorAndSmokeState.astro";
+---
+
+<!-- * CONTENEDOR PRINCIPAL RESPONSIVO * -->
+<div class="panel-container w-full bg-[#efefef] shadow-lg rounded-lg p-4">
+    <!-- Contenido del panel -->
+    <WindowsAndSelectorsButtons />
+    <div class="tab-content" data-tab-content="controles">
+        <ControlButtonSection />
+        <DivisorLine />
+        <TwoColumnsSection />
+        <DivisorLine />
+        <LedSection />
+        <DivisorLine />
+        <CabinStateAndButtonActions />
+    </div>
+    <div class="tab-content hidden" data-tab-content="graficas">
+        <GraphicSection />
+        <DivisorLine />
+        <IndicatorSection />
+        <DivisorLine />
+        <SelectedColorAndSmokeState />
+    </div>
+</div>
