@@ -1,0 +1,466 @@
+---
+//* IMPORTS
+import CabinPanel from "./CabinPanel.astro";
+---
+
+<!-- * CONTENEDOR PRINCIPAL RESPONSIVO * -->
+<div class="flex flex-col md:flex-row gap-6 p-6">
+    <CabinPanel />
+    <CabinPanel />
+</div>
+
+<!-- CDN de Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+
+<!-- Script principal -->
+<script>
+    // Mapeo entre data-codigo y acción (ON/OFF)
+    const codigoBoton = {
+        "VIBRACION": { off: "038", on: "039" },
+        "VENTILADOR": { off: "040", on: "041" },
+        "EXTRACTOR": { off: "042", on: "043" },
+        "FRIO": { off: "044", on: "045" },
+        "CALOR": { off: "046", on: "047" },
+        "HUMEDAD": { off: "048", on: "049" },
+        "DESHUMIDIFICADOR": { off: "055", on: "056" },
+        "HUMO": { off: "050", on: "051" }
+    };
+
+    // Estado global de conexión serial (simulado)
+    let puertoSerialConectado = false;
+
+    // Función para enviar trama real (simulada como alert o puedes integrar con WinForms)
+    function enviarTramaReal(trama) {
+        if (!puertoSerialConectado) {
+            console.warn("Puerto no conectado. Simulando trama:", trama);
+            return;
+        }
+        console.log("Enviando trama real:", trama);
+    }
+
+    // Función pública para enviar trama condicionalmente
+    function enviarTrama(prefijo, codigoAccion, cabinaActiva) {
+        const trama = `${prefijo}${codigoAccion}F`;
+
+        if (cabinaActiva) {
+            enviarTramaReal(trama);
+        } else {
+            console.log("[Simulado] Trama generada:", trama);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const panels = document.querySelectorAll(".panel-container");
+
+        panels.forEach((panel, index) => {
+            const tabButtons = panel.querySelectorAll("[data-tab]");
+            const tabContents = panel.querySelectorAll("[data-tab-content]");
+            const selects = panel.querySelectorAll("select");
+            const controlButtons = panel.querySelectorAll(".control-btn");
+            const ledButtons = panel.querySelectorAll(".led-button");
+
+            // Elementos del formulario de tiempo
+            const tiempoInput = panel.querySelector("#tiempo-input-form");
+            const tiempoMostrado = panel.querySelector("#tiempo-mostrado");
+            const btnEnviarTiempo = panel.querySelector("#btn-enviar-tiempo");
+
+            // Elementos de estado visual
+            const estadoCabina = panel.querySelector("#estado-cabina");
+            const colorCabina = panel.querySelector("#color-cabina");
+            const estadoHumo = panel.querySelector("#estado-humo");
+            const botonHumo = panel.querySelector("[data-medicion='X']");
+            let cabinaActiva = false;
+            let humoActivado = false;
+
+            // Selector de cabina por panel
+            const selectCabina = panel.querySelector("[data-select='cabina']");
+            let cabinaPrefijo = "C1"; // Valor inicial por panel
+
+            if (selectCabina) {
+                selectCabina.addEventListener("change", () => {
+                    cabinaPrefijo = selectCabina.value === "Cabina 1" ? "C1" : "C2";
+                    console.log(`Panel ${index + 1}: Cabina seleccionada: ${cabinaPrefijo}`);
+                });
+            }
+
+            // Manejo de pestañas
+            tabButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    tabButtons.forEach((btn) => {
+                        btn.classList.remove("bg-[#00bf63]", "text-black", "active");
+                        btn.classList.add("bg-[#efefef]", "text-black");
+                        btn.setAttribute("aria-selected", "false");
+                        btn.setAttribute("tabindex", "-1");
+                    });
+
+                    button.classList.remove("bg-[#efefef]", "text-black");
+                    button.classList.add("bg-[#d9d9d9]", "text-black", "active");
+                    button.setAttribute("aria-selected", "true");
+                    button.setAttribute("tabindex", "0");
+
+                    tabContents.forEach((content) => content.classList.add("hidden"));
+
+                    const selectedTab = button.getAttribute("data-tab");
+                    const selectedContent = panel.querySelector(`[data-tab-content='${selectedTab}']`);
+                    if (selectedContent) {
+                        selectedContent.classList.remove("hidden");
+                        if (selectedTab === "graficas") {
+                            initGrafica(panel);
+                        }
+                    }
+                });
+            });
+
+            // Función para actualizar hover en pestañas
+            function updateTabHover() {
+                tabButtons.forEach((btn) => {
+                    if (btn.classList.contains("active")) {
+                        btn.classList.remove("hover:bg-[#a6a6a6]");
+                    } else {
+                        btn.classList.add("hover:bg-[#a6a6a6]");
+                    }
+                });
+            }
+
+            // Función para actualizar hover en selectores
+            function updateSelectHover() {
+                selects.forEach((select) => {
+                    const isActive = select.value.includes("1");
+                    if (isActive) {
+                        select.style.transition = "none";
+                        select.style.backgroundColor = window.getComputedStyle(select).backgroundColor;
+                        select.classList.remove("hover:bg-[#a6a6a6]");
+                    } else {
+                        select.style.transition = "";
+                        select.style.backgroundColor = "";
+                        select.classList.add("hover:bg-[#a6a6a6]");
+                    }
+                });
+            }
+
+            // Eventos de cambio en selects
+            selects.forEach((select) => {
+                select.addEventListener("change", updateSelectHover);
+            });
+
+            // Manejo de botones de control - solo uno activo a la vez
+            controlButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const codigo = btn.getAttribute("data-codigo");
+                    const isActive = btn.classList.contains("bg-[#00bf63]");
+
+                    if (isActive) {
+                        btn.classList.remove("bg-[#00bf63]");
+                        btn.classList.add("bg-[#d9d9d9]");
+                        if (codigo && codigoBoton[codigo]) {
+                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].off, cabinaActiva);
+                        }
+                    } else {
+                        controlButtons.forEach((b) => {
+                            const cod = b.getAttribute("data-codigo");
+                            if (b.classList.contains("bg-[#00bf63]") && cod && codigoBoton[cod]) {
+                                b.classList.remove("bg-[#00bf63]");
+                                b.classList.add("bg-[#d9d9d9]");
+                                enviarTrama(cabinaPrefijo, codigoBoton[cod].off);
+                            }
+                        });
+
+                        btn.classList.remove("bg-[#d9d9d9]");
+                        btn.classList.add("bg-[#00bf63]");
+                        if (codigo && codigoBoton[codigo]) {
+                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].on, cabinaActiva);
+                        }
+                    }
+                });
+            });
+
+            // Manejo de LEDs - solo un LED activo por panel
+            let ledActivo = null;
+
+            ledButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const codigo = button.getAttribute("data-codigo");
+                    const isActive = button.classList.contains("active-led");
+
+                    if (!codigo) return;
+
+                    if (isActive) {
+                        // Desactivar LED actual
+                        button.classList.remove("active-led");
+                        button.style.backgroundColor = button.getAttribute("data-inactive-color");
+                        colorCabina.style.backgroundColor = "#d9d9d9";
+
+                        enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+                        ledActivo = null;
+
+                    } else {
+                        // Desactivar LED anterior si existe
+                        if (ledActivo) {
+                            const codAnterior = ledActivo.getAttribute("data-codigo");
+                            ledActivo.classList.remove("active-led");
+                            ledActivo.style.backgroundColor = ledActivo.getAttribute("data-inactive-color");
+                            enviarTrama(cabinaPrefijo, codAnterior, cabinaActiva);
+                        }
+
+                        // Activar nuevo LED
+                        button.classList.add("active-led");
+                        button.style.backgroundColor = button.getAttribute("data-active-color");
+                        colorCabina.style.backgroundColor = button.getAttribute("data-active-color");
+                        enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+
+                        ledActivo = button;
+                    }
+                });
+            });
+
+            // Interacción del botón "Enviar Tiempo"
+            if (btnEnviarTiempo && tiempoInput && tiempoMostrado) {
+                tiempoInput.addEventListener("input", () => {
+                    let valor = parseInt(tiempoInput.value);
+                    if (!valor || valor < 0) {
+                        tiempoInput.value = 0;
+                        valor = 0;
+                    }
+                    tiempoMostrado.textContent = valor;
+                });
+
+                btnEnviarTiempo.addEventListener("click", () => {
+                    let valorMinutos = parseInt(tiempoInput.value);
+                    if (!valorMinutos || valorMinutos < 0) {
+                        alert("Por favor, ingrese un número válido y no negativo.");
+                        tiempoInput.value = 0;
+                        valorMinutos = 0;
+                    }
+                    tiempoMostrado.textContent = valorMinutos;
+                    const valorSegundos = Math.min(valorMinutos * 60, 300); // Máximo 5 minutos
+                    const graficaCanvas = panel.querySelector("#graficaPanel");
+                    if (graficaCanvas) {
+                        graficaCanvas.setAttribute("data-time-range", valorSegundos);
+                        if (cabinaActiva && graficaCanvas.chartInstance) {
+                            const chart = graficaCanvas.chartInstance;
+                            const labels = [];
+                            for (let i = 0; i < 10; i++) {
+                                labels.push(`${i * (valorSegundos / 10)}s`);
+                            }
+                            chart.data.labels = labels;
+                            chart.data.datasets[0].data = labels.map(() =>
+                                Math.floor(Math.random() * 5)
+                            );
+                            chart.update();
+                        }
+                    }
+                });
+            }
+
+            // Botón Humo - Actualiza estado del detector
+            if (botonHumo && estadoHumo) {
+                botonHumo.addEventListener("click", () => {
+                    if (!cabinaActiva) {
+                        alert("La cabina debe estar activa antes de usar esta función.");
+                        return;
+                    }
+                    humoActivado = !humoActivado;
+                    if (humoActivado) {
+                        estadoHumo.style.backgroundColor = "#d9d9d9";
+                        estadoHumo.style.opacity = "1";
+                    } else {
+                        estadoHumo.style.backgroundColor = "#ccc";
+                        estadoHumo.style.opacity = "0.5";
+                    }
+                });
+            }
+
+            // Manejo de botones de medición (debajo de la gráfica)
+            const medicionBotones = panel.querySelectorAll(".medicion-btn");
+            const medicionTextos = panel.querySelectorAll(".medicion-texto");
+
+            if (medicionBotones.length > 0 && medicionTextos.length > 0) {
+                medicionBotones.forEach((boton, index) => {
+                    boton.addEventListener("click", () => {
+                        if (!cabinaActiva) {
+                            alert("Por favor, inicie la cabina antes de usar las mediciones.");
+                            return;
+                        }
+
+                        // Desactivar otros botones de medición
+                        medicionBotones.forEach((btn, i) => {
+                            if (btn !== boton) {
+                                btn.classList.remove("activo", "bg-[#00bf63]");
+                                btn.classList.add("bg-[#d9d9d9]");
+                                medicionTextos[i].textContent = "N/A";
+                            }
+                        });
+
+                        // Activar este botón y mostrar dato simulado
+                        boton.classList.remove("bg-[#d9d9d9]");
+                        boton.classList.add("bg-[#00bf63]", "activo");
+
+                        const nombre = boton.dataset.medicion;
+                        const textoElemento = medicionTextos[index];
+                        const valorSimulado = (Math.random() * 10).toFixed(1);
+                        textoElemento.textContent = `${valorSimulado} ${getUnidad(nombre)}`;
+                    });
+                });
+            }
+
+            // Botón Enviar Configuración - Inicia la cabina
+            const btnIniciar = panel.querySelector("#btn-enviar-configuracion");
+            if (btnIniciar && estadoCabina) {
+                btnIniciar.addEventListener("click", () => {
+                    if (!cabinaActiva) {
+                        cabinaActiva = true;
+                        estadoCabina.classList.remove("bg-[#d9d9d9]");
+                        estadoCabina.classList.add("bg-[#00bf63]");
+                        estadoCabina.textContent = "ACTIVA";
+
+                        // Conectar o preparar puerto COM
+                        puertoSerialConectado = true;
+                        alert("Sistema iniciado. ¡La cabina ha sido activada y listo para enviar tramas!");
+                    } else {
+                        alert("Ya está activa. No se puede enviar otra vez sin resetear.");
+                    }
+                });
+            }
+
+            // Botón Parar y Reset - Reinicia todo
+            const btnReset = panel.querySelector("#btn-parar-reset");
+            if (btnReset && estadoCabina) {
+                btnReset.addEventListener("click", () => {
+                    // Volver a estado inicial
+                    estadoCabina.classList.remove("bg-[#00bf63]");
+                    estadoCabina.classList.add("bg-[#d9d9d9]");
+                    estadoCabina.textContent = "INACTIVA";
+                    cabinaActiva = false;
+
+                    // Desactivar todos los botones de control y enviar C1/C2000F
+                    controlButtons.forEach((btn) => {
+                        const codigo = btn.getAttribute("data-codigo");
+                        if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
+                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].off, cabinaActiva);
+                        }
+                        btn.classList.remove("bg-[#00bf63]");
+                        btn.classList.add("bg-[#d9d9d9]");
+                    });
+
+                    // Desactivar todos los LEDs y enviar C1/C2000F
+                    ledButtons.forEach((led) => {
+                        const codigo = led.getAttribute("data-codigo");
+                        if (led.classList.contains("active-led") && codigo) {
+                            enviarTrama(cabinaPrefijo, codigo, cabinaActiva); // Puedes usar también "000" si prefieres una trama general
+                        }
+                        led.classList.remove("active-led");
+                        led.style.backgroundColor = led.getAttribute("data-inactive-color");
+                    });
+
+                    // Reiniciar gráfica si existe
+                    const graficaCanvas = panel.querySelector("#graficaPanel");
+                    if (graficaCanvas && graficaCanvas.chartInstance) {
+                        graficaCanvas.chartInstance.destroy();
+                    }
+
+                    // Limpiar datos de mediciones
+                    medicionTextos.forEach((txt) => {
+                        txt.textContent = "N/A";
+                    });
+
+                    // Limpiar input de tiempo
+                    if (tiempoInput) {
+                        tiempoInput.value = 0;
+                        tiempoMostrado.textContent = 0;
+                    }
+
+                    alert("Sistema detenido. Todo ha sido reiniciado.");
+
+                    colorCabina.style.backgroundColor = "#d9d9d9"; // Restablecer color de cabina
+                });
+            }
+
+            setTimeout(updateTabHover, 0);
+            setTimeout(updateSelectHover, 0);
+        });
+    });
+
+    // Función para obtener unidad según medición
+    function getUnidad(medicion) {
+        switch (medicion) {
+            case "X": return "m";
+            case "T": return "°C";
+            case "CO2": return "ppm";
+            case "Y": return "m";
+            case "%H": return "%";
+            case "%O2": return "%";
+            case "Z": return "m";
+            case "UV": return "W/m²";
+            case "Son": return "dB";
+            default: return "";
+        }
+    }
+
+    // Función para inicializar gráfica con Chart.js
+    function initGrafica(panel) {
+        const graficaCanvas = panel.querySelector("#graficaPanel");
+        if (!graficaCanvas) return;
+
+        const existingChart = Chart.getChart(graficaCanvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        const ctx = graficaCanvas.getContext("2d");
+        const valorSegundos = parseInt(graficaCanvas.getAttribute("data-time-range")) || 300;
+        const labels = [];
+        const maxPuntos = 10;
+        for (let i = 0; i < maxPuntos; i++) {
+            labels.push(`${i * (valorSegundos / maxPuntos)}s`);
+        }
+        const dataValues = labels.map(() => Math.floor(Math.random() * 5));
+
+        graficaCanvas.chartInstance = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "Sensor 1",
+                        data: dataValues,
+                        borderColor: "#000",
+                        backgroundColor: "rgba(0, 74, 173, 0.2)",
+                        tension: 0.3,
+                        pointRadius: 4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Tiempo (s)",
+                            color: "#333",
+                            font: { weight: "bold" }
+                        },
+                        grid: { color: "#ddd" }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Amplitud",
+                            color: "#333",
+                            font: { weight: "bold" }
+                        },
+                        grid: { color: "#ddd" }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: { color: "#333" }
+                    }
+                }
+            }
+        });
+    }
+</script>

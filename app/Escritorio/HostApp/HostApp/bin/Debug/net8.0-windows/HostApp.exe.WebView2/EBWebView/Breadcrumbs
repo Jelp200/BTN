@@ -1,0 +1,96 @@
+0:00:06 Widget Closed:
+0:00:07 Widget Closed:
+0:00:22 Widget Closed: JavaScriptTabModalDialogViewViews
+0:00:24 Widget Closed: TooltipAura
+0:00:37 Widget Closed: JavaScriptTabModalDialogViewViews
+0:09:22 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+0:00:00 Startup
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpEphemeralProfiles
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpDeletedProfiles
+0:00:00 Microsoft.NewBrowser_Popup
+0:00:00 Microsoft.BrowserList.AddBrowser
+0:00:00 Browser1 Insert active Tab1 at 0
+0:00:00 Tab1 StartNav1 #auto_toplevel
+0:00:00 Tab1 FinishNav1
+0:00:00 Tab1 PageLoad
+0:00:00 Tab1 StartNav2 #typed
+0:00:00 Tab1 FinishNav2
+0:00:01 Tab1 PageLoad
+0:00:04 Memory Pressure: Moderate
+0:00:15 Memory Pressure: Moderate
+0:00:25 Memory Pressure: Moderate
+0:00:35 Memory Pressure: Moderate
+0:00:45 Memory Pressure: Moderate
+0:00:46 Widget Closed: StatusBubble
+0:00:54 Widget Closed: JavaScriptTabModalDialogViewViews
+0:00:55 Memory Pressure: Moderate
+0:01:04 Widget Closed: TooltipAura
+0:01:05 Memory Pressure: Moderate
+0:01:05 Widget Closed: TooltipAura
+0:01:05 Widget Closed: StatusBubble
+0:01:07 Widget Closed: TooltipAura
+0:01:11 Widget Closed: TooltipAura
+0:01:12 Widget Closed: TooltipAura
+0:01:15 Memory Pressure: Moderate
+0:01:17 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+0:00:00 Startup
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpEphemeralProfiles
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpDeletedProfiles
+0:00:00 Microsoft.NewBrowser_Popup
+0:00:00 Microsoft.BrowserList.AddBrowser
+0:00:00 Browser1 Insert active Tab1 at 0
+0:00:00 Tab1 StartNav1 #auto_toplevel
+0:00:00 Tab1 FinishNav1
+0:00:00 Tab1 PageLoad
+0:00:00 Tab1 StartNav2 #typed
+0:00:00 Tab1 FinishNav2
+0:00:00 Tab1 PageLoad
+0:00:04 Memory Pressure: Moderate
+0:00:14 Memory Pressure: Moderate
+0:00:24 Memory Pressure: Moderate
+0:00:34 Memory Pressure: Moderate
+0:00:45 Memory Pressure: Moderate
+0:00:55 Memory Pressure: Moderate
+0:00:59 Widget Closed: JavaScriptTabModalDialogViewViews
+0:01:03 Widget Closed: JavaScriptTabModalDialogViewViews
+0:01:05 Memory Pressure: Moderate
+0:01:15 Memory Pressure: Moderate
+0:01:25 Memory Pressure: Moderate
+0:01:29 Widget Closed: JavaScriptTabModalDialogViewViews
+0:01:31 Widget Closed: JavaScriptTabModalDialogViewViews
+0:01:35 Memory Pressure: Moderate
+0:01:45 Memory Pressure: Moderate
+0:01:55 Memory Pressure: Moderate
+0:02:05 Memory Pressure: Moderate
+0:02:07 Widget Closed: JavaScriptTabModalDialogViewViews
+0:02:15 Memory Pressure: Moderate
+0:02:18 Widget Closed: JavaScriptTabModalDialogViewViews
+0:02:25 Memory Pressure: Moderate
+0:02:35 Memory Pressure: Moderate
+0:02:36 Widget Closed: JavaScriptTabModalDialogViewViews
+0:02:39 Widget Closed: JavaScriptTabModalDialogViewViews
+0:02:45 Memory Pressure: Moderate
+0:03:35 Memory Pressure: Moderate
+0:03:45 Memory Pressure: Moderate
+0:03:48 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+0:00:00 Startup
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpEphemeralProfiles
+0:00:00 Microsoft.DeleteProfileHelper.CleanUpDeletedProfiles
+0:00:00 Microsoft.NewBrowser_Popup
+0:00:00 Microsoft.BrowserList.AddBrowser
+0:00:00 Browser1 Insert active Tab1 at 0
+0:00:00 Tab1 StartNav1 #auto_toplevel
+0:00:00 Tab1 StartNav2 #typed
+0:00:00 Tab1 FinishNav1
+0:00:00 Tab1 PageLoad
+0:00:00 Tab1 FinishNav2
+0:00:00 Tab1 PageLoad
+0:00:04 Memory Pressure: Moderate
+0:00:14 Memory Pressure: Moderate
+0:00:25 Memory Pressure: Moderate
+0:00:35 Memory Pressure: Moderate
+0:01:54 Widget Closed: StatusBubble
+0:02:05 Memory Pressure: Moderate
+0:07:25 Widget Closed: StatusBubble
+0:08:21 Widget Closed: StatusBubble
+0:15:33 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp

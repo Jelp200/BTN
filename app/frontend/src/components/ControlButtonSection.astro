@@ -1,0 +1,28 @@
+---
+// ControlButtonSection.astro
+
+import ControlButton from "./ControlButton.astro";
+---
+
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <!-- Usamos el componente ControlButton con data-codigo -->
+    <ControlButton label="Frío" icon="frio" data-codigo="FRIO" />
+    <ControlButton label="Calor" icon="calor" data-codigo="CALOR" />
+    <ControlButton label="Humedad" icon="humedad" data-codigo="HUMEDAD" />
+    <ControlButton label="Vibración" icon="vibracion" data-codigo="VIBRACION" />
+    <ControlButton label="Ventilador" icon="ventilador" data-codigo="VENTILADOR" />
+    <ControlButton label="Extractor" icon="extractor" data-codigo="EXTRACTOR" />
+
+    <!-- Botón especial con col-span-2 -->
+    <button
+        data-codigo="DESHUMIDIFICADOR"
+        class="col-span-2 control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all"
+    >
+        <img
+            src="/icons/deshumidificador.svg"
+            alt="Deshumidificador"
+            class="w-8 h-8 status-icon"
+        />
+        <span>Deshumidificador</span>
+    </button>
+</div>

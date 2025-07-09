@@ -42,8 +42,10 @@ Esta aplicación controla actuadores y monitorea sensores conectados a un microc
 ```plaintext
 BTN/
 ├── app/
-|   ├── Diseno web/
-|   └── Escritorio/
+|   ├── Escritorio/
+|   |   ├── ControlPanel.API/
+|   |   └── HostApp/
+|   └── Frontend/
 ├── docs/
 ├── imgs/
 |   └── DF/

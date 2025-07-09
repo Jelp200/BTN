@@ -1,0 +1,73 @@
+---
+// TwoColumnsSection.astro
+
+//* IMPORTS
+import ControlButton from "./ControlButton.astro";
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+    <!-- Línea divisora centrada (solo en pantallas medianas y mayores) -->
+    <div
+        class="absolute inset-y-0 left-1/2 -ml-px border-1 border-[#a6a6a6] pointer-events-none hidden md:block"
+    >
+    </div>
+
+    <!-- Columna izquierda -->
+    <div class="space-y-4">
+        <div class="flex gap-4">
+            <!-- Usamos el componente ControlButton -->
+            <ControlButton label="Humo" icon="humo" data-codigo="HUMO"/>
+
+            <!-- Botón especial -->
+            <button
+                class="flex flex-col items-center justify-center w-full text-center space-y-1 p-4 bg-[black] text-white rounded-lg transition-all"
+            >
+                <img
+                    src="/icons/disparo.svg"
+                    alt="Disparo"
+                    class="w-8 h-8 mx-auto"
+                />
+                <span>Disparo</span>
+            </button>
+        </div>
+
+        <!-- Campo de tiempo -->
+        <p class="text-sm text-[#a6a6a6]">
+            Espere
+            <span id="tiempo-mostrado">0</span>
+            minutos
+        </p>
+
+        <!-- Formulario para ingresar tiempo -->
+        <div>
+            <label
+                for="tiempo-input-form"
+                class="block text-sm font-medium text-black mb-1"
+            >
+                Ingrese tiempo de espera:
+            </label>
+            <div class="flex gap-2">
+                <input
+                    id="tiempo-input-form"
+                    type="number"
+                    min="0"
+                    value="0"
+                    class="border border-[#a6a6a6] px-3 py-2 w-full rounded-lg"
+                    placeholder="Minutos"
+                />
+                <button
+                    id="btn-enviar-tiempo"
+                    class="bg-[#d9d9d9] text-black px-4 py-2 hover:bg-[#a6a6a6] rounded-lg transition-colors"
+                >
+                    <img src="/icons/flecha.svg" class="h-6 w-8" />
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna derecha -->
+    <div class="space-y-4">
+        <h3 class="font-semibold text-black">Columna Derecha</h3>
+        <p class="text-sm text-[#a6a6a6]">Próximamente...</p>
+    </div>
+</div>
