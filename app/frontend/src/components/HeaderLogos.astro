@@ -1,12 +1,83 @@
 ---
-//* IMAGENES
 import logoAnahuac from "../../public/logos/logo-anahuac.svg";
 import logoGITSe from "../../public/logos/logo-gitse.svg";
 ---
 
-<div class="w-full flex justify-between items-center px-8 py-4">
-    <a href="https://cancun.anahuac.mx/sitio/" target="_blank" rel="noopener noreferrer">
-        <img src={logoAnahuac.src} alt="Logo Anahuac Cancun" class="h-12" />
+<div class="w-full flex flex-wrap justify-between items-center gap-4 px-6 py-4 bg-white border-b border-gray-200">
+    <!-- Logo Anáhuac -->
+    <a
+        href="https://cancun.anahuac.mx/sitio/ "
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        <img src={logoAnahuac.src} alt="Logo Anáhuac Cancún" class="h-12" />
     </a>
-    <img src={logoGITSe.src} alt="Logo GITSe" class="h-8" />
+
+    <!-- Control de puertos COM -->
+    <div class="flex items-center gap-2 flex-wrap">
+        <!-- Selector de Puerto -->
+        <select
+            id="com-port-selector"
+            class="px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-[160px]"
+        >
+            <option disabled selected>Seleccionar Puerto</option>
+        </select>
+
+        <!-- Botón: Escanear Puertos -->
+        <button
+            id="btn-scan-com"
+            class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded border border-gray-300"
+        >
+            🔄 Escanear
+        </button>
+
+        <!-- Botón: Conectar Puerto -->
+        <button
+            id="btn-connect-com"
+            class="bg-[#00bf63] hover:bg-[#00a152] px-3 py-2 text-sm text-white rounded"
+        >
+            🔌 Conectar
+        </button>
+    </div>
+
+    <!-- Ventana de Logs - Tramas Enviadas -->
+    <div class="relative group">
+        <button
+            id="btn-toggle-log"
+            class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded"
+        >
+            📜 Ver Tramas
+        </button>
+        <div
+            id="trama-log-window"
+            class="hidden group-hover:flex absolute right-0 mt-2 w-72 h-48 bg-white border border-[#ccc] shadow-lg rounded overflow-auto p-2 text-xs font-mono text-gray-700 flex-col-reverse z-50"
+        >
+            <div class="text-center text-gray-500">No hay tramas aún...</div>
+        </div>
+    </div>
+
+    <!-- Logo GITSe -->
+    <img src={logoGITSe.src} alt="Logo GITSe" class="h-10" />
 </div>
+
+<!-- Estilos para scroll de log -->
+<style>
+    #trama-log-window {
+        max-height: 200px;
+        scrollbar-width: thin;
+        scrollbar-color: #a6a6a6 #f1f1f1;
+    }
+
+    #trama-log-window::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #trama-log-window::-webkit-scrollbar-thumb {
+        background: #a6a6a6;
+        border-radius: 4px;
+    }
+
+    #trama-log-window::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+</style>

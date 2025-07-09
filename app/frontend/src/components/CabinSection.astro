@@ -26,16 +26,52 @@ import CabinPanel from "./CabinPanel.astro";
         "HUMO": { off: "050", on: "051" }
     };
 
-    // Estado global de conexión serial (simulado)
-    let puertoSerialConectado = false;
+    // Estado global del puerto serial
+    let puertoSerial;
+    let escritor;
 
-    // Función para enviar trama real (simulada como alert o puedes integrar con WinForms)
-    function enviarTramaReal(trama) {
-        if (!puertoSerialConectado) {
-            console.warn("Puerto no conectado. Simulando trama:", trama);
+    // Función global para mostrar tramas en ventana de logs
+    window.mostrarTramaEnLog = function(trama, tipo = 'pendiente') {
+        const logWindow = document.getElementById("trama-log-window");
+        if (!logWindow) return;
+
+        // Limpiar mensaje inicial
+        if (logWindow.children.length === 1 && logWindow.firstElementChild.textContent.includes("No hay tramas aún")) {
+            logWindow.innerHTML = "";
+        }
+
+        // Crear entrada de log con icono según tipo
+        const entry = document.createElement("div");
+        entry.className = "p-1 truncate";
+
+        let icono = "🟡"; // Pendiente / simulada
+        if (tipo === 'real') icono = "🟢"; // Realmente enviada
+
+        entry.textContent = `${icono} ${trama}`;
+
+        // Insertar arriba (última trama primero)
+        logWindow.insertBefore(entry, logWindow.firstChild);
+    };
+
+    // Función para enviar trama vía Web Serial
+    async function enviarTramaReal(trama) {
+        if (!escritor) {
+            console.warn("Puerto no conectado. No se puede enviar:", trama);
             return;
         }
-        console.log("Enviando trama real:", trama);
+
+        try {
+            const encoder = new TextEncoder();
+            await escritor.write(encoder.encode(trama));
+            console.log("Trama enviada:", trama);
+
+            if (window.mostrarTramaEnLog) {
+                window.mostrarTramaEnLog(trama, 'real');
+            }
+        } catch (err) {
+            console.error("Error al enviar trama:", err);
+            alert("Error de conexión serial. Revisa el puerto.");
+        }
     }
 
     // Función pública para enviar trama condicionalmente
@@ -45,10 +81,86 @@ import CabinPanel from "./CabinPanel.astro";
         if (cabinaActiva) {
             enviarTramaReal(trama);
         } else {
-            console.log("[Simulado] Trama generada:", trama);
+            console.log("[Pendiente] Trama generada:", trama);
+            if (window.mostrarTramaEnLog) {
+                window.mostrarTramaEnLog(trama, 'pendiente');
+            }
         }
     }
 
+    // Escanear puertos COM del sistema
+    async function escanearPuertosCOM() {
+        const selector = document.getElementById("com-port-selector");
+        if (!selector) return;
+
+        try {
+            const puertos = await navigator.serial.getPorts();
+            selector.innerHTML = "";
+
+            if (puertos.length === 0) {
+                const option = document.createElement("option");
+                option.textContent = "No hay puertos disponibles";
+                option.disabled = true;
+                selector.appendChild(option);
+                console.log("Web Serial: No se encontraron puertos.");
+                alert("No se encontraron puertos COM conectados.");
+                return;
+            }
+
+            puertos.forEach((port, index) => {
+                const option = document.createElement("option");
+                option.value = index;
+                option.textContent = `Puerto ${index + 1}`;
+                selector.appendChild(option);
+            });
+
+            console.log("Web Serial: Puertos escaneados correctamente.", puertos);
+            alert(`✅ Se encontraron ${puertos.length} puertos COM.`);
+        } catch (err) {
+            console.error("Error al escanear puertos:", err);
+            alert("❌ Error al escanear puertos COM.");
+        }
+    }
+
+    // Conectar al puerto seleccionado
+    async function conectarPuertoSerial() {
+        const selector = document.getElementById("com-port-selector");
+        if (!selector) return;
+
+        const indexSeleccionado = parseInt(selector.value);
+        if (isNaN(indexSeleccionado)) {
+            alert("⚠️ Por favor, seleccione un puerto válido.");
+            return;
+        }
+
+        try {
+            const puertos = await navigator.serial.getPorts();
+            puertoSerial = puertos[indexSeleccionado];
+
+            await puertoSerial.open({ baudRate: 9600 });
+            escritor = puertoSerial.writable.getWriter();
+
+            console.log("🔌 Puerto serial conectado:", puertoSerial);
+            alert("✅ Puerto serial conectado exitosamente.");
+
+        } catch (err) {
+            console.error("❌ Error al conectar puerto COM:", err);
+            alert("❌ No se pudo conectar al puerto seleccionado.");
+        }
+    }
+
+    // Asignar eventos a botones del header al cargar
+    window.addEventListener("DOMContentLoaded", () => {
+        const btnScanCom = document.getElementById("btn-scan-com");
+        const btnConnectCom = document.getElementById("btn-connect-com");
+
+        if (btnScanCom) btnScanCom.addEventListener("click", escanearPuertosCOM);
+        if (btnConnectCom) btnConnectCom.addEventListener("click", conectarPuertoSerial);
+
+        escanearPuertosCOM();
+    });
+
+    // Manejo de los paneles (cabina 1 y 2)
     document.addEventListener("DOMContentLoaded", () => {
         const panels = document.querySelectorAll(".panel-container");
 
@@ -128,7 +240,8 @@ import CabinPanel from "./CabinPanel.astro";
                     const isActive = select.value.includes("1");
                     if (isActive) {
                         select.style.transition = "none";
-                        select.style.backgroundColor = window.getComputedStyle(select).backgroundColor;
+                        select.style.backgroundColor =
+                            window.getComputedStyle(select).backgroundColor;
                         select.classList.remove("hover:bg-[#a6a6a6]");
                     } else {
                         select.style.transition = "";
@@ -143,7 +256,7 @@ import CabinPanel from "./CabinPanel.astro";
                 select.addEventListener("change", updateSelectHover);
             });
 
-            // Manejo de botones de control - solo uno activo a la vez
+            // Solo un botón de control puede estar activo a la vez
             controlButtons.forEach((btn) => {
                 btn.addEventListener("click", () => {
                     const codigo = btn.getAttribute("data-codigo");
@@ -161,7 +274,7 @@ import CabinPanel from "./CabinPanel.astro";
                             if (b.classList.contains("bg-[#00bf63]") && cod && codigoBoton[cod]) {
                                 b.classList.remove("bg-[#00bf63]");
                                 b.classList.add("bg-[#d9d9d9]");
-                                enviarTrama(cabinaPrefijo, codigoBoton[cod].off);
+                                enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
                             }
                         });
 
@@ -185,7 +298,6 @@ import CabinPanel from "./CabinPanel.astro";
                     if (!codigo) return;
 
                     if (isActive) {
-                        // Desactivar LED actual
                         button.classList.remove("active-led");
                         button.style.backgroundColor = button.getAttribute("data-inactive-color");
                         colorCabina.style.backgroundColor = "#d9d9d9";
@@ -194,7 +306,6 @@ import CabinPanel from "./CabinPanel.astro";
                         ledActivo = null;
 
                     } else {
-                        // Desactivar LED anterior si existe
                         if (ledActivo) {
                             const codAnterior = ledActivo.getAttribute("data-codigo");
                             ledActivo.classList.remove("active-led");
@@ -202,7 +313,6 @@ import CabinPanel from "./CabinPanel.astro";
                             enviarTrama(cabinaPrefijo, codAnterior, cabinaActiva);
                         }
 
-                        // Activar nuevo LED
                         button.classList.add("active-led");
                         button.style.backgroundColor = button.getAttribute("data-active-color");
                         colorCabina.style.backgroundColor = button.getAttribute("data-active-color");
@@ -212,6 +322,65 @@ import CabinPanel from "./CabinPanel.astro";
                     }
                 });
             });
+
+            // Botón Enviar Configuración - Inicia la cabina
+            const btnIniciar = panel.querySelector("#btn-enviar-configuracion");
+            if (btnIniciar && estadoCabina) {
+                btnIniciar.addEventListener("click", () => {
+                    if (!cabinaActiva) {
+                        cabinaActiva = true;
+                        estadoCabina.classList.remove("bg-[#ff4d4d]");
+                        estadoCabina.classList.add("bg-[#00bf63]");
+                        estadoCabina.textContent = "ACTIVA";
+                        alert("Sistema iniciado. ¡La cabina ha sido activada!");
+                    } else {
+                        alert("Ya está activa. No se puede enviar otra vez sin resetear.");
+                    }
+                });
+            }
+
+            // Botón Parar y Reset - Reinicia todo
+            const btnReset = panel.querySelector("#btn-parar-reset");
+            if (btnReset && estadoCabina) {
+                btnReset.addEventListener("click", () => {
+                    estadoCabina.classList.remove("bg-[#00bf63]");
+                    estadoCabina.classList.add("bg-[#ff4d4d]");
+                    estadoCabina.textContent = "INACTIVA";
+                    cabinaActiva = false;
+
+                    controlButtons.forEach((btn) => {
+                        btn.classList.remove("bg-[#00bf63]");
+                        btn.classList.add("bg-[#d9d9d9]");
+                    });
+
+                    const graficaCanvas = panel.querySelector("#graficaPanel");
+                    if (graficaCanvas && graficaCanvas.chartInstance) {
+                        graficaCanvas.chartInstance.destroy();
+                    }
+
+                    const medicionTextos = panel.querySelectorAll(".medicion-texto");
+                    medicionTextos.forEach((txt) => {
+                        txt.textContent = "N/A";
+                    });
+
+                    ledButtons.forEach((led) => {
+                        led.classList.remove("active-led");
+                        led.style.backgroundColor = led.getAttribute("data-inactive-color");
+                    });
+
+                    if (tiempoInput) {
+                        tiempoInput.value = 0;
+                        tiempoMostrado.textContent = 0;
+                    }
+
+                    if (ledActivo) {
+                        ledActivo = null;
+                        colorCabina.style.backgroundColor = "#d9d9d9";
+                    }
+
+                    alert("Sistema detenido. Todo ha sido reiniciado.");
+                });
+            }
 
             // Interacción del botón "Enviar Tiempo"
             if (btnEnviarTiempo && tiempoInput && tiempoMostrado) {
@@ -270,7 +439,7 @@ import CabinPanel from "./CabinPanel.astro";
                 });
             }
 
-            // Manejo de botones de medición (debajo de la gráfica)
+            // Manejo de botones de medición
             const medicionBotones = panel.querySelectorAll(".medicion-btn");
             const medicionTextos = panel.querySelectorAll(".medicion-texto");
 
@@ -300,78 +469,6 @@ import CabinPanel from "./CabinPanel.astro";
                         const valorSimulado = (Math.random() * 10).toFixed(1);
                         textoElemento.textContent = `${valorSimulado} ${getUnidad(nombre)}`;
                     });
-                });
-            }
-
-            // Botón Enviar Configuración - Inicia la cabina
-            const btnIniciar = panel.querySelector("#btn-enviar-configuracion");
-            if (btnIniciar && estadoCabina) {
-                btnIniciar.addEventListener("click", () => {
-                    if (!cabinaActiva) {
-                        cabinaActiva = true;
-                        estadoCabina.classList.remove("bg-[#d9d9d9]");
-                        estadoCabina.classList.add("bg-[#00bf63]");
-                        estadoCabina.textContent = "ACTIVA";
-
-                        // Conectar o preparar puerto COM
-                        puertoSerialConectado = true;
-                        alert("Sistema iniciado. ¡La cabina ha sido activada y listo para enviar tramas!");
-                    } else {
-                        alert("Ya está activa. No se puede enviar otra vez sin resetear.");
-                    }
-                });
-            }
-
-            // Botón Parar y Reset - Reinicia todo
-            const btnReset = panel.querySelector("#btn-parar-reset");
-            if (btnReset && estadoCabina) {
-                btnReset.addEventListener("click", () => {
-                    // Volver a estado inicial
-                    estadoCabina.classList.remove("bg-[#00bf63]");
-                    estadoCabina.classList.add("bg-[#d9d9d9]");
-                    estadoCabina.textContent = "INACTIVA";
-                    cabinaActiva = false;
-
-                    // Desactivar todos los botones de control y enviar C1/C2000F
-                    controlButtons.forEach((btn) => {
-                        const codigo = btn.getAttribute("data-codigo");
-                        if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
-                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].off, cabinaActiva);
-                        }
-                        btn.classList.remove("bg-[#00bf63]");
-                        btn.classList.add("bg-[#d9d9d9]");
-                    });
-
-                    // Desactivar todos los LEDs y enviar C1/C2000F
-                    ledButtons.forEach((led) => {
-                        const codigo = led.getAttribute("data-codigo");
-                        if (led.classList.contains("active-led") && codigo) {
-                            enviarTrama(cabinaPrefijo, codigo, cabinaActiva); // Puedes usar también "000" si prefieres una trama general
-                        }
-                        led.classList.remove("active-led");
-                        led.style.backgroundColor = led.getAttribute("data-inactive-color");
-                    });
-
-                    // Reiniciar gráfica si existe
-                    const graficaCanvas = panel.querySelector("#graficaPanel");
-                    if (graficaCanvas && graficaCanvas.chartInstance) {
-                        graficaCanvas.chartInstance.destroy();
-                    }
-
-                    // Limpiar datos de mediciones
-                    medicionTextos.forEach((txt) => {
-                        txt.textContent = "N/A";
-                    });
-
-                    // Limpiar input de tiempo
-                    if (tiempoInput) {
-                        tiempoInput.value = 0;
-                        tiempoMostrado.textContent = 0;
-                    }
-
-                    alert("Sistema detenido. Todo ha sido reiniciado.");
-
-                    colorCabina.style.backgroundColor = "#d9d9d9"; // Restablecer color de cabina
                 });
             }
 
@@ -419,17 +516,15 @@ import CabinPanel from "./CabinPanel.astro";
             type: "line",
             data: {
                 labels,
-                datasets: [
-                    {
-                        label: "Sensor 1",
-                        data: dataValues,
-                        borderColor: "#000",
-                        backgroundColor: "rgba(0, 74, 173, 0.2)",
-                        tension: 0.3,
-                        pointRadius: 4,
-                        fill: true
-                    }
-                ]
+                datasets: [{
+                    label: "Sensor 1",
+                    data: dataValues,
+                    borderColor: "#000",
+                    backgroundColor: "rgba(0, 74, 173, 0.2)",
+                    tension: 0.3,
+                    pointRadius: 4,
+                    fill: true
+                }]
             },
             options: {
                 responsive: true,
