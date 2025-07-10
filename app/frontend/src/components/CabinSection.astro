@@ -42,7 +42,7 @@ import CabinPanel from "./CabinPanel.astro";
 
         // Crear entrada de log con icono según tipo
         const entry = document.createElement("div");
-        entry.className = "p-1 truncate";
+        entry.className = "p-1 truncate text-xs";
 
         let icono = "🟡"; // Pendiente / simulada
         if (tipo === 'real') icono = "🟢"; // Realmente enviada
@@ -56,21 +56,20 @@ import CabinPanel from "./CabinPanel.astro";
     // Función para enviar trama vía Web Serial
     async function enviarTramaReal(trama) {
         if (!escritor) {
-            console.warn("Puerto no conectado. No se puede enviar:", trama);
+            console.warn("Puerto no conectado. Simulando trama:", trama);
             return;
         }
 
         try {
             const encoder = new TextEncoder();
             await escritor.write(encoder.encode(trama));
-            console.log("Trama enviada:", trama);
+            console.log("Trama enviada real:", trama);
 
-            if (window.mostrarTramaEnLog) {
-                window.mostrarTramaEnLog(trama, 'real');
-            }
+            // Mostrar en ventana de logs
+            window.mostrarTramaEnLog(trama, 'real');
         } catch (err) {
             console.error("Error al enviar trama:", err);
-            alert("Error de conexión serial. Revisa el puerto.");
+            alert("Error de comunicación serial. Verifica el puerto.");
         }
     }
 
@@ -95,30 +94,30 @@ import CabinPanel from "./CabinPanel.astro";
 
         try {
             const puertos = await navigator.serial.getPorts();
-            selector.innerHTML = "";
+            selector.innerHTML = ""; // Limpiar opciones
 
             if (puertos.length === 0) {
                 const option = document.createElement("option");
                 option.textContent = "No hay puertos disponibles";
                 option.disabled = true;
                 selector.appendChild(option);
-                console.log("Web Serial: No se encontraron puertos.");
-                alert("No se encontraron puertos COM conectados.");
+                console.log("No se encontraron puertos.");
+                alert("No hay puertos COM conectados.");
                 return;
             }
 
             puertos.forEach((port, index) => {
                 const option = document.createElement("option");
-                option.value = index;
-                option.textContent = `Puerto ${index + 1}`;
+                option.value = port.portId; // ID único del puerto
+                option.textContent = port.name; // Nombre del puerto (ej: COM3)
                 selector.appendChild(option);
             });
 
-            console.log("Web Serial: Puertos escaneados correctamente.", puertos);
-            alert(`✅ Se encontraron ${puertos.length} puertos COM.`);
+            console.log("Puertos escaneados:", puertos);
+            alert(`Se encontraron ${puertos.length} puertos COM.`);
         } catch (err) {
             console.error("Error al escanear puertos:", err);
-            alert("❌ Error al escanear puertos COM.");
+            alert("❌ Web Serial no disponible o acceso denegado.");
         }
     }
 
@@ -127,24 +126,22 @@ import CabinPanel from "./CabinPanel.astro";
         const selector = document.getElementById("com-port-selector");
         if (!selector) return;
 
-        const indexSeleccionado = parseInt(selector.value);
-        if (isNaN(indexSeleccionado)) {
-            alert("⚠️ Por favor, seleccione un puerto válido.");
+        const selectedIndex = selector.selectedIndex;
+        if (selectedIndex === -1 || selectedIndex === 0) {
+            alert("Por favor, seleccione un puerto válido.");
             return;
         }
 
         try {
-            const puertos = await navigator.serial.getPorts();
-            puertoSerial = puertos[indexSeleccionado];
+            const puertoSeleccionado = await navigator.serial.requestPort();
+            await puertoSeleccionado.open({ baudRate: 9600 });
+            escritor = puertoSeleccionado.writable.getWriter();
 
-            await puertoSerial.open({ baudRate: 9600 });
-            escritor = puertoSerial.writable.getWriter();
-
-            console.log("🔌 Puerto serial conectado:", puertoSerial);
+            console.log("Puerto conectado:", puertoSeleccionado);
             alert("✅ Puerto serial conectado exitosamente.");
 
         } catch (err) {
-            console.error("❌ Error al conectar puerto COM:", err);
+            console.error("Error al conectar puerto COM:", err);
             alert("❌ No se pudo conectar al puerto seleccionado.");
         }
     }
