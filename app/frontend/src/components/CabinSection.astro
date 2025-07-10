@@ -117,31 +117,30 @@ import CabinPanel from "./CabinPanel.astro";
     async function enviarTrama(prefijo, codigoAccion, cabinaActiva) {
         const trama = `${prefijo}${codigoAccion}F`;
 
-        // Si la cabina no está activa, solo registrar como pendiente
         if (!cabinaActiva) {
-            console.log("[Pendiente] Trama generada:", trama);
             mostrarNotificacion(trama, 'pendiente');
             return;
         }
 
-        // Si hay conexión serial, intentar enviarla
-        if (escritor && puertoSerial && puertoSerial.readable && puertoSerial.writable) {
-            try {
-                const encoder = new TextEncoder();
-                await escritor.write(encoder.encode(trama));
-                console.log("📩 Trama enviada real:", trama);
-                mostrarNotificacion(trama, 'real');
+        const selector = document.getElementById("com-port-selector");
+        const port = selector?.value;
+        if (!port) {
+            mostrarNotificacion("Puerto no seleccionado", "error");
+            return;
+        }
 
-                // Mostrar alerta al usuario (opcional)
-                // alert(`Trama enviada: ${trama}`);
+        try {
+            const response = await fetch("http://localhost:5000/api/serial/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ portName: port, trama })
+            });
 
-            } catch (err) {
-                console.error("❌ Error al enviar trama:", trama, err);
-                mostrarNotificacion(`Error: ${trama}`, 'error');
-            }
-        } else {
-            console.warn("🚫 Puerto no conectado. No se puede enviar:", trama);
-            mostrarNotificacion(`Puerto desconectado: ${trama}`, 'error');
+            const mensaje = await response.text();
+            mostrarNotificacion(mensaje, "real");
+        } catch (err) {
+            console.error("Error al enviar trama:", err);
+            mostrarNotificacion("Error al enviar trama", "error");
         }
     }
 
@@ -151,66 +150,49 @@ import CabinPanel from "./CabinPanel.astro";
         if (!selector) return;
 
         try {
-            const puertos = await navigator.serial.getPorts();
-            selector.innerHTML = ""; // Limpiar opciones
+            const response = await fetch("http://localhost:5000/api/serial/ports");
+            const puertos = await response.json();
 
+            selector.innerHTML = "";
             if (puertos.length === 0) {
-                const option = document.createElement("option");
-                option.textContent = "No hay puertos disponibles";
-                option.disabled = true;
-                selector.appendChild(option);
-                console.log("No se encontraron puertos.");
-                alert("No hay puertos COM conectados.");
+                selector.innerHTML = `<option disabled selected>No hay puertos disponibles</option>`;
                 return;
             }
 
-            puertos.forEach((port, index) => {
+            puertos.forEach(port => {
                 const option = document.createElement("option");
-                option.value = port.portId; // ID único del puerto
-                option.textContent = port.name; // Nombre del puerto (ej: COM3)
+                option.value = port;
+                option.textContent = port;
                 selector.appendChild(option);
             });
 
-            console.log("Puertos escaneados:", puertos);
-            alert(`Se encontraron ${puertos.length} puertos COM.`);
         } catch (err) {
             console.error("Error al escanear puertos:", err);
-            alert("❌ Web Serial no disponible o acceso denegado.");
+            alert("Error al escanear puertos desde backend.");
         }
     }
 
     // Conectar al puerto seleccionado
     async function conectarPuertoSerial() {
-        puertoSerialConectado = true;
-        puertoPreviamenteConectado = true
         const selector = document.getElementById("com-port-selector");
-        if (!selector) return;
-
-        const indexSeleccionado = parseInt(selector.value);
-        if (isNaN(indexSeleccionado)) {
-            alert("Por favor, seleccione un puerto válido.");
-            return;
-        }
+        const port = selector?.value;
+        if (!port) return alert("Seleccione un puerto.");
 
         try {
-            const puertos = await navigator.serial.getPorts();
-            puertoSerial = puertos[indexSeleccionado];
+            const response = await fetch("http://localhost:5000/api/serial/connect", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(port)
+            });
 
-            await puertoSerial.open({ baudRate: 9600 });
-            escritor = puertoSerial.writable.getWriter();
-
-            console.log("🔌 Puerto serial conectado:", puertoSerial);
-
-            // Lanzar evento global para notificar conexión
-            const event = new Event("puertoConectado");
-            window.dispatchEvent(event);
-
-            alert(`✅ Puerto COM${indexSeleccionado + 1} conectado. Puede iniciar la cabina.`);
+            const mensaje = await response.text();
+            mostrarNotificacion(mensaje, "real");
         } catch (err) {
-            console.error("❌ Error al conectar puerto COM:", err);
-            alert("Error al conectar con el microcontrolador.");
+            console.error("Error al conectar:", err);
+            alert("Error al conectar al puerto.");
         }
     }
+
 
     // Asignar eventos a botones del header al cargar
     window.addEventListener("DOMContentLoaded", () => {

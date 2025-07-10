@@ -1,0 +1,877 @@
+<!DOCTYPE html><html lang="es" data-astro-cid-sckkx6r4> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="../../public/logos/favicon.svg"><meta name="generator" content="Astro v5.9.2"><title>Universidad Anáhuac Cancún | Panel de control</title><style data-vite-dev-id="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/styles/global.css">
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+/*! tailwindcss v4.1.8 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --color-gray-200: oklch(92.8% 0.006 264.531);
+    --color-gray-300: oklch(87.2% 0.01 258.338);
+    --color-gray-500: oklch(55.1% 0.027 264.364);
+    --color-gray-700: oklch(37.3% 0.034 259.733);
+    --color-black: #000;
+    --color-white: #fff;
+    --spacing: 0.25rem;
+    --text-xs: 0.75rem;
+    --text-xs--line-height: calc(1 / 0.75);
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .pointer-events-none {
+    pointer-events: none;
+  }
+  .absolute {
+    position: absolute;
+  }
+  .relative {
+    position: relative;
+  }
+  .inset-y-0 {
+    inset-block: calc(var(--spacing) * 0);
+  }
+  .right-0 {
+    right: calc(var(--spacing) * 0);
+  }
+  .left-1\/2 {
+    left: calc(1/2 * 100%);
+  }
+  .z-50 {
+    z-index: 50;
+  }
+  .col-span-2 {
+    grid-column: span 2 / span 2;
+  }
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .my-4 {
+    margin-block: calc(var(--spacing) * 4);
+  }
+  .mt-2 {
+    margin-top: calc(var(--spacing) * 2);
+  }
+  .mt-6 {
+    margin-top: calc(var(--spacing) * 6);
+  }
+  .mb-1 {
+    margin-bottom: calc(var(--spacing) * 1);
+  }
+  .mb-3 {
+    margin-bottom: calc(var(--spacing) * 3);
+  }
+  .-ml-px {
+    margin-left: -1px;
+  }
+  .block {
+    display: block;
+  }
+  .flex {
+    display: flex;
+  }
+  .grid {
+    display: grid;
+  }
+  .hidden {
+    display: none;
+  }
+  .h-6 {
+    height: calc(var(--spacing) * 6);
+  }
+  .h-8 {
+    height: calc(var(--spacing) * 8);
+  }
+  .h-9 {
+    height: calc(var(--spacing) * 9);
+  }
+  .h-10 {
+    height: calc(var(--spacing) * 10);
+  }
+  .h-12 {
+    height: calc(var(--spacing) * 12);
+  }
+  .h-28 {
+    height: calc(var(--spacing) * 28);
+  }
+  .h-48 {
+    height: calc(var(--spacing) * 48);
+  }
+  .h-95 {
+    height: calc(var(--spacing) * 95);
+  }
+  .h-\[60px\] {
+    height: 60px;
+  }
+  .w-8 {
+    width: calc(var(--spacing) * 8);
+  }
+  .w-9 {
+    width: calc(var(--spacing) * 9);
+  }
+  .w-25 {
+    width: calc(var(--spacing) * 25);
+  }
+  .w-28 {
+    width: calc(var(--spacing) * 28);
+  }
+  .w-72 {
+    width: calc(var(--spacing) * 72);
+  }
+  .w-\[90px\] {
+    width: 90px;
+  }
+  .w-\[150px\] {
+    width: 150px;
+  }
+  .w-full {
+    width: 100%;
+  }
+  .min-w-\[160px\] {
+    min-width: 160px;
+  }
+  .transform {
+    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+  }
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .flex-col {
+    flex-direction: column;
+  }
+  .flex-col-reverse {
+    flex-direction: column-reverse;
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .gap-4 {
+    gap: calc(var(--spacing) * 4);
+  }
+  .gap-6 {
+    gap: calc(var(--spacing) * 6);
+  }
+  .gap-8 {
+    gap: calc(var(--spacing) * 8);
+  }
+  .space-y-1 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 1) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
+  .space-y-2 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
+  .space-y-4 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
+  .space-x-2 {
+    :where(& > :not(:last-child)) {
+      --tw-space-x-reverse: 0;
+      margin-inline-start: calc(calc(var(--spacing) * 2) * var(--tw-space-x-reverse));
+      margin-inline-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-x-reverse)));
+    }
+  }
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .overflow-auto {
+    overflow: auto;
+  }
+  .rounded {
+    border-radius: 0.25rem;
+  }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+  .rounded-md {
+    border-radius: var(--radius-md);
+  }
+  .rounded-xl {
+    border-radius: var(--radius-xl);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-1 {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-2 {
+    border-style: var(--tw-border-style);
+    border-width: 2px;
+  }
+  .border-t {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
+  }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
+  .border-\[\#a6a6a6\] {
+    border-color: #a6a6a6;
+  }
+  .border-\[\#ccc\] {
+    border-color: #ccc;
+  }
+  .border-gray-200 {
+    border-color: var(--color-gray-200);
+  }
+  .border-gray-300 {
+    border-color: var(--color-gray-300);
+  }
+  .bg-\[\#00bf63\] {
+    background-color: #00bf63;
+  }
+  .bg-\[\#000\] {
+    background-color: #000;
+  }
+  .bg-\[\#d9d9d9\] {
+    background-color: #d9d9d9;
+  }
+  .bg-\[\#efefef\] {
+    background-color: #efefef;
+  }
+  .bg-\[\#ff4d4d\] {
+    background-color: #ff4d4d;
+  }
+  .bg-\[\#ff5757\] {
+    background-color: #ff5757;
+  }
+  .bg-\[black\] {
+    background-color: black;
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .p-1 {
+    padding: calc(var(--spacing) * 1);
+  }
+  .p-2 {
+    padding: calc(var(--spacing) * 2);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .p-6 {
+    padding: calc(var(--spacing) * 6);
+  }
+  .px-2 {
+    padding-inline: calc(var(--spacing) * 2);
+  }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .px-6 {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+  .py-1 {
+    padding-block: calc(var(--spacing) * 1);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .py-4 {
+    padding-block: calc(var(--spacing) * 4);
+  }
+  .pb-4 {
+    padding-bottom: calc(var(--spacing) * 4);
+  }
+  .text-center {
+    text-align: center;
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+  .text-xs {
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+  .font-medium {
+    --tw-font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .text-\[\#a6a6a6\] {
+    color: #a6a6a6;
+  }
+  .text-black {
+    color: var(--color-black);
+  }
+  .text-gray-500 {
+    color: var(--color-gray-500);
+  }
+  .text-gray-700 {
+    color: var(--color-gray-700);
+  }
+  .text-white {
+    color: var(--color-white);
+  }
+  .opacity-50 {
+    opacity: 50%;
+  }
+  .shadow-inner {
+    --tw-shadow: inset 0 2px 4px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .shadow-lg {
+    --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .filter {
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+  }
+  .transition {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, visibility, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-colors {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .duration-300 {
+    --tw-duration: 300ms;
+    transition-duration: 300ms;
+  }
+  .group-hover\:flex {
+    &:is(:where(.group):hover *) {
+      @media (hover: hover) {
+        display: flex;
+      }
+    }
+  }
+  .hover\:bg-\[\#00a152\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #00a152;
+      }
+    }
+  }
+  .hover\:bg-\[\#028646cd\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #028646cd;
+      }
+    }
+  }
+  .hover\:bg-\[\#a6a6a6\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #a6a6a6;
+      }
+    }
+  }
+  .hover\:bg-\[\#d9d9d9\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #d9d9d9;
+      }
+    }
+  }
+  .hover\:bg-\[\#fa3a3a\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #fa3a3a;
+      }
+    }
+  }
+  .hover\:text-black {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-black);
+      }
+    }
+  }
+  .sm\:grid-cols-3 {
+    @media (width >= 40rem) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .md\:block {
+    @media (width >= 48rem) {
+      display: block;
+    }
+  }
+  .md\:grid-cols-2 {
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .md\:grid-cols-3 {
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .md\:grid-cols-4 {
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .md\:flex-row {
+    @media (width >= 48rem) {
+      flex-direction: row;
+    }
+  }
+  .md\:items-center {
+    @media (width >= 48rem) {
+      align-items: center;
+    }
+  }
+}
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-space-x-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-drop-shadow-size {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-duration {
+  syntax: "*";
+  inherits: false;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
+      --tw-space-y-reverse: 0;
+      --tw-space-x-reverse: 0;
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-blur: initial;
+      --tw-brightness: initial;
+      --tw-contrast: initial;
+      --tw-grayscale: initial;
+      --tw-hue-rotate: initial;
+      --tw-invert: initial;
+      --tw-opacity: initial;
+      --tw-saturate: initial;
+      --tw-sepia: initial;
+      --tw-drop-shadow: initial;
+      --tw-drop-shadow-color: initial;
+      --tw-drop-shadow-alpha: 100%;
+      --tw-drop-shadow-size: initial;
+      --tw-duration: initial;
+    }
+  }
+}
+</style>
+<style data-vite-dev-id="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/layouts/Layout.astro?astro&#38;type=style&#38;index=0&#38;lang.css">html,body{font-family:"Montserrat",sans-serif;margin:0;width:100%;height:100%}</style>
+<style data-vite-dev-id="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro?astro&#38;type=style&#38;index=0&#38;lang.css">#trama-log-window[data-astro-cid-2fdy6p7o]{max-height:200px;scrollbar-width:thin;scrollbar-color:#a6a6a6 #f1f1f1}#trama-log-window[data-astro-cid-2fdy6p7o]::-webkit-scrollbar{width:8px}#trama-log-window[data-astro-cid-2fdy6p7o]::-webkit-scrollbar-thumb{background:#a6a6a6;border-radius:4px}#trama-log-window[data-astro-cid-2fdy6p7o]::-webkit-scrollbar-track{background:#f1f1f1}</style><script type="module" src="/@vite/client"></script>
+<script type="module" src="/@fs/C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/node_modules/astro/dist/runtime/client/dev-toolbar/entrypoint.js?v=d71e62df"></script>
+<script>window.__astro_dev_toolbar__ = {"root":"C:\\Users\\nikob\\OneDrive\\Escritorio\\GRADUS_T_LOCAL\\DPTO_COMPUTO\\2025-02\\GITSe\\PanelControlApp\\frontend\\","version":"5.9.2","debugInfo":"Astro                    v5.9.2\nNode                     v22.12.0\nSystem                   Windows (x64)\nPackage Manager          npm\nOutput                   static\nAdapter                  none\nIntegrations             none"}</script>
+<script type="module" src="/src/styles/global.css"></script>
+<script type="module" src="/src/layouts/Layout.astro?astro&type=style&index=0&lang.css"></script>
+<script type="module" src="/src/components/HeaderLogos.astro?astro&type=style&index=0&lang.css"></script></head> <body data-astro-cid-sckkx6r4 data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/layouts/Layout.astro" data-astro-source-loc="22:8">  <div class="w-full flex flex-wrap justify-between items-center gap-4 px-6 py-4 bg-white border-b border-gray-200" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="6:115"> <!-- Logo Anáhuac --> <a href="https://cancun.anahuac.mx/sitio/ " target="_blank" rel="noopener noreferrer" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="12:6"> <img src="/@fs/C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/public/logos/logo-anahuac.svg?origWidth=500&#38;origHeight=200&#38;origFormat=svg" alt="Logo Anáhuac Cancún" class="h-12" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="13:10"> </a> <!-- Control de puertos COM --> <div class="flex items-center gap-2 flex-wrap" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="17:52"> <!-- Selector de Puerto --> <select id="com-port-selector" class="px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-[160px]" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="22:10"> <option disabled selected data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="23:39">Seleccionar Puerto</option> </select> <!-- Botón: Escanear Puertos --> <button id="btn-scan-com" class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded border border-gray-300" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="30:10">
+🔄 Escanear
+</button> <!-- Botón: Conectar Puerto --> <button id="btn-connect-com" class="bg-[#00bf63] hover:bg-[#00a152] px-3 py-2 text-sm text-white rounded" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="38:10">
+🔌 Conectar
+</button> </div> <!-- Ventana de Logs - Tramas Enviadas --> <div class="relative group" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="44:33"> <button id="btn-toggle-log" class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="48:10">
+📜 Ver Tramas
+</button> <div id="trama-log-window" class="hidden group-hover:flex absolute right-0 mt-2 w-72 h-48 bg-white border border-[#ccc] shadow-lg rounded overflow-auto p-2 text-xs font-mono text-gray-700 flex-col-reverse z-50" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="54:10"> <div class="text-center text-gray-500" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="55:52">No hay tramas aún...</div> </div> </div> <!-- Logo GITSe --> <img src="/@fs/C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/public/logos/logo-gitse.svg?origWidth=500&#38;origHeight=200&#38;origFormat=svg" alt="Logo GITSe" class="h-10" data-astro-cid-2fdy6p7o data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/HeaderLogos.astro" data-astro-source-loc="60:6"> </div> <!-- Estilos para scroll de log -->  <!-- * CONTENEDOR PRINCIPAL RESPONSIVO * --><div class="flex flex-col md:flex-row gap-6 p-6" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinSection.astro" data-astro-source-loc="7:50"> <!-- * CONTENEDOR PRINCIPAL RESPONSIVO * --><div class="panel-container w-full bg-[#efefef] shadow-lg rounded-lg p-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinPanel.astro" data-astro-source-loc="15:75"> <!-- Contenido del panel --> <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3 border-b border-[#a6a6a6] pb-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="7:2"> <!-- BOTONES DE PESTANAS --> <div class="flex gap-2" role="tablist" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="9:44"> <!-- Controles --> <button class="tab-button active bg-[#d9d9d9] text-black font-semibold px-4 py-2 transition-colors rounded-lg" data-tab="controles" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="14:10">
+Controles
+</button> <!-- Pestanas --> <button class="tab-button bg-[#efefef] hover:bg-[#a6a6a6] text-black font-semibold px-4 py-2 transition-colors rounded-lg" data-tab="graficas" role="tab" aria-selected="false" tabindex="-1" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="24:10">
+Gráficas
+</button> </div> <!-- SELECTORES --> <div class="flex gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="30:29"> <!-- Selector 1 --> <select class="select-style px-3 py-2 text-sm text-black bg-white border border-[#a6a6a6] hover:bg-[#a6a6a6] hover:text-black transition-colors rounded-lg" data-select="sensores" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="35:10"> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="36:21">Sensores 1</option> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="37:21">Sensores 2</option> </select> <!-- Selector 2 --> <select class="select-style px-3 py-2 text-sm text-black bg-white border border-[#a6a6a6] hover:bg-[#a6a6a6] hover:text-black transition-colors rounded-lg" data-select="cabina" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="44:10"> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="45:21">Cabina 1</option> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="46:21">Cabina 2</option> </select> </div> </div> <div class="tab-content" data-tab-content="controles" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinPanel.astro" data-astro-source-loc="18:59"> <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="7:67"> <!-- Usamos el componente ControlButton con data-codigo --> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="FRIO" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/frio.svg" alt="Frío" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Frío</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="CALOR" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/calor.svg" alt="Calor" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Calor</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="HUMEDAD" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/humedad.svg" alt="Humedad" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Humedad</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="VIBRACION" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/vibracion.svg" alt="Vibración" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Vibración</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="VENTILADOR" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/ventilador.svg" alt="Ventilador" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Ventilador</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="EXTRACTOR" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/extractor.svg" alt="Extractor" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Extractor</span> </button> <!-- Botón especial con col-span-2 --> <button data-codigo="DESHUMIDIFICADOR" class="col-span-2 control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="20:6"> <img src="/icons/deshumidificador.svg" alt="Deshumidificador" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="21:10"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="26:15">Deshumidificador</span> </button> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="8:61"> <!-- Línea divisora centrada (solo en pantallas medianas y mayores) --> <div class="absolute inset-y-0 left-1/2 -ml-px border-1 border-[#a6a6a6] pointer-events-none hidden md:block" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="12:6"></div> <!-- Columna izquierda --> <div class="space-y-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="16:28"> <div class="flex gap-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="17:33"> <!-- Usamos el componente ControlButton --> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="HUMO" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/humo.svg" alt="Humo" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Humo</span> </button> <!-- Botón especial --> <button class="flex flex-col items-center justify-center w-full text-center space-y-1 p-4 bg-[black] text-white rounded-lg transition-all" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="24:14"> <img src="/icons/disparo.svg" alt="Disparo" class="w-8 h-8 mx-auto" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="25:18"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="30:23">Disparo</span> </button> </div> <!-- Campo de tiempo --> <p class="text-sm text-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="35:43">
+Espere
+<span id="tiempo-mostrado" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="37:40">0</span>
+minutos
+</p> <!-- Formulario para ingresar tiempo --> <div data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="42:14"> <label for="tiempo-input-form" class="block text-sm font-medium text-black mb-1" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="46:14">
+Ingrese tiempo de espera:
+</label> <div class="flex gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="49:37"> <input id="tiempo-input-form" type="number" min="0" value="0" class="border border-[#a6a6a6] px-3 py-2 w-full rounded-lg" placeholder="Minutos" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="50:18"> <button id="btn-enviar-tiempo" class="bg-[#d9d9d9] text-black px-4 py-2 hover:bg-[#a6a6a6] rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="61:18"> <img src="/icons/flecha.svg" class="h-6 w-8" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="62:22"> </button> </div> </div> </div> <!-- Columna derecha --> <div class="space-y-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="69:28"> <h3 class="font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="70:46">Columna Derecha</h3> <p class="text-sm text-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="71:43">Próximamente...</p> </div> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="8:57"> <!-- Grupo A - Luz cálida --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="10:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="11:58">Luz cálida</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="12:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="1" data-inactive-color="#fd8c8c" data-active-color="#ff3131" style="background-color: #fd8c8c;" data-codigo="001" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C1 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="1" data-inactive-color="#f69c9c" data-active-color="#ff5757" style="background-color: #f69c9c;" data-codigo="002" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C2 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="1" data-inactive-color="#ef955e" data-active-color="#f47527" style="background-color: #ef955e;" data-codigo="003" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C3 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="1" data-inactive-color="#ffd391" data-active-color="#ffbd59" style="background-color: #ffd391;" data-codigo="004" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C4 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="1" data-inactive-color="#fae692" data-active-color="#ffde59" style="background-color: #fae692;" data-codigo="005" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C5 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="6" data-row="1" data-inactive-color="#fff" data-active-color="#D9D9D9" style="background-color: #fff;" data-codigo="034" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado luz cálida </button> </div> </div> <!-- Grupo B - Luz fría --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="65:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="66:58">Luz fría</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="67:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="2" data-inactive-color="#5b7ba6" data-active-color="#004aad" style="background-color: #5b7ba6;" data-codigo="011" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F1 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="2" data-inactive-color="#92a6ff" data-active-color="#5271ff" style="background-color: #92a6ff;" data-codigo="012" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F2 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="2" data-inactive-color="#8ed3fa" data-active-color="#38b6ff" style="background-color: #8ed3fa;" data-codigo="013" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F3 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="2" data-inactive-color="#aa8be8" data-active-color="#6f31eb" style="background-color: #aa8be8;" data-codigo="014" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F4 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="2" data-inactive-color="#bea8e8" data-active-color="#5500ff" style="background-color: #bea8e8;" data-codigo="015" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F5 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="6" data-row="2" data-inactive-color="#fff" data-active-color="#D9D9D9" style="background-color: #fff;" data-codigo="005" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado luz fría </button> </div> </div> <!-- Grupo C - Luz neutra --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="120:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="121:58">Luz neutra</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="122:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="3" data-inactive-color="#74b898" data-active-color="#00bf63" style="background-color: #74b898;" data-codigo="006" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N1 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="3" data-inactive-color="#b0dd9d" data-active-color="#7ed957" style="background-color: #b0dd9d;" data-codigo="007" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N2 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="3" data-inactive-color="#d3f1ab" data-active-color="#c1ff72" style="background-color: #d3f1ab;" data-codigo="008" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N3 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="3" data-inactive-color="#b0fad4" data-active-color="#72ffb7" style="background-color: #b0fad4;" data-codigo="009" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N4 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="3" data-inactive-color="#a2e1e4" data-active-color="#5ce1e6" style="background-color: #a2e1e4;" data-codigo="010" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N5 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="6" data-row="3" data-inactive-color="#fff" data-active-color="#D9D9D9" style="background-color: #fff;" data-codigo="016" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado luz neutra </button> </div> </div> <!-- Grupo D - Otros --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="175:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="176:58">Otros</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="177:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="018" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Strobo </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="017" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Flash </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="021" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> B+ </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="022" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> B- </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="000" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado total </button> </div> </div> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="flex items-center justify-between" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="5:48"> <!-- Círculo de estado con texto --> <div class="flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="7:42"> <div id="estado-cabina" class="w-25 h-8 rounded-xl bg-[#ff5757] text-white flex items-center justify-center text-s font-semibold shadow-inner transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="11:10">
+INACTIVA
+</div> <span class="text-black text-sm" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="14:42">Estado de la cabina</span> </div> <!-- Botones Enviar y Parar a la derecha --> <div class="flex gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="18:29"> <button id="btn-enviar-configuracion" class="bg-[#00bf63] hover:bg-[#028646cd] text-white font-medium px-3 py-1 rounded-xl transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="22:10">
+ENVIAR
+</button> <button id="btn-parar-reset" class="bg-[#ff5757] hover:bg-[#fa3a3a] text-white font-medium px-3 py-1 rounded-xl transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="28:10">
+PARAR Y RESET
+</button> </div> </div> </div> <div class="tab-content hidden" data-tab-content="graficas" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinPanel.astro" data-astro-source-loc="27:65"> <div class="bg-white rounded-md border border-[#a6a6a6] p-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/GraphicSection.astro" data-astro-source-loc="5:62"> <canvas id="graficaPanel" class="w-full h-95" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/GraphicSection.astro" data-astro-source-loc="6:6"></canvas> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/IndicatorSection.astro" data-astro-source-loc="7:67"> <!-- Usamos el componente ControlButton --> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/x.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 23.5 </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/y.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 10.6 </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/z.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 5.6 </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/t.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 23.5 C </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/h.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 7 W/m² </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/uv.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 60 dB </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/co2.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 0.4 mm/s </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/o3.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 7 W/m² </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/db.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 60 dB </div> </div> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="mt-6 flex items-center gap-8" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="5:43"> <!-- Círculo de color de cabina --> <div class="flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="7:42"> <div id="color-cabina" class="w-28 h-28 rounded-full bg-[#000] transition-colors duration-300" title="Último color seleccionado en LEDs" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="12:10"></div> <span class="text-sm text-gray-700 font-medium" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="14:57">Color cabina</span> </div> <!-- Círculo de estado de humo --> <div class="flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="18:42"> <div id="estado-humo" class="w-28 h-28 rounded-full bg-[#ff5757] opacity-50 transition-all duration-300" title="Estado del detector de humo" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="23:10"></div> <span class="text-sm text-gray-700 font-medium" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="25:57">Detector de humo</span> </div> </div> </div> </div> <!-- * CONTENEDOR PRINCIPAL RESPONSIVO * --><div class="panel-container w-full bg-[#efefef] shadow-lg rounded-lg p-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinPanel.astro" data-astro-source-loc="15:75"> <!-- Contenido del panel --> <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3 border-b border-[#a6a6a6] pb-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="7:2"> <!-- BOTONES DE PESTANAS --> <div class="flex gap-2" role="tablist" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="9:44"> <!-- Controles --> <button class="tab-button active bg-[#d9d9d9] text-black font-semibold px-4 py-2 transition-colors rounded-lg" data-tab="controles" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="14:10">
+Controles
+</button> <!-- Pestanas --> <button class="tab-button bg-[#efefef] hover:bg-[#a6a6a6] text-black font-semibold px-4 py-2 transition-colors rounded-lg" data-tab="graficas" role="tab" aria-selected="false" tabindex="-1" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="24:10">
+Gráficas
+</button> </div> <!-- SELECTORES --> <div class="flex gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="30:29"> <!-- Selector 1 --> <select class="select-style px-3 py-2 text-sm text-black bg-white border border-[#a6a6a6] hover:bg-[#a6a6a6] hover:text-black transition-colors rounded-lg" data-select="sensores" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="35:10"> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="36:21">Sensores 1</option> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="37:21">Sensores 2</option> </select> <!-- Selector 2 --> <select class="select-style px-3 py-2 text-sm text-black bg-white border border-[#a6a6a6] hover:bg-[#a6a6a6] hover:text-black transition-colors rounded-lg" data-select="cabina" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="44:10"> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="45:21">Cabina 1</option> <option data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/WindowsAndSelectorsButtons.astro" data-astro-source-loc="46:21">Cabina 2</option> </select> </div> </div> <div class="tab-content" data-tab-content="controles" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinPanel.astro" data-astro-source-loc="18:59"> <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="7:67"> <!-- Usamos el componente ControlButton con data-codigo --> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="FRIO" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/frio.svg" alt="Frío" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Frío</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="CALOR" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/calor.svg" alt="Calor" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Calor</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="HUMEDAD" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/humedad.svg" alt="Humedad" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Humedad</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="VIBRACION" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/vibracion.svg" alt="Vibración" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Vibración</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="VENTILADOR" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/ventilador.svg" alt="Ventilador" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Ventilador</span> </button> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="EXTRACTOR" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/extractor.svg" alt="Extractor" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Extractor</span> </button> <!-- Botón especial con col-span-2 --> <button data-codigo="DESHUMIDIFICADOR" class="col-span-2 control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="20:6"> <img src="/icons/deshumidificador.svg" alt="Deshumidificador" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="21:10"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButtonSection.astro" data-astro-source-loc="26:15">Deshumidificador</span> </button> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="8:61"> <!-- Línea divisora centrada (solo en pantallas medianas y mayores) --> <div class="absolute inset-y-0 left-1/2 -ml-px border-1 border-[#a6a6a6] pointer-events-none hidden md:block" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="12:6"></div> <!-- Columna izquierda --> <div class="space-y-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="16:28"> <div class="flex gap-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="17:33"> <!-- Usamos el componente ControlButton --> <button class="control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all" data-codigo="HUMO" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="10:2"> <img src="/icons/humo.svg" alt="Humo" class="w-8 h-8 status-icon" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="11:6"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlButton.astro" data-astro-source-loc="12:11">Humo</span> </button> <!-- Botón especial --> <button class="flex flex-col items-center justify-center w-full text-center space-y-1 p-4 bg-[black] text-white rounded-lg transition-all" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="24:14"> <img src="/icons/disparo.svg" alt="Disparo" class="w-8 h-8 mx-auto" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="25:18"> <span data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="30:23">Disparo</span> </button> </div> <!-- Campo de tiempo --> <p class="text-sm text-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="35:43">
+Espere
+<span id="tiempo-mostrado" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="37:40">0</span>
+minutos
+</p> <!-- Formulario para ingresar tiempo --> <div data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="42:14"> <label for="tiempo-input-form" class="block text-sm font-medium text-black mb-1" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="46:14">
+Ingrese tiempo de espera:
+</label> <div class="flex gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="49:37"> <input id="tiempo-input-form" type="number" min="0" value="0" class="border border-[#a6a6a6] px-3 py-2 w-full rounded-lg" placeholder="Minutos" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="50:18"> <button id="btn-enviar-tiempo" class="bg-[#d9d9d9] text-black px-4 py-2 hover:bg-[#a6a6a6] rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="61:18"> <img src="/icons/flecha.svg" class="h-6 w-8" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="62:22"> </button> </div> </div> </div> <!-- Columna derecha --> <div class="space-y-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="69:28"> <h3 class="font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="70:46">Columna Derecha</h3> <p class="text-sm text-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/TwoColumnsSection.astro" data-astro-source-loc="71:43">Próximamente...</p> </div> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="8:57"> <!-- Grupo A - Luz cálida --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="10:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="11:58">Luz cálida</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="12:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="1" data-inactive-color="#fd8c8c" data-active-color="#ff3131" style="background-color: #fd8c8c;" data-codigo="001" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C1 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="1" data-inactive-color="#f69c9c" data-active-color="#ff5757" style="background-color: #f69c9c;" data-codigo="002" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C2 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="1" data-inactive-color="#ef955e" data-active-color="#f47527" style="background-color: #ef955e;" data-codigo="003" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C3 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="1" data-inactive-color="#ffd391" data-active-color="#ffbd59" style="background-color: #ffd391;" data-codigo="004" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C4 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="1" data-inactive-color="#fae692" data-active-color="#ffde59" style="background-color: #fae692;" data-codigo="005" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> C5 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="6" data-row="1" data-inactive-color="#fff" data-active-color="#D9D9D9" style="background-color: #fff;" data-codigo="034" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado luz cálida </button> </div> </div> <!-- Grupo B - Luz fría --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="65:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="66:58">Luz fría</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="67:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="2" data-inactive-color="#5b7ba6" data-active-color="#004aad" style="background-color: #5b7ba6;" data-codigo="011" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F1 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="2" data-inactive-color="#92a6ff" data-active-color="#5271ff" style="background-color: #92a6ff;" data-codigo="012" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F2 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="2" data-inactive-color="#8ed3fa" data-active-color="#38b6ff" style="background-color: #8ed3fa;" data-codigo="013" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F3 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="2" data-inactive-color="#aa8be8" data-active-color="#6f31eb" style="background-color: #aa8be8;" data-codigo="014" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F4 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="2" data-inactive-color="#bea8e8" data-active-color="#5500ff" style="background-color: #bea8e8;" data-codigo="015" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> F5 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="6" data-row="2" data-inactive-color="#fff" data-active-color="#D9D9D9" style="background-color: #fff;" data-codigo="005" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado luz fría </button> </div> </div> <!-- Grupo C - Luz neutra --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="120:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="121:58">Luz neutra</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="122:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="3" data-inactive-color="#74b898" data-active-color="#00bf63" style="background-color: #74b898;" data-codigo="006" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N1 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="3" data-inactive-color="#b0dd9d" data-active-color="#7ed957" style="background-color: #b0dd9d;" data-codigo="007" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N2 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="3" data-inactive-color="#d3f1ab" data-active-color="#c1ff72" style="background-color: #d3f1ab;" data-codigo="008" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N3 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="3" data-inactive-color="#b0fad4" data-active-color="#72ffb7" style="background-color: #b0fad4;" data-codigo="009" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N4 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="3" data-inactive-color="#a2e1e4" data-active-color="#5ce1e6" style="background-color: #a2e1e4;" data-codigo="010" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> N5 </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="6" data-row="3" data-inactive-color="#fff" data-active-color="#D9D9D9" style="background-color: #fff;" data-codigo="016" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado luz neutra </button> </div> </div> <!-- Grupo D - Otros --> <div class="space-y-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="175:28"> <h3 class="text-center font-semibold text-black" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="176:58">Otros</h3> <div class="flex flex-col gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedSection.astro" data-astro-source-loc="177:42"> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="1" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="018" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Strobo </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="2" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="017" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Flash </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="3" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="021" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> B+ </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="4" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="022" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> B- </button> <button class="led-button w-full px-2 py-2 text-sm font-medium text-black border-2 border-[#a6a6a6] rounded-full transition-colors" data-col="5" data-row="4" data-inactive-color="#fff" data-active-color="#e84e0e" style="background-color: #fff;" data-codigo="000" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/LedButton.astro" data-astro-source-loc="13:2"> Apagado total </button> </div> </div> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="flex items-center justify-between" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="5:48"> <!-- Círculo de estado con texto --> <div class="flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="7:42"> <div id="estado-cabina" class="w-25 h-8 rounded-xl bg-[#ff5757] text-white flex items-center justify-center text-s font-semibold shadow-inner transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="11:10">
+INACTIVA
+</div> <span class="text-black text-sm" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="14:42">Estado de la cabina</span> </div> <!-- Botones Enviar y Parar a la derecha --> <div class="flex gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="18:29"> <button id="btn-enviar-configuracion" class="bg-[#00bf63] hover:bg-[#028646cd] text-white font-medium px-3 py-1 rounded-xl transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="22:10">
+ENVIAR
+</button> <button id="btn-parar-reset" class="bg-[#ff5757] hover:bg-[#fa3a3a] text-white font-medium px-3 py-1 rounded-xl transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinStateAndButtonActions.astro" data-astro-source-loc="28:10">
+PARAR Y RESET
+</button> </div> </div> </div> <div class="tab-content hidden" data-tab-content="graficas" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/CabinPanel.astro" data-astro-source-loc="27:65"> <div class="bg-white rounded-md border border-[#a6a6a6] p-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/GraphicSection.astro" data-astro-source-loc="5:62"> <canvas id="graficaPanel" class="w-full h-95" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/GraphicSection.astro" data-astro-source-loc="6:6"></canvas> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/IndicatorSection.astro" data-astro-source-loc="7:67"> <!-- Usamos el componente ControlButton --> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/x.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 23.5 </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/y.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 10.6 </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/z.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 5.6 </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/t.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 23.5 C </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/h.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 7 W/m² </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/uv.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 60 dB </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/co2.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 0.4 mm/s </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/o3.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 7 W/m² </div> </div> <!-- Botón + display juntos --><div class="control-indicador flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="10:56"> <!-- Botón fijo --> <button type="button" class="control-btn w-[90px] h-[60px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="15:6"> <!-- Icono fijo --> <img src="/icons/db.svg" class="w-9 h-9" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="17:10"> </button> <!-- Caja de texto con altura fija --> <div class="medicion-display w-[150px] h-[60px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/ControlIndicador.astro" data-astro-source-loc="24:166"> 60 dB </div> </div> </div> <!-- Línea divisora --><hr class="my-4 border-t border-b border-[#a6a6a6]" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/DivisorLine.astro" data-astro-source-loc="2:2"> <div class="mt-6 flex items-center gap-8" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="5:43"> <!-- Círculo de color de cabina --> <div class="flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="7:42"> <div id="color-cabina" class="w-28 h-28 rounded-full bg-[#000] transition-colors duration-300" title="Último color seleccionado en LEDs" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="12:10"></div> <span class="text-sm text-gray-700 font-medium" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="14:57">Color cabina</span> </div> <!-- Círculo de estado de humo --> <div class="flex items-center gap-2" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="18:42"> <div id="estado-humo" class="w-28 h-28 rounded-full bg-[#ff5757] opacity-50 transition-all duration-300" title="Estado del detector de humo" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="23:10"></div> <span class="text-sm text-gray-700 font-medium" data-astro-source-file="C:/Users/nikob/OneDrive/Escritorio/GRADUS_T_LOCAL/DPTO_COMPUTO/2025-02/GITSe/PanelControlApp/frontend/src/components/SelectedColorAndSmokeState.astro" data-astro-source-loc="25:57">Detector de humo</span> </div> </div> </div> </div> </div> <!-- CDN de Chart.js --> <script type="module" src="/src/components/CabinSection.astro?astro&type=script&index=0&lang.ts"></script> <!-- Script principal --> <script type="module" src="/src/components/CabinSection.astro?astro&type=script&index=1&lang.ts"></script>  </body></html>
