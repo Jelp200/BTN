@@ -14,6 +14,40 @@ import CabinPanel from "./CabinPanel.astro";
 
 <!-- Script principal -->
 <script>
+    // Verificar si el navegador soporta Web Serial API
+    if (!("serial" in navigator)) {
+        const mensaje = "⚠️ Web Serial API no soportado. Use Chrome, Edge u Opera.";
+        
+        // Mostrar alerta emergente
+        alert(mensaje);
+
+        // Crear una notificación tipo toast en pantalla
+        const notificacion = document.createElement("div");
+        notificacion.textContent = mensaje;
+        notificacion.style.position = "fixed";
+        notificacion.style.top = "20px";
+        notificacion.style.right = "20px";
+        notificacion.style.backgroundColor = "#ff4d4d";
+        notificacion.style.color = "white";
+        notificacion.style.padding = "10px 20px";
+        notificacion.style.borderRadius = "6px";
+        notificacion.style.zIndex = "9999";
+        notificacion.style.fontFamily = "Arial, sans-serif";
+        notificacion.style.fontSize = "14px";
+        notificacion.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+        
+        document.body.appendChild(notificacion);
+    }
+
+    navigator.serial.addEventListener("disconnect", (event) => {
+        if (puertoPreviamenteConectado) {
+            alert("❌ El puerto COM se ha desconectado inesperadamente.");
+            mostrarNotificacion("Puerto desconectado inesperadamente.", "error");
+            puertoSerialConectado = false;
+            puertoPreviamenteConectado = false;
+        }
+    });
+
     // Mapeo entre data-codigo y acción (ON/OFF)
     const codigoBoton = {
         "VIBRACION": { off: "038", on: "039" },
@@ -26,9 +60,13 @@ import CabinPanel from "./CabinPanel.astro";
         "HUMO": { off: "050", on: "051" }
     };
 
-    // Estado global del puerto serial
+    // Estados globales
     let puertoSerial;
     let escritor;
+    let cabinaActiva = false;
+    let puertoSerialConectado = false;
+    let puertoPreviamenteConectado = false; // Detectar desconexiones después de estar activo
+
 
     // Función global para mostrar tramas en ventana de logs
     window.mostrarTramaEnLog = function(trama, tipo = 'pendiente') {
@@ -53,37 +91,57 @@ import CabinPanel from "./CabinPanel.astro";
         logWindow.insertBefore(entry, logWindow.firstChild);
     };
 
-    // Función para enviar trama vía Web Serial
-    async function enviarTramaReal(trama) {
-        if (!escritor) {
-            console.warn("Puerto no conectado. Simulando trama:", trama);
+    // Función para notificar al usuario.
+    function mostrarNotificacion(mensaje, tipo = "info") {
+        const logWindow = document.getElementById("trama-log-window");
+        if (!logWindow) return;
+
+        // Limpiar mensaje inicial
+        if (logWindow.children.length === 1 && logWindow.firstElementChild.textContent.includes("No hay tramas aún")) {
+            logWindow.innerHTML = "";
+        }
+
+        let icono = "🔵";
+        if (tipo === "error") icono = "❌";
+        if (tipo === "real") icono = "🟢";
+        if (tipo === "pendiente") icono = "🟡";
+
+        const entry = document.createElement("div");
+        entry.className = "log-entry truncate text-xs";
+        entry.textContent = `${icono} [${new Date().toLocaleTimeString()}] ${mensaje}`;
+
+        logWindow.insertBefore(entry, logWindow.firstChild);
+    }
+
+    // Función única para enviar tramas (simuladas o reales)
+    async function enviarTrama(prefijo, codigoAccion, cabinaActiva) {
+        const trama = `${prefijo}${codigoAccion}F`;
+
+        // Si la cabina no está activa, solo registrar como pendiente
+        if (!cabinaActiva) {
+            console.log("[Pendiente] Trama generada:", trama);
+            mostrarNotificacion(trama, 'pendiente');
             return;
         }
 
-        try {
-            const encoder = new TextEncoder();
-            await escritor.write(encoder.encode(trama));
-            console.log("Trama enviada real:", trama);
+        // Si hay conexión serial, intentar enviarla
+        if (escritor && puertoSerial && puertoSerial.readable && puertoSerial.writable) {
+            try {
+                const encoder = new TextEncoder();
+                await escritor.write(encoder.encode(trama));
+                console.log("📩 Trama enviada real:", trama);
+                mostrarNotificacion(trama, 'real');
 
-            // Mostrar en ventana de logs
-            window.mostrarTramaEnLog(trama, 'real');
-        } catch (err) {
-            console.error("Error al enviar trama:", err);
-            alert("Error de comunicación serial. Verifica el puerto.");
-        }
-    }
+                // Mostrar alerta al usuario (opcional)
+                // alert(`Trama enviada: ${trama}`);
 
-    // Función pública para enviar trama condicionalmente
-    function enviarTrama(prefijo, codigoAccion, cabinaActiva) {
-        const trama = `${prefijo}${codigoAccion}F`;
-
-        if (cabinaActiva) {
-            enviarTramaReal(trama);
-        } else {
-            console.log("[Pendiente] Trama generada:", trama);
-            if (window.mostrarTramaEnLog) {
-                window.mostrarTramaEnLog(trama, 'pendiente');
+            } catch (err) {
+                console.error("❌ Error al enviar trama:", trama, err);
+                mostrarNotificacion(`Error: ${trama}`, 'error');
             }
+        } else {
+            console.warn("🚫 Puerto no conectado. No se puede enviar:", trama);
+            mostrarNotificacion(`Puerto desconectado: ${trama}`, 'error');
         }
     }
 
@@ -123,26 +181,34 @@ import CabinPanel from "./CabinPanel.astro";
 
     // Conectar al puerto seleccionado
     async function conectarPuertoSerial() {
+        puertoSerialConectado = true;
+        puertoPreviamenteConectado = true
         const selector = document.getElementById("com-port-selector");
         if (!selector) return;
 
-        const selectedIndex = selector.selectedIndex;
-        if (selectedIndex === -1 || selectedIndex === 0) {
+        const indexSeleccionado = parseInt(selector.value);
+        if (isNaN(indexSeleccionado)) {
             alert("Por favor, seleccione un puerto válido.");
             return;
         }
 
         try {
-            const puertoSeleccionado = await navigator.serial.requestPort();
-            await puertoSeleccionado.open({ baudRate: 9600 });
-            escritor = puertoSeleccionado.writable.getWriter();
+            const puertos = await navigator.serial.getPorts();
+            puertoSerial = puertos[indexSeleccionado];
 
-            console.log("Puerto conectado:", puertoSeleccionado);
-            alert("✅ Puerto serial conectado exitosamente.");
+            await puertoSerial.open({ baudRate: 9600 });
+            escritor = puertoSerial.writable.getWriter();
 
+            console.log("🔌 Puerto serial conectado:", puertoSerial);
+
+            // Lanzar evento global para notificar conexión
+            const event = new Event("puertoConectado");
+            window.dispatchEvent(event);
+
+            alert(`✅ Puerto COM${indexSeleccionado + 1} conectado. Puede iniciar la cabina.`);
         } catch (err) {
-            console.error("Error al conectar puerto COM:", err);
-            alert("❌ No se pudo conectar al puerto seleccionado.");
+            console.error("❌ Error al conectar puerto COM:", err);
+            alert("Error al conectar con el microcontrolador.");
         }
     }
 
@@ -323,15 +389,52 @@ import CabinPanel from "./CabinPanel.astro";
             // Botón Enviar Configuración - Inicia la cabina
             const btnIniciar = panel.querySelector("#btn-enviar-configuracion");
             if (btnIniciar && estadoCabina) {
+                // Función para actualizar estado del botón Enviar Configuración
+                function actualizarEstadoBotonIniciar() {
+                    if (!puertoSerial || !puertoSerial.readable || !puertoSerial.writable) {
+                        btnIniciar.disabled = true;
+                        btnIniciar.classList.add("opacity-50", "cursor-not-allowed");
+                        btnIniciar.title = "Conecte un puerto COM para iniciar la cabina";
+                    } else {
+                        btnIniciar.disabled = false;
+                        btnIniciar.classList.remove("opacity-50", "cursor-not-allowed");
+                        btnIniciar.title = "";
+                    }
+                }
+
+                // Verificar estado al cargar
+                window.addEventListener("DOMContentLoaded", () => {
+                    actualizarEstadoBotonIniciar();
+                });
+
+                // También verificar después de conectar o desconectar puerto
+                window.addEventListener("puertoConectado", () => {
+                    console.log("Puerto conectado, verificando...");
+                    puertoSerialConectado = true;
+                    actualizarEstadoBotonIniciar();
+
+                    // Opcional: disparar evento global
+                    const event = new Event("puertoConectado");
+                    window.dispatchEvent(event);
+                });
+
+                // Botón Enviar Configuración - Solo funciona si hay puerto conectado
                 btnIniciar.addEventListener("click", () => {
+                    if (!puertoSerial || !puertoSerial.readable || !puertoSerial.writable) {
+                        alert("⚠️ No hay un puerto COM conectado. Conecte uno antes de iniciar la cabina.");
+                        return;
+                    }
+
                     if (!cabinaActiva) {
                         cabinaActiva = true;
                         estadoCabina.classList.remove("bg-[#ff4d4d]");
                         estadoCabina.classList.add("bg-[#00bf63]");
                         estadoCabina.textContent = "ACTIVA";
-                        alert("Sistema iniciado. ¡La cabina ha sido activada!");
+
+                        alert("✅ Sistema iniciado. ¡La cabina ha sido activada y listo para enviar tramas!");
+
                     } else {
-                        alert("Ya está activa. No se puede enviar otra vez sin resetear.");
+                        alert("🔄 Ya está activa. Reinicie antes de volver a usar.");
                     }
                 });
             }
@@ -339,15 +442,37 @@ import CabinPanel from "./CabinPanel.astro";
             // Botón Parar y Reset - Reinicia todo
             const btnReset = panel.querySelector("#btn-parar-reset");
             if (btnReset && estadoCabina) {
-                btnReset.addEventListener("click", () => {
+                btnReset.addEventListener("click", async () => {
+                    if (!puertoSerial || !puertoSerial.readable || !puertoSerial.writable) {
+                        alert("⚠️ No hay un puerto COM conectado. No se puede reiniciar la cabina.");
+                        return;
+                    }
+
                     estadoCabina.classList.remove("bg-[#00bf63]");
                     estadoCabina.classList.add("bg-[#ff4d4d]");
                     estadoCabina.textContent = "INACTIVA";
                     cabinaActiva = false;
 
+                    // Enviar tramas de apagado para todos los LEDs activos
+                    if (ledActivo) {
+                        const codAnterior = ledActivo.getAttribute("data-codigo");
+                        if (codAnterior) {
+                            await enviarTrama(cabinaPrefijo, codAnterior, true); // Envío real
+                        }
+                        ledActivo.classList.remove("active-led");
+                        ledActivo.style.backgroundColor = ledActivo.getAttribute("data-inactive-color");
+                        colorCabina.style.backgroundColor = "#d9d9d9";
+                        ledActivo = null;
+                    }
+
+                    // Enviar trama OFF para cada botón activo
                     controlButtons.forEach((btn) => {
-                        btn.classList.remove("bg-[#00bf63]");
-                        btn.classList.add("bg-[#d9d9d9]");
+                        const codigo = btn.getAttribute("data-codigo");
+                        if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
+                            btn.classList.remove("bg-[#00bf63]");
+                            btn.classList.add("bg-[#d9d9d9]");
+                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].off, true);
+                        }
                     });
 
                     const graficaCanvas = panel.querySelector("#graficaPanel");
