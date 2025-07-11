@@ -16,8 +16,9 @@ import CabinPanel from "./CabinPanel.astro";
 <script>
     // Verificar si el navegador soporta Web Serial API
     if (!("serial" in navigator)) {
-        const mensaje = "⚠️ Web Serial API no soportado. Use Chrome, Edge u Opera.";
-        
+        const mensaje =
+            "⚠️ Web Serial API no soportado. Use Chrome, Edge u Opera.";
+
         // Mostrar alerta emergente
         alert(mensaje);
 
@@ -35,14 +36,17 @@ import CabinPanel from "./CabinPanel.astro";
         notificacion.style.fontFamily = "Arial, sans-serif";
         notificacion.style.fontSize = "14px";
         notificacion.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
-        
+
         document.body.appendChild(notificacion);
     }
 
     navigator.serial.addEventListener("disconnect", (event) => {
         if (puertoPreviamenteConectado) {
             alert("❌ El puerto COM se ha desconectado inesperadamente.");
-            mostrarNotificacion("Puerto desconectado inesperadamente.", "error");
+            mostrarNotificacion(
+                "Puerto desconectado inesperadamente.",
+                "error",
+            );
             puertoSerialConectado = false;
             puertoPreviamenteConectado = false;
         }
@@ -50,14 +54,27 @@ import CabinPanel from "./CabinPanel.astro";
 
     // Mapeo entre data-codigo y acción (ON/OFF)
     const codigoBoton = {
-        "VIBRACION": { off: "038", on: "039" },
-        "VENTILADOR": { off: "040", on: "041" },
-        "EXTRACTOR": { off: "042", on: "043" },
-        "FRIO": { off: "044", on: "045" },
-        "CALOR": { off: "046", on: "047" },
-        "HUMEDAD": { off: "048", on: "049" },
-        "DESHUMIDIFICADOR": { off: "055", on: "056" },
-        "HUMO": { off: "050", on: "051" }
+        VIBRACION: { off: "038", on: "039" },
+        VENTILADOR: { off: "040", on: "041" },
+        EXTRACTOR: { off: "042", on: "043" },
+        FRIO: { off: "044", on: "045" },
+        CALOR: { off: "046", on: "047" },
+        HUMEDAD: { off: "048", on: "049" },
+        DESHUMIDIFICADOR: { off: "055", on: "056" },
+        HUMO: { off: "050", on: "051" },
+    };
+
+    // Configuración de sensores y sus frecuencias (en segundos)
+    const sensorConfig = {
+        TEMP: { frecuencia: 60, label: "Temperatura (°C)" },
+        HUM: { frecuencia: 60, label: "Humedad (%)" },
+        CO2: { frecuencia: 60, label: "CO₂ (ppm)" },
+        O3: { frecuencia: 60, label: "Ozono (ppb)" },
+        UV: { frecuencia: 60, label: "UV (W/m²)" },
+        DB: { frecuencia: 60, label: "Ruido (dB)" },
+        X: { frecuencia: 1, label: "Aceleración X (m/s²)" },
+        Y: { frecuencia: 1, label: "Aceleración Y (m/s²)" },
+        Z: { frecuencia: 1, label: "Aceleración Z (m/s²)" },
     };
 
     // Estados globales
@@ -66,15 +83,20 @@ import CabinPanel from "./CabinPanel.astro";
     let cabinaActiva = false;
     let puertoSerialConectado = false;
     let puertoPreviamenteConectado = false; // Detectar desconexiones después de estar activo
-
+    let graficaSensor = null;
 
     // Función global para mostrar tramas en ventana de logs
-    window.mostrarTramaEnLog = function(trama, tipo = 'pendiente') {
+    window.mostrarTramaEnLog = function (trama, tipo = "pendiente") {
         const logWindow = document.getElementById("trama-log-window");
         if (!logWindow) return;
 
         // Limpiar mensaje inicial
-        if (logWindow.children.length === 1 && logWindow.firstElementChild.textContent.includes("No hay tramas aún")) {
+        if (
+            logWindow.children.length === 1 &&
+            logWindow.firstElementChild.textContent.includes(
+                "No hay tramas aún",
+            )
+        ) {
             logWindow.innerHTML = "";
         }
 
@@ -83,7 +105,7 @@ import CabinPanel from "./CabinPanel.astro";
         entry.className = "p-1 truncate text-xs";
 
         let icono = "🟡"; // Pendiente / simulada
-        if (tipo === 'real') icono = "🟢"; // Realmente enviada
+        if (tipo === "real") icono = "🟢"; // Realmente enviada
 
         entry.textContent = `${icono} ${trama}`;
 
@@ -97,7 +119,12 @@ import CabinPanel from "./CabinPanel.astro";
         if (!logWindow) return;
 
         // Limpiar mensaje inicial
-        if (logWindow.children.length === 1 && logWindow.firstElementChild.textContent.includes("No hay tramas aún")) {
+        if (
+            logWindow.children.length === 1 &&
+            logWindow.firstElementChild.textContent.includes(
+                "No hay tramas aún",
+            )
+        ) {
             logWindow.innerHTML = "";
         }
 
@@ -118,7 +145,7 @@ import CabinPanel from "./CabinPanel.astro";
         const trama = `${prefijo}${codigoAccion}F`;
 
         if (!cabinaActiva) {
-            mostrarNotificacion(trama, 'pendiente');
+            mostrarNotificacion(trama, "pendiente");
             return;
         }
 
@@ -130,11 +157,14 @@ import CabinPanel from "./CabinPanel.astro";
         }
 
         try {
-            const response = await fetch("http://localhost:5000/api/serial/send", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ portName: port, trama })
-            });
+            const response = await fetch(
+                "http://localhost:5000/api/serial/send",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ portName: port, trama }),
+                },
+            );
 
             const mensaje = await response.text();
             mostrarNotificacion(mensaje, "real");
@@ -150,7 +180,9 @@ import CabinPanel from "./CabinPanel.astro";
         if (!selector) return;
 
         try {
-            const response = await fetch("http://localhost:5000/api/serial/ports");
+            const response = await fetch(
+                "http://localhost:5000/api/serial/ports",
+            );
             const puertos = await response.json();
 
             selector.innerHTML = "";
@@ -159,13 +191,12 @@ import CabinPanel from "./CabinPanel.astro";
                 return;
             }
 
-            puertos.forEach(port => {
+            puertos.forEach((port) => {
                 const option = document.createElement("option");
                 option.value = port;
                 option.textContent = port;
                 selector.appendChild(option);
             });
-
         } catch (err) {
             console.error("Error al escanear puertos:", err);
             alert("Error al escanear puertos desde backend.");
@@ -179,28 +210,74 @@ import CabinPanel from "./CabinPanel.astro";
         if (!port) return alert("Seleccione un puerto.");
 
         try {
-            const response = await fetch("http://localhost:5000/api/serial/connect", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(port)
-            });
+            const response = await fetch(
+                "http://localhost:5000/api/serial/connect",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(port),
+                },
+            );
 
             const mensaje = await response.text();
             mostrarNotificacion(mensaje, "real");
+
+            // 🔴 Marcar como conectado y lanzar evento global
+            puertoSerialConectado = true;
+            puertoPreviamenteConectado = true;
+            window.dispatchEvent(new Event("puertoConectado"));
         } catch (err) {
             console.error("Error al conectar:", err);
             alert("Error al conectar al puerto.");
         }
     }
 
+    // Desconectar el puerto serial
+    async function desconectarPuertoSerial() {
+        const selector = document.getElementById("com-port-selector");
+        const port = selector?.value;
+        if (!port) {
+            mostrarNotificacion(
+                "Puerto no seleccionado para desconexión",
+                "error",
+            );
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                "http://localhost:5000/api/serial/disconnect",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(port),
+                },
+            );
+
+            const mensaje = await response.text();
+            mostrarNotificacion(mensaje, "real");
+
+            puertoSerialConectado = false;
+            puertoPreviamenteConectado = false;
+            window.dispatchEvent(new Event("puertoDesconectado"));
+        } catch (err) {
+            console.error("Error al desconectar:", err);
+            mostrarNotificacion("Error al desconectar puerto", "error");
+        }
+    }
 
     // Asignar eventos a botones del header al cargar
     window.addEventListener("DOMContentLoaded", () => {
         const btnScanCom = document.getElementById("btn-scan-com");
         const btnConnectCom = document.getElementById("btn-connect-com");
+        const btnDisconnectCom = document.getElementById("btn-disconnect-com");
 
-        if (btnScanCom) btnScanCom.addEventListener("click", escanearPuertosCOM);
-        if (btnConnectCom) btnConnectCom.addEventListener("click", conectarPuertoSerial);
+        if (btnScanCom)
+            btnScanCom.addEventListener("click", escanearPuertosCOM);
+        if (btnConnectCom)
+            btnConnectCom.addEventListener("click", conectarPuertoSerial);
+        if (btnDisconnectCom)
+            btnDisconnectCom.addEventListener("click", desconectarPuertoSerial);
 
         escanearPuertosCOM();
     });
@@ -235,8 +312,11 @@ import CabinPanel from "./CabinPanel.astro";
 
             if (selectCabina) {
                 selectCabina.addEventListener("change", () => {
-                    cabinaPrefijo = selectCabina.value === "Cabina 1" ? "C1" : "C2";
-                    console.log(`Panel ${index + 1}: Cabina seleccionada: ${cabinaPrefijo}`);
+                    cabinaPrefijo =
+                        selectCabina.value === "Cabina 1" ? "C1" : "C2";
+                    console.log(
+                        `Panel ${index + 1}: Cabina seleccionada: ${cabinaPrefijo}`,
+                    );
                 });
             }
 
@@ -244,21 +324,33 @@ import CabinPanel from "./CabinPanel.astro";
             tabButtons.forEach((button) => {
                 button.addEventListener("click", () => {
                     tabButtons.forEach((btn) => {
-                        btn.classList.remove("bg-[#00bf63]", "text-black", "active");
+                        btn.classList.remove(
+                            "bg-[#00bf63]",
+                            "text-black",
+                            "active",
+                        );
                         btn.classList.add("bg-[#efefef]", "text-black");
                         btn.setAttribute("aria-selected", "false");
                         btn.setAttribute("tabindex", "-1");
                     });
 
                     button.classList.remove("bg-[#efefef]", "text-black");
-                    button.classList.add("bg-[#d9d9d9]", "text-black", "active");
+                    button.classList.add(
+                        "bg-[#d9d9d9]",
+                        "text-black",
+                        "active",
+                    );
                     button.setAttribute("aria-selected", "true");
                     button.setAttribute("tabindex", "0");
 
-                    tabContents.forEach((content) => content.classList.add("hidden"));
+                    tabContents.forEach((content) =>
+                        content.classList.add("hidden"),
+                    );
 
                     const selectedTab = button.getAttribute("data-tab");
-                    const selectedContent = panel.querySelector(`[data-tab-content='${selectedTab}']`);
+                    const selectedContent = panel.querySelector(
+                        `[data-tab-content='${selectedTab}']`,
+                    );
                     if (selectedContent) {
                         selectedContent.classList.remove("hidden");
                         if (selectedTab === "graficas") {
@@ -311,22 +403,38 @@ import CabinPanel from "./CabinPanel.astro";
                         btn.classList.remove("bg-[#00bf63]");
                         btn.classList.add("bg-[#d9d9d9]");
                         if (codigo && codigoBoton[codigo]) {
-                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].off, cabinaActiva);
+                            enviarTrama(
+                                cabinaPrefijo,
+                                codigoBoton[codigo].off,
+                                cabinaActiva,
+                            );
                         }
                     } else {
                         controlButtons.forEach((b) => {
                             const cod = b.getAttribute("data-codigo");
-                            if (b.classList.contains("bg-[#00bf63]") && cod && codigoBoton[cod]) {
+                            if (
+                                b.classList.contains("bg-[#00bf63]") &&
+                                cod &&
+                                codigoBoton[cod]
+                            ) {
                                 b.classList.remove("bg-[#00bf63]");
                                 b.classList.add("bg-[#d9d9d9]");
-                                enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
+                                enviarTrama(
+                                    cabinaPrefijo,
+                                    codigoBoton[cod].off,
+                                    cabinaActiva,
+                                );
                             }
                         });
 
                         btn.classList.remove("bg-[#d9d9d9]");
                         btn.classList.add("bg-[#00bf63]");
                         if (codigo && codigoBoton[codigo]) {
-                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].on, cabinaActiva);
+                            enviarTrama(
+                                cabinaPrefijo,
+                                codigoBoton[codigo].on,
+                                cabinaActiva,
+                            );
                         }
                     }
                 });
@@ -344,23 +452,32 @@ import CabinPanel from "./CabinPanel.astro";
 
                     if (isActive) {
                         button.classList.remove("active-led");
-                        button.style.backgroundColor = button.getAttribute("data-inactive-color");
+                        button.style.backgroundColor = button.getAttribute(
+                            "data-inactive-color",
+                        );
                         colorCabina.style.backgroundColor = "#d9d9d9";
 
                         enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
                         ledActivo = null;
-
                     } else {
                         if (ledActivo) {
-                            const codAnterior = ledActivo.getAttribute("data-codigo");
+                            const codAnterior =
+                                ledActivo.getAttribute("data-codigo");
                             ledActivo.classList.remove("active-led");
-                            ledActivo.style.backgroundColor = ledActivo.getAttribute("data-inactive-color");
-                            enviarTrama(cabinaPrefijo, codAnterior, cabinaActiva);
+                            ledActivo.style.backgroundColor =
+                                ledActivo.getAttribute("data-inactive-color");
+                            enviarTrama(
+                                cabinaPrefijo,
+                                codAnterior,
+                                cabinaActiva,
+                            );
                         }
 
                         button.classList.add("active-led");
-                        button.style.backgroundColor = button.getAttribute("data-active-color");
-                        colorCabina.style.backgroundColor = button.getAttribute("data-active-color");
+                        button.style.backgroundColor =
+                            button.getAttribute("data-active-color");
+                        colorCabina.style.backgroundColor =
+                            button.getAttribute("data-active-color");
                         enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
 
                         ledActivo = button;
@@ -370,63 +487,73 @@ import CabinPanel from "./CabinPanel.astro";
 
             // Botón Enviar Configuración - Inicia la cabina
             const btnIniciar = panel.querySelector("#btn-enviar-configuracion");
+            const btnReset = panel.querySelector("#btn-parar-reset"); // Nueva línea
             if (btnIniciar && estadoCabina) {
-                // Función para actualizar estado del botón Enviar Configuración
                 function actualizarEstadoBotonIniciar() {
-                    if (!puertoSerial || !puertoSerial.readable || !puertoSerial.writable) {
-                        btnIniciar.disabled = true;
-                        btnIniciar.classList.add("opacity-50", "cursor-not-allowed");
-                        btnIniciar.title = "Conecte un puerto COM para iniciar la cabina";
-                    } else {
-                        btnIniciar.disabled = false;
-                        btnIniciar.classList.remove("opacity-50", "cursor-not-allowed");
-                        btnIniciar.title = "";
+                    const activo = puertoSerialConectado;
+                    btnIniciar.disabled = !activo;
+                    btnIniciar.classList.toggle("opacity-50", !activo);
+                    btnIniciar.classList.toggle("cursor-not-allowed", !activo);
+                    btnIniciar.title = activo
+                        ? ""
+                        : "Conecte un puerto COM para iniciar la cabina";
+
+                    // También actualizamos el botón de reset
+                    if (btnReset) {
+                        btnReset.disabled = !activo;
+                        btnReset.classList.toggle("opacity-50", !activo);
+                        btnReset.classList.toggle(
+                            "cursor-not-allowed",
+                            !activo,
+                        );
+                        btnReset.title = activo
+                            ? ""
+                            : "Conecte un puerto COM para usar esta función";
                     }
                 }
 
-                // Verificar estado al cargar
-                window.addEventListener("DOMContentLoaded", () => {
-                    actualizarEstadoBotonIniciar();
-                });
-
-                // También verificar después de conectar o desconectar puerto
+                // Escuchar cambios globales de conexión
                 window.addEventListener("puertoConectado", () => {
-                    console.log("Puerto conectado, verificando...");
                     puertoSerialConectado = true;
                     actualizarEstadoBotonIniciar();
-
-                    // Opcional: disparar evento global
-                    const event = new Event("puertoConectado");
-                    window.dispatchEvent(event);
                 });
 
-                // Botón Enviar Configuración - Solo funciona si hay puerto conectado
+                window.addEventListener("puertoDesconectado", () => {
+                    puertoSerialConectado = false;
+                    actualizarEstadoBotonIniciar();
+                });
+
+                // Llamada inicial
+                actualizarEstadoBotonIniciar();
+
                 btnIniciar.addEventListener("click", () => {
-                    if (!puertoSerial || !puertoSerial.readable || !puertoSerial.writable) {
-                        alert("⚠️ No hay un puerto COM conectado. Conecte uno antes de iniciar la cabina.");
+                    if (!puertoSerialConectado) {
+                        alert(
+                            "Debe conectar un puerto COM antes de iniciar la cabina.",
+                        );
                         return;
                     }
 
-                    if (!cabinaActiva) {
-                        cabinaActiva = true;
-                        estadoCabina.classList.remove("bg-[#ff4d4d]");
-                        estadoCabina.classList.add("bg-[#00bf63]");
-                        estadoCabina.textContent = "ACTIVA";
+                    cabinaActiva = true; // ✅ ACTIVAMOS la cabina
+                    estadoCabina.classList.remove("bg-[#ff4d4d]");
+                    estadoCabina.classList.add("bg-[#00bf63]");
+                    estadoCabina.textContent = "ACTIVA";
 
-                        alert("✅ Sistema iniciado. ¡La cabina ha sido activada y listo para enviar tramas!");
-
-                    } else {
-                        alert("🔄 Ya está activa. Reinicie antes de volver a usar.");
-                    }
+                    mostrarNotificacion("🚀 Cabina iniciada", "real");
                 });
             }
 
             // Botón Parar y Reset - Reinicia todo
-            const btnReset = panel.querySelector("#btn-parar-reset");
             if (btnReset && estadoCabina) {
                 btnReset.addEventListener("click", async () => {
-                    if (!puertoSerial || !puertoSerial.readable || !puertoSerial.writable) {
-                        alert("⚠️ No hay un puerto COM conectado. No se puede reiniciar la cabina.");
+                    if (
+                        !puertoSerial ||
+                        !puertoSerial.readable ||
+                        !puertoSerial.writable
+                    ) {
+                        alert(
+                            "⚠️ No hay un puerto COM conectado. No se puede reiniciar la cabina.",
+                        );
                         return;
                     }
 
@@ -437,12 +564,14 @@ import CabinPanel from "./CabinPanel.astro";
 
                     // Enviar tramas de apagado para todos los LEDs activos
                     if (ledActivo) {
-                        const codAnterior = ledActivo.getAttribute("data-codigo");
+                        const codAnterior =
+                            ledActivo.getAttribute("data-codigo");
                         if (codAnterior) {
                             await enviarTrama(cabinaPrefijo, codAnterior, true); // Envío real
                         }
                         ledActivo.classList.remove("active-led");
-                        ledActivo.style.backgroundColor = ledActivo.getAttribute("data-inactive-color");
+                        ledActivo.style.backgroundColor =
+                            ledActivo.getAttribute("data-inactive-color");
                         colorCabina.style.backgroundColor = "#d9d9d9";
                         ledActivo = null;
                     }
@@ -450,10 +579,18 @@ import CabinPanel from "./CabinPanel.astro";
                     // Enviar trama OFF para cada botón activo
                     controlButtons.forEach((btn) => {
                         const codigo = btn.getAttribute("data-codigo");
-                        if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
+                        if (
+                            btn.classList.contains("bg-[#00bf63]") &&
+                            codigo &&
+                            codigoBoton[codigo]
+                        ) {
                             btn.classList.remove("bg-[#00bf63]");
                             btn.classList.add("bg-[#d9d9d9]");
-                            enviarTrama(cabinaPrefijo, codigoBoton[codigo].off, true);
+                            enviarTrama(
+                                cabinaPrefijo,
+                                codigoBoton[codigo].off,
+                                true,
+                            );
                         }
                     });
 
@@ -462,14 +599,17 @@ import CabinPanel from "./CabinPanel.astro";
                         graficaCanvas.chartInstance.destroy();
                     }
 
-                    const medicionTextos = panel.querySelectorAll(".medicion-texto");
+                    const medicionTextos =
+                        panel.querySelectorAll(".medicion-texto");
                     medicionTextos.forEach((txt) => {
                         txt.textContent = "N/A";
                     });
 
                     ledButtons.forEach((led) => {
                         led.classList.remove("active-led");
-                        led.style.backgroundColor = led.getAttribute("data-inactive-color");
+                        led.style.backgroundColor = led.getAttribute(
+                            "data-inactive-color",
+                        );
                     });
 
                     if (tiempoInput) {
@@ -500,7 +640,9 @@ import CabinPanel from "./CabinPanel.astro";
                 btnEnviarTiempo.addEventListener("click", () => {
                     let valorMinutos = parseInt(tiempoInput.value);
                     if (!valorMinutos || valorMinutos < 0) {
-                        alert("Por favor, ingrese un número válido y no negativo.");
+                        alert(
+                            "Por favor, ingrese un número válido y no negativo.",
+                        );
                         tiempoInput.value = 0;
                         valorMinutos = 0;
                     }
@@ -508,7 +650,10 @@ import CabinPanel from "./CabinPanel.astro";
                     const valorSegundos = Math.min(valorMinutos * 60, 300); // Máximo 5 minutos
                     const graficaCanvas = panel.querySelector("#graficaPanel");
                     if (graficaCanvas) {
-                        graficaCanvas.setAttribute("data-time-range", valorSegundos);
+                        graficaCanvas.setAttribute(
+                            "data-time-range",
+                            valorSegundos,
+                        );
                         if (cabinaActiva && graficaCanvas.chartInstance) {
                             const chart = graficaCanvas.chartInstance;
                             const labels = [];
@@ -517,7 +662,7 @@ import CabinPanel from "./CabinPanel.astro";
                             }
                             chart.data.labels = labels;
                             chart.data.datasets[0].data = labels.map(() =>
-                                Math.floor(Math.random() * 5)
+                                Math.floor(Math.random() * 5),
                             );
                             chart.update();
                         }
@@ -529,7 +674,9 @@ import CabinPanel from "./CabinPanel.astro";
             if (botonHumo && estadoHumo) {
                 botonHumo.addEventListener("click", () => {
                     if (!cabinaActiva) {
-                        alert("La cabina debe estar activa antes de usar esta función.");
+                        alert(
+                            "La cabina debe estar activa antes de usar esta función.",
+                        );
                         return;
                     }
                     humoActivado = !humoActivado;
@@ -551,7 +698,9 @@ import CabinPanel from "./CabinPanel.astro";
                 medicionBotones.forEach((boton, index) => {
                     boton.addEventListener("click", () => {
                         if (!cabinaActiva) {
-                            alert("Por favor, inicie la cabina antes de usar las mediciones.");
+                            alert(
+                                "Por favor, inicie la cabina antes de usar las mediciones.",
+                            );
                             return;
                         }
 
@@ -584,82 +733,136 @@ import CabinPanel from "./CabinPanel.astro";
     // Función para obtener unidad según medición
     function getUnidad(medicion) {
         switch (medicion) {
-            case "X": return "m";
-            case "T": return "°C";
-            case "CO2": return "ppm";
-            case "Y": return "m";
-            case "%H": return "%";
-            case "%O2": return "%";
-            case "Z": return "m";
-            case "UV": return "W/m²";
-            case "Son": return "dB";
-            default: return "";
+            case "X":
+                return "m";
+            case "T":
+                return "°C";
+            case "CO2":
+                return "ppm";
+            case "Y":
+                return "m";
+            case "%H":
+                return "%";
+            case "%O2":
+                return "%";
+            case "Z":
+                return "m";
+            case "UV":
+                return "W/m²";
+            case "Son":
+                return "dB";
+            default:
+                return "";
         }
     }
 
     // Función para inicializar gráfica con Chart.js
-    function initGrafica(panel) {
+    async function initGrafica(panel) {
         const graficaCanvas = panel.querySelector("#graficaPanel");
         if (!graficaCanvas) return;
 
-        const existingChart = Chart.getChart(graficaCanvas);
-        if (existingChart) {
-            existingChart.destroy();
-        }
+        const selectCabina = panel.querySelector("[data-select='cabina']");
+        const cabina = selectCabina?.value.includes("1") ? "c1" : "c2";
 
-        const ctx = graficaCanvas.getContext("2d");
-        const valorSegundos = parseInt(graficaCanvas.getAttribute("data-time-range")) || 300;
-        const labels = [];
-        const maxPuntos = 10;
-        for (let i = 0; i < maxPuntos; i++) {
-            labels.push(`${i * (valorSegundos / maxPuntos)}s`);
-        }
-        const dataValues = labels.map(() => Math.floor(Math.random() * 5));
+        const selectSensor = panel.querySelector("[data-select='sensor']") || {
+            value: "T",
+        };
+        const sensor = selectSensor.value; // Por defecto: T (temperatura)
 
-        graficaCanvas.chartInstance = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels,
-                datasets: [{
-                    label: "Sensor 1",
-                    data: dataValues,
-                    borderColor: "#000",
-                    backgroundColor: "rgba(0, 74, 173, 0.2)",
-                    tension: 0.3,
-                    pointRadius: 4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: "Tiempo (s)",
-                            color: "#333",
-                            font: { weight: "bold" }
-                        },
-                        grid: { color: "#ddd" }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: "Amplitud",
-                            color: "#333",
-                            font: { weight: "bold" }
-                        },
-                        grid: { color: "#ddd" }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        labels: { color: "#333" }
-                    }
-                }
+        try {
+            const response = await fetch(
+                `http://localhost:5000/api/serial/datos/${cabina}`,
+            );
+            const datos = await response.json();
+
+            if (!Array.isArray(datos) || datos.length === 0) {
+                alert(`Sin datos disponibles para ${cabina.toUpperCase()}`);
+                return;
             }
-        });
+
+            const labels = datos.map((_, i) => `${i}`);
+            const valores = datos.map((d) => {
+                switch (sensor) {
+                    case "T":
+                        return d.t;
+                    case "H":
+                        return d.h;
+                    case "UV":
+                        return d.uv;
+                    case "CO2":
+                        return d.co2;
+                    case "O3":
+                        return d.o3;
+                    case "dB":
+                        return d.db;
+                    case "X":
+                        return d.x;
+                    case "Y":
+                        return d.y;
+                    case "Z":
+                        return d.z;
+                    default:
+                        return 0;
+                }
+            });
+
+            const existingChart = Chart.getChart(graficaCanvas);
+            if (existingChart) existingChart.destroy();
+
+            const ctx = graficaCanvas.getContext("2d");
+            graficaCanvas.chartInstance = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: `${sensorConfig[sensor]?.label || "Dato"}`,
+                            data: valores,
+                            borderColor: "#000",
+                            backgroundColor: "rgba(0, 74, 173, 0.2)",
+                            tension: 0.3,
+                            pointRadius: 0,
+                            fill: true,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Muestras",
+                                color: "#333",
+                                font: { weight: "bold" },
+                            },
+                            ticks: {
+                                display: false,
+                            },
+                            grid: { color: "#eee" },
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: sensorConfig[sensor]?.label || "Valor",
+                                color: "#333",
+                                font: { weight: "bold" },
+                            },
+                            grid: { color: "#eee" },
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: { color: "#333" },
+                        },
+                    },
+                },
+            });
+        } catch (error) {
+            console.error("Error al cargar datos de sensor:", error);
+            alert("No se pudieron cargar datos desde el backend.");
+        }
     }
 </script>
