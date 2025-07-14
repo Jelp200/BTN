@@ -51,7 +51,7 @@ namespace ControlPanel.API.Controllers
                     try
                     {
                         var serial = (SerialPort)sender!;
-                        string raw = serial.ReadExisting().Trim();
+                        string raw = serial.ReadLine().Trim();
 
                         var datosParseados = TramaParser.Parse(raw);
 
