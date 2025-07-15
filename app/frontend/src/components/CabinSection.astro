@@ -539,6 +539,8 @@ import CabinPanel from "./CabinPanel.astro";
                     estadoCabina.classList.add("bg-[#00bf63]");
                     estadoCabina.textContent = "ACTIVA";
 
+                    enviarTrama(cabinaPrefijo, "START", cabinaActiva);
+
                     mostrarNotificacion("🚀 Cabina iniciada", "real");
                 });
             }
