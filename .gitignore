@@ -7,10 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node and frontend build artifacts
 node_modules
 dist
 dist-ssr
-*.local
+.astro/
 
 # Editor directories and files
 .vscode/*
@@ -22,7 +23,25 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
 .env
 
 # Ignore package files
 package-lock.json
+
+# .NET build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.json
+*.editorconfig
+
+# Visual Studio-specific files
+.vs/
+
+# Custom untracked folders (e.g., pruebas locales)
+app/Escritorio/
