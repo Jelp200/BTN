@@ -169,6 +169,30 @@ namespace ControlPanel.API.Controllers
             return Ok(new { Count = count });
         }
 
+        [HttpGet("count/c1")]
+        public IActionResult GetTramaCountCabina1()
+        {
+            int count;
+            lock (LockObj)
+            {
+                count = HistorialDatos.Where(d => d.Cabina == "C1").Count();
+            }
+
+            return Ok(new { Count = count });
+        }
+
+        [HttpGet("count/c2")]
+        public IActionResult GetTramaCountCabina2()
+        {
+            int count;
+            lock (LockObj)
+            {
+                count = HistorialDatos.Where(d => d.Cabina == "C2").Count();
+            }
+
+            return Ok(new { Count = count });
+        }
+
         [HttpGet("datos")]
         public IActionResult GetAllDatos()
         {
