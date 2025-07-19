@@ -14,6 +14,9 @@ import CabinPanel from "./CabinPanel.astro";
 
 <!-- Script principal -->
 <script>
+import { z } from 'astro/zod';
+z.boolean()
+
     // Verificar si el navegador soporta Web Serial API
     if (!("serial" in navigator)) {
         const mensaje =
@@ -775,6 +778,12 @@ import CabinPanel from "./CabinPanel.astro";
             const response = await fetch(
                 `http://localhost:5000/api/serial/datos/${cabina}`,
             );
+
+            if (!response.ok) {
+            // El servidor respondió con un estado de error (404, 500, etc.)
+            throw new Error(`Error HTTP: ${response.status}`);
+            }
+
             const datos = await response.json();
 
             if (!Array.isArray(datos) || datos.length === 0) {
@@ -870,10 +879,22 @@ import CabinPanel from "./CabinPanel.astro";
                 try {
 
                     const response_size = await fetch(`http://localhost:5000/api/serial/count/${cabina}`);
+
+                    if (!response.ok) {
+                        // El servidor respondió con un estado de error (404, 500, etc.)
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+
                     const data_size = await response_size.json();
                     if (data_size.count > valores.length) {
                         
                         const response = await fetch(`http://localhost:5000/api/serial/ultimo-dato/${cabina}`);
+
+                        if (!response.ok) {
+                            // El servidor respondió con un estado de error (404, 500, etc.)
+                            throw new Error(`Error HTTP: ${response.status}`);
+                        }
+
                         const ultimoDato = await response.json();
 
                         let valor = 0;
@@ -916,4 +937,33 @@ import CabinPanel from "./CabinPanel.astro";
             alert("No se pudieron cargar datos desde el backend.");
         }
     }
+
+    async function verificarConexion() {
+        try {
+            const response = await fetch("http://localhost:5000/api/serial/test-connection");
+
+            if (!response.ok) {
+                throw new Error(`Desconectado del backend`);
+                //Tomar acciones para intentar reiniciar el backend
+                /* PENDIENTE LMAO */
+            }
+
+            const status_data = await response.json();
+
+            if ( (status_data.state == "false") && puertoSerialConectado) {
+                alert("❌ El puerto COM se ha desconectado inesperadamente.");
+                mostrarNotificacion("Puerto desconectado inesperadamente.", "error");
+                //Acciones para regresar el estado del programa a "desconectado"
+                puertoSerialConectado = false;
+                puertoPreviamenteConectado = false;
+            }
+            
+        } catch (error) {
+            console.error("Error: ", error);
+        }
+    }
+
+    /* Verifica el estado de la conexion cada segundo */
+    setInterval(verificarConexion, 1000);
+
 </script>

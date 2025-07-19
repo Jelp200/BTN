@@ -308,6 +308,35 @@ namespace ControlPanel.API.Controllers
 
             return Ok(resultados);
         }
+
+        [HttpGet("test-connection")]
+        public IActionResult VerificaConexion()
+        {
+            if (PuertosAbiertos.Any())
+            {
+                var primerPuerto = PuertosAbiertos.First();
+                string nombre = primerPuerto.Key;
+                SerialPort serialPort = primerPuerto.Value;
+
+                if (serialPort.IsOpen)
+                {
+                    try
+                    {
+                        serialPort.Write("TESTF");
+                    }
+                    catch
+                    {
+                        serialPort.Close();
+                        return Ok( new{ State = "false" } );
+                    }
+
+                    return Ok( new{ State = "true" } );
+                }
+            }
+
+            return Ok( new{ State = "false" } );
+        }
+
     }
 
     public class TramaRequest
