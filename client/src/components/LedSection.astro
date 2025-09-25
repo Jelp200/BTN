@@ -1,0 +1,216 @@
+---
+// LedSection.astro
+
+//* IMPORTS
+import LedButton from "./LedButton.astro";
+---
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-3">
+    <!-- Grupo A - Luz cálida -->
+    <div class="space-y-1">
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="C1"
+                colIndex="1"
+                rowIndex="1"
+                inactiveColor="#fd8c8c"
+                activeColor="#ff3131"
+                data-codigo="104"
+            />
+            <LedButton
+                label="C2"
+                colIndex="2"
+                rowIndex="1"
+                inactiveColor="#f69c9c"
+                activeColor="#ff5757"
+                data-codigo="105"
+            />
+            <LedButton
+                label="C3"
+                colIndex="3"
+                rowIndex="1"
+                inactiveColor="#ef955e"
+                activeColor="#f47527"
+                data-codigo="106"
+            />
+            <LedButton
+                label="C4"
+                colIndex="4"
+                rowIndex="1"
+                inactiveColor="#ffd391"
+                activeColor="#ffbd59"
+                data-codigo="107"
+            />
+            <LedButton
+                label="C5"
+                colIndex="5"
+                rowIndex="1"
+                inactiveColor="#fae692"
+                activeColor="#ffde59"
+                data-codigo="108"
+            />
+            <LedButton
+                label="Encendido luz cálida"
+                colIndex="6"
+                rowIndex="1"
+                inactiveColor="#fff"
+                activeColor="#FF1306"
+                data-codigo="101"
+            />
+        </div>
+    </div>
+
+    <!-- Grupo B - Luz fría -->
+    <div class="space-y-2">
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="F1"
+                colIndex="1"
+                rowIndex="2"
+                inactiveColor="#5b7ba6"
+                activeColor="#004aad"
+                data-codigo="109"
+            />
+            <LedButton
+                label="F2"
+                colIndex="2"
+                rowIndex="2"
+                inactiveColor="#92a6ff"
+                activeColor="#5271ff"
+                data-codigo="110"
+            />
+            <LedButton
+                label="F3"
+                colIndex="3"
+                rowIndex="2"
+                inactiveColor="#8ed3fa"
+                activeColor="#38b6ff"
+                data-codigo="111"
+            />
+            <LedButton
+                label="F4"
+                colIndex="4"
+                rowIndex="2"
+                inactiveColor="#aa8be8"
+                activeColor="#6f31eb"
+                data-codigo="112"
+            />
+            <LedButton
+                label="F5"
+                colIndex="5"
+                rowIndex="2"
+                inactiveColor="#bea8e8"
+                activeColor="#5500ff"
+                data-codigo="113"
+            />
+            <LedButton
+                label="Encendido luz fría"
+                colIndex="6"
+                rowIndex="2"
+                inactiveColor="#fff"
+                activeColor="#0243D3"
+                data-codigo="102"
+            />
+        </div>
+    </div>
+
+    <!-- Grupo C - Luz neutra -->
+    <div class="space-y-2">
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="N1"
+                colIndex="1"
+                rowIndex="3"
+                inactiveColor="#74b898"
+                activeColor="#00bf63"
+                data-codigo="114"
+            />
+            <LedButton
+                label="N2"
+                colIndex="2"
+                rowIndex="3"
+                inactiveColor="#b0dd9d"
+                activeColor="#7ed957"
+                data-codigo="115"
+            />
+            <LedButton
+                label="N3"
+                colIndex="3"
+                rowIndex="3"
+                inactiveColor="#d3f1ab"
+                activeColor="#c1ff72"
+                data-codigo="116"
+            />
+            <LedButton
+                label="N4"
+                colIndex="4"
+                rowIndex="3"
+                inactiveColor="#b0fad4"
+                activeColor="#72ffb7"
+                data-codigo="117"
+            />
+            <LedButton
+                label="N5"
+                colIndex="5"
+                rowIndex="3"
+                inactiveColor="#a2e1e4"
+                activeColor="#c"
+                data-codigo="118"
+            />
+            <LedButton
+                label="Encendido luz neutra"
+                colIndex="6"
+                rowIndex="3"
+                inactiveColor="#fff"
+                activeColor="#029705"
+                data-codigo="103"
+            />
+        </div>
+    </div>
+
+    <!-- Grupo D - Otros -->
+    <div class="space-y-2">
+        <div class="flex flex-col gap-2">
+            <LedButton
+                label="Strobo"
+                colIndex="1"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+                data-codigo="119"
+            />
+            <LedButton
+                label="Flash"
+                colIndex="2"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+                data-codigo="120"
+            />
+            <LedButton
+                label="B+"
+                colIndex="3"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+                data-codigo="121"
+            />
+            <LedButton
+                label="B-"
+                colIndex="4"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+                data-codigo="122"
+            />
+            <LedButton
+                label="Apagado total"
+                colIndex="5"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+                data-codigo="100"
+            />
+        </div>
+    </div>
+</div>

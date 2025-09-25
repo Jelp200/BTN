@@ -1,0 +1,245 @@
+---
+// HeaderLogos.astro
+
+import logoAnahuac from "../../public/logos/logo-anahuac.svg";
+import logoGITSe from "../../public/logos/logo-gitse.svg";
+---
+
+<!-- Header sticky -->
+<header class="sticky top-0 z-50 w-full bg-white shadow-md">
+    <div
+        class="w-full flex flex-wrap justify-between items-center gap-4 px-6 py-1 bg-white border-b border-gray-200"
+    >
+        <!-- Logo Anáhuac -->
+        <a
+            href="https://cancun.anahuac.mx/sitio/ "
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            <img src={logoAnahuac.src} alt="Logo Anáhuac Cancún" class="h-12" />
+        </a>
+
+        <!-- Control de puertos COM -->
+        <div class="flex items-center gap-2 flex-wrap">
+            <!-- Selector de Puerto -->
+            <select
+                id="com-port-selector"
+                class="px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-[160px]"
+            >
+                <option disabled selected>Seleccionar Puerto</option>
+            </select>
+
+            <!-- Botón: Escanear Puertos -->
+            <button
+                id="btn-scan-com"
+                class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded border border-gray-300"
+            >
+                🔄 Escanear
+            </button>
+
+            <!-- Botón: Conectar Puerto -->
+            <button
+                id="btn-connect-com"
+                class="bg-[#00bf63] hover:bg-[#00a152] px-3 py-2 text-sm text-white rounded"
+            >
+                🔌 Conectar
+            </button>
+
+            <!-- Botón: Desconectar Puerto -->
+            <button
+                id="btn-disconnect-com"
+                class="bg-[#ff4d4d] hover:bg-[#d94343] px-3 py-2 text-sm text-white rounded hidden"
+            >
+                🔓 Desconectar
+            </button>
+        </div>
+
+        <!-- Botones para Logs -->
+        <div class="relative">
+            <div class="flex gap-2">
+                <!-- Botón: Ver Tramas Enviadas -->
+                <button
+                    id="btn-toggle-sent"
+                    class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded"
+                    aria-expanded="false"
+                    aria-controls="log-sent"
+                >
+                    📤 Enviadas
+                </button>
+
+                <!-- Botón: Ver Tramas Recibidas -->
+                <button
+                    id="btn-toggle-received"
+                    class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded"
+                    aria-expanded="false"
+                    aria-controls="log-received"
+                >
+                    📥 Recibidas
+                </button>
+            </div>
+
+            <!-- Ventana de Logs - Tramas Enviadas -->
+            <div
+                id="log-sent"
+                class="hidden absolute right-0 mt-2 w-72 bg-white border border-[#ccc] shadow-lg rounded p-2 z-50"
+            >
+                <div class="text-center text-xs text-gray-500 mb-1">
+                    Tramas Enviadas
+                </div>
+                <div
+                    id="log-sent-messages"
+                    class="log-window flex flex-col gap-1 text-xs font-mono text-gray-700 max-h-48 overflow-y-auto"
+                >
+                    <div class="text-center text-gray-500">
+                        No hay tramas aún...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana de Logs - Tramas Recibidas -->
+            <div
+                id="log-received"
+                class="hidden absolute right-0 mt-2 w-72 bg-white border border-[#ccc] shadow-lg rounded p-2 z-50"
+            >
+                <div class="text-center text-xs text-gray-500 mb-1">
+                    Tramas Recibidas
+                </div>
+                <div
+                    id="log-received-messages"
+                    class="log-window flex flex-col gap-1 text-xs font-mono text-gray-700 max-h-48 overflow-y-auto"
+                >
+                    <div class="text-center text-gray-500">
+                        No hay tramas aún...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logo GITSe -->
+        <img src={logoGITSe.src} alt="Logo GITSe" class="h-10" />
+    </div>
+</header>
+
+<!-- Estilos personalizados para scroll -->
+<style>
+    .log-window {
+        scrollbar-width: thin;
+        scrollbar-color: #a6a6a6 #f1f1f1;
+    }
+
+    .log-window::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .log-window::-webkit-scrollbar-thumb {
+        background: #a6a6a6;
+        border-radius: 4px;
+    }
+
+    .log-window::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+</style>
+
+<!-- Script para mostrar/ocultar ventanas de logs -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnToggleSent = document.getElementById("btn-toggle-sent");
+        const btnToggleReceived = document.getElementById(
+            "btn-toggle-received",
+        );
+        const logSent = document.getElementById("log-sent");
+        const logReceived = document.getElementById("log-received");
+
+        // Mostrar u ocultar logs enviados
+        btnToggleSent.addEventListener("click", () => {
+            const isVisible = !logSent.classList.contains("hidden");
+            logSent.classList.toggle("hidden", isVisible);
+            btnToggleSent.setAttribute("aria-expanded", !isVisible);
+
+            // Ocultar la otra ventana si está abierta
+            if (!logReceived.classList.contains("hidden")) {
+                logReceived.classList.add("hidden");
+                btnToggleReceived.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        // Mostrar u ocultar logs recibidos
+        btnToggleReceived.addEventListener("click", () => {
+            const isVisible = !logReceived.classList.contains("hidden");
+            logReceived.classList.toggle("hidden", isVisible);
+            btnToggleReceived.setAttribute("aria-expanded", !isVisible);
+
+            // Ocultar la otra ventana si está abierta
+            if (!logSent.classList.contains("hidden")) {
+                logSent.classList.add("hidden");
+                btnToggleSent.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        // Ocultar logs si se hace clic fuera
+        document.addEventListener("click", (e) => {
+            const clickedInSent =
+                logSent.contains(e.target) || btnToggleSent.contains(e.target);
+            const clickedInReceived =
+                logReceived.contains(e.target) ||
+                btnToggleReceived.contains(e.target);
+
+            if (!clickedInSent) logSent.classList.add("hidden");
+            if (!clickedInReceived) logReceived.classList.add("hidden");
+
+            btnToggleSent.setAttribute(
+                "aria-expanded",
+                !logSent.classList.contains("hidden"),
+            );
+            btnToggleReceived.setAttribute(
+                "aria-expanded",
+                !logReceived.classList.contains("hidden"),
+            );
+        });
+
+        // Función global para agregar logs enviados
+        window.addSentLog = function (message) {
+            const logContainer = document.getElementById("log-sent-messages");
+            if (!logContainer) return;
+
+            if (
+                logContainer.children.length === 1 &&
+                logContainer.firstChild.textContent === "No hay tramas aún..."
+            ) {
+                logContainer.innerHTML = "";
+            }
+
+            const logItem = document.createElement("div");
+            logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
+            logItem.textContent = `🔵 ${message}`;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        };
+
+        // Función global para agregar logs recibidos
+        window.addReceivedLog = function (message) {
+            const logContainer = document.getElementById(
+                "log-received-messages",
+            );
+            _addLog(logContainer, message, "🟢");
+        };
+
+        // Función auxiliar para agregar logs
+        function _addLog(container, message, icono = "🟡") {
+            // Eliminar mensaje inicial
+            if (
+                container.children.length === 1 &&
+                container.firstChild.textContent === "No hay tramas aún..."
+            ) {
+                container.innerHTML = "";
+            }
+
+            const logItem = document.createElement("div");
+            logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
+            logItem.textContent = `${icono} ${message}`;
+            container.appendChild(logItem);
+            container.scrollTop = container.scrollHeight;
+        }
+    });
+</script>
