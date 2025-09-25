@@ -13,6 +13,7 @@ dist-ssr
 *.local
 
 # Editor directories and files
+.vs
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -23,6 +24,16 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.production
+
+# Archivos grandes
+*.exe
+*.iss
+
+# Ignorar carpetas bin y obj en todos los proyectos
+**/bin
+**/obj
+**/wwwroot
 
 # Ignore package files
 package-lock.json
