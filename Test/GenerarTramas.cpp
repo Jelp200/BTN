@@ -1,16 +1,22 @@
 /**
- * #######################################################################################################################################
- *      Archivo: main.cpp
- *      SO: Windows 11
- *      Herramienta: Visual Studio Code
- *      Descripción:
- *          Simulador de tramas de sensores para cabinas ambientales.
- *          Genera datos simulados y los guarda en un archivo de texto con formato:
- *          C#Cabina|X:#Flotante|Y:#Flotante|Z:#Flotante|T:#Flotante|H:#Flotante|UV:#Flotante|
- *          CO2:#Flotante|O3:#Flotante|dB:#Flotante|\n
- * ######################################################################################################################################
+* #######################################################################################################################################
+*      Archivo: GenerarTramas.cpp
+*      Proyecto: Botonera (BTN) - Simulador de tramas
+*      SO: Windows 11
+*      Herramienta: Visual Studio Code
+*      Compilador: g++ (MinGW-W64) 12.2.0
+*      Estándar: C++14
+*      Autor: Jorge Peña (Jelp200)
+*      Descripción:
+*          Simulador de tramas de sensores para cabinas ambientales.
+*          Genera datos simulados y los guarda en un archivo de texto con formato:
+*          C#Cabina|X:#Flotante|Y:#Flotante|Z:#Flotante|T:#Flotante|H:#Flotante|UV:#Flotante|CO2:#Flotante|O3:#Flotante|dB:#Flotante|\n
+* ######################################################################################################################################
 */
 
+// ─────────────────────────────────────────────────────
+// Inclusión de librerías
+// ─────────────────────────────────────────────────────
 #include <iostream>
 #include <fstream>
 #include <random>
@@ -34,8 +40,7 @@ public:
     float co2;           // CO2: 400.0 - 800.0 ppm
     float o3;            // O3: 0.0 - 0.1 ppm
 
-    SensorData()
-        : temperatura(25.0f), humedad(45.0f), uv(5.0f), co2(600.0f), o3(0.05f) {}
+    SensorData() : temperatura(25.0f), humedad(45.0f), uv(5.0f), co2(600.0f), o3(0.05f) {}
 
     void actualizar(std::mt19937& gen) {
         std::uniform_real_distribution<float> tempDist(20.0f, 30.0f);
@@ -127,11 +132,11 @@ public:
 
 private:
     static int seleccionarCabina() {
-        std::cout << "=== SIMULADOR DE TRAMAS ===\n";
-        std::cout << "Seleccione la cabina a simular:\n";
-        std::cout << "1. Cabina 1\n";
-        std::cout << "2. Cabina 2\n";
-        std::cout << "Opción: ";
+        std::cout << "\t\t=== SIMULADOR DE TRAMAS ===\n";
+        std::cout << "\tSeleccione la cabina a simular:\n";
+        std::cout << "\t1. Cabina 1\n";
+        std::cout << "\t2. Cabina 2\n";
+        std::cout << "\tOpcion: ";
 
         int opcion;
         std::cin >> opcion;
@@ -139,7 +144,7 @@ private:
         if (opcion == 1 || opcion == 2) {
             return opcion;
         } else {
-            std::cout << "Opción inválida. Terminando programa.\n";
+            std::cout << "Opcion inválida. Terminando programa.\n";
             return -1;
         }
     }

@@ -10,6 +10,10 @@
 * ######################################################################################################################################
 */
 
+// ─────────────────────────────────────────────────────
+// Inclusión de librerías
+// ─────────────────────────────────────────────────────
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -109,12 +113,12 @@ int main() {
     std::vector<std::string> puertos = escanearPuertosCOM();
 
     if (puertos.empty()) {
-        std::cout << "❌ No se encontraron puertos COM disponibles.\n";
-        std::cout << "Asegúrate de tener un adaptador USB-Serial conectado o usa un puerto virtual (como com0com).\n";
+        std::cout << "No se encontraron puertos COM disponibles.\n";
+        std::cout << "Asegurate de tener un adaptador USB-Serial conectado o usa un puerto virtual (como com0com).\n";
         return 1;
     }
 
-    std::cout << "✅ Puertos COM disponibles:\n";
+    std::cout << "Puertos COM disponibles:\n";
     for (size_t i = 0; i < puertos.size(); ++i) {
         std::cout << "  [" << (i + 1) << "] " << puertos[i] << "\n";
     }
@@ -126,7 +130,7 @@ int main() {
     std::cin.ignore(); // Limpiar el buffer
 
     if (seleccion < 1 || seleccion > (int)puertos.size()) {
-        std::cout << "❌ Selección inválida.\n";
+        std::cout << "Selección inválida.\n";
         return 1;
     }
 
@@ -145,17 +149,17 @@ int main() {
     );
 
     if (hSerial == INVALID_HANDLE_VALUE) {
-        std::cout << "❌ Error al abrir el puerto " << puerto << ".\n";
+        std::cout << "Error al abrir el puerto " << puerto << ".\n";
         return 1;
     }
 
     if (!configurarPuerto(hSerial)) {
-        std::cout << "❌ Error al configurar el puerto " << puerto << ".\n";
+        std::cout << "Error al configurar el puerto " << puerto << ".\n";
         CloseHandle(hSerial);
         return 1;
     }
 
-    std::cout << "✅ Conectado a " << puerto << " a 9600 baudios.\n";
+    std::cout << "Conectado a " << puerto << " a 9600 baudios.\n";
     std::cout << "Esperando comandos desde el controlador serial...\n";
     std::cout << "Presiona Ctrl+C para salir.\n\n";
 
@@ -190,7 +194,7 @@ int main() {
                     if (bufferAcumulado[inicio + len - 1] == 'F') {
                         std::string candidato = bufferAcumulado.substr(inicio, len);
                         if (validarComando(candidato)) {
-                            // ✅ Comando válido encontrado
+                            // Comando válido encontrado
                             std::cout << "[Serial RX] Comando detectado: '" << candidato << "'\n";
 
                             std::string cabinaID = candidato.substr(1, 1);

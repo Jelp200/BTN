@@ -1,10 +1,27 @@
 /**
- * LiberarCOM.cpp
- * Utilidad para listar y liberar puertos COM en Windows
- * Compilar con: g++ -o LiberarCOM.exe LiberarCOM.cpp -lpsapi
- */
+* #######################################################################################################################################
+*      Archivo: LiberarCom.cpp
+*      Proyecto: Botonera (BTN) - Liberar puerto COM
+*      SO: Windows 11
+*      Herramienta: Visual Studio Code
+*      Compilador: g++ (MinGW-W64) 12.2.0
+*      Estándar: C++14
+*      Autor: Jorge Peña (Jelp200)
+*      Descripción:
+*          Programa el cual permite el escaneo de puertos COM en uso y la libreación de los mismos.
+*          Útil para liberar puertos COM bloqueados por aplicaciones que no los liberan correctamente
+* ######################################################################################################################################
+*/
 
-#define _WIN32_WINNT 0x0A00
+// ─────────────────────────────────────────────────────
+// Definiciones para Windows
+// ─────────────────────────────────────────────────────
+
+#define _WIN32_WINNT 0x0A00     // Windows 10 o superior
+
+// ─────────────────────────────────────────────────────
+// Inclusión de librerías
+// ─────────────────────────────────────────────────────
 
 #include <windows.h>
 #include <psapi.h>
@@ -85,30 +102,29 @@ std::vector<PuertoEnUso> escanearPuertosEnUso() {
 // Por simplicidad, usaremos un enfoque práctico: listar procesos comunes que usan COM
 
 int main() {
-    std::cout << "=== Liberador de Puertos COM (Windows) ===\n\n";
+    std::cout << "\t\t=== Liberador de Puertos COM (Windows) ===\n\n";
 
-    std::cout << "Escaneando puertos COM en uso (COM1-COM32)...\n";
+    std::cout << "\tEscaneando puertos COM en uso (COM1-COM32)...\n";
     std::vector<PuertoEnUso> puertos = escanearPuertosEnUso();
 
     if (puertos.empty()) {
-        std::cout << "✅ Todos los puertos COM están libres.\n";
+        std::cout << "\tTodos los puertos COM están libres.\n";
         return 0;
     }
 
-    std::cout << "\n⚠️ Puertos COM que no se pudieron abrir (probablemente en uso):\n";
+    std::cout << "\n\tPuertos COM que no se pudieron abrir (probablemente en uso):\n";
     for (size_t i = 0; i < puertos.size(); ++i) {
-        std::cout << "  [" << (i + 1) << "] " << puertos[i].nombre
-                  << " -> " << puertos[i].proceso << " (PID: " << puertos[i].pid << ")\n";
+        std::cout << "  [" << (i + 1) << "] " << puertos[i].nombre << " -> " << puertos[i].proceso << " (PID: " << puertos[i].pid << ")\n";
     }
 
-    std::cout << "\n💡 Recomendación:\n";
-    std::cout << "  - Cierra las aplicaciones que usen puertos serie (Arduino IDE, SerialController, etc.).\n";
-    std::cout << "  - Si es necesario, usa el 'Administrador de tareas' para finalizar el proceso.\n";
-    std::cout << "\n¿Deseas intentar matar un proceso? (No se puede determinar PID automáticamente)\n";
-    std::cout << "Alternativamente, reinicia tu aplicacion o la PC.\n";
+    std::cout << "\n\tRecomendación:\n";
+    std::cout << "\t- Cierra las aplicaciones que usen puertos serie (Arduino IDE, SerialController, etc.).\n";
+    std::cout << "\t- Si es necesario, usa el 'Administrador de tareas' para finalizar el proceso.\n";
+    std::cout << "\n\t¿Deseas intentar matar un proceso? (No se puede determinar PID automáticamente)\n";
+    std::cout << "\tAlternativamente, reinicia tu aplicacion o la PC.\n";
 
     // Opción: permitir al usuario ingresar un PID manualmente
-    std::cout << "\nIngresa un PID para terminar (0 para salir): ";
+    std::cout << "\n\tIngresa un PID para terminar (0 para salir): ";
     DWORD pid;
     std::cin >> pid;
 
@@ -116,13 +132,13 @@ int main() {
         HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
         if (hProcess != NULL) {
             if (TerminateProcess(hProcess, 0)) {
-                std::cout << "✅ Proceso " << pid << " terminado.\n";
+                std::cout << "\tProceso " << pid << " terminado.\n";
             } else {
-                std::cout << "❌ Error al terminar el proceso " << pid << ".\n";
+                std::cout << "\tError al terminar el proceso " << pid << ".\n";
             }
             CloseHandle(hProcess);
         } else {
-            std::cout << "❌ No se pudo abrir el proceso " << pid << ".\n";
+            std::cout << "\tNo se pudo abrir el proceso " << pid << ".\n";
         }
     }
 
