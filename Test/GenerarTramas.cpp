@@ -9,7 +9,7 @@
  *          C#Cabina|X:#Flotante|Y:#Flotante|Z:#Flotante|T:#Flotante|H:#Flotante|UV:#Flotante|
  *          CO2:#Flotante|O3:#Flotante|dB:#Flotante|\n
  * ######################################################################################################################################
- */
+*/
 
 #include <iostream>
 #include <fstream>
