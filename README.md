@@ -16,24 +16,15 @@
 
 ## 📌 Descripción General
 
-Esta aplicación controla actuadores y monitorea sensores conectados a un microcontrolador (MSP430) desde una interfaz de escritorio o web. Los datos de sensores y comandos se intercambian mediante un protocolo serial entre los diferentes módulos.
+La aplicación desarrollada permite controlar actuadores y monitorear sensores conectados a un microcontrolador dentro de una cabina desde una interfaz de escritorio/web central. Los datos de los sensores y los comandos generados por la interfaz se intercambian mediante un protocolo serial entre los diferentes modulos.
+
+> **_Nota._** Es posible controlar y visualizar datos de dos cabinas al mismo tiempo.
 
 ---
 
 ## 🧱 Arquitectura del Sistema
 
-```plaintext
-┌──────────────────┐         UART/USB          ┌──────────────────┐
-│  APLICACION C#   |  <─────────────────────>  │      uC (C)      |
-└──────────────────┘                           └──────────────────┘
-         ↑
-         |       API
-         ↓
-┌──────────────────┐
-|   INTERFAZ WEB   |
-| (Astro/Tailwind) |
-└──────────────────┘
-```
+![Arquitectura](imgs/Aquitectura.png)
 
 ---
 
@@ -41,20 +32,21 @@ Esta aplicación controla actuadores y monitorea sensores conectados a un microc
 
 ```plaintext
 BTN/
-├── app/
-|   ├── Escritorio/
-|   |   ├── ControlPanel.API/
-|   |   └── HostApp/
-|   └── Frontend/
+├── ControlPanel.API/
+|   ├── ControlPanel.API/
+|   └── ControlPanel.API.sln
+├── HostApp/
+|   ├── HostApp/
+|   └── HostApp.sln
+├── Microcontroller/
+├── Test/
+|   ├── output/
+|   └── GenerarTramas.cpp
+├── client/
+|   ├── public/
+|   └── src/
 ├── docs/
 ├── imgs/
-|   └── DF/
-├── test/
-|   ├── BotoneraSerial/
-|   └── PanelControlApp/
-├── uC/
-|   ├── Codigos nuevos/
-|   └── Codigos originales/
 ├── .gitignore/
 ├── LICENSE/
 └── README.md/
