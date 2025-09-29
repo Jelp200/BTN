@@ -6,11 +6,11 @@
 *       Herramientas:
 *           - Visual Studio Code
 *           - MySQL Workbench
-*      Compilador:
+*       Compilador:
 *           - MySQL 8.0
-*      Autor:
+*       Autor:
 *           - Jorge Peña (Jelp200)
-*      Descripción:
+*       Descripción:
 *          Script para la creación de la base de datos y tablas para la gestión de comandos de las cabinas de control.
 * ######################################################################################################################################
 */
@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS Cabinas (
 --- ===========================================
 CREATE TABLE IF NOT EXISTS Comandos (
     comando_id INT AUTO_INCREMENT PRIMARY KEY,
-    cabina_id INT NOT NULL,
     caracter_inicio CHAR(1) NOT NULL DEFAULT 'C',
+    cabina_id INT NOT NULL,
     codigo_comando VARCHAR(3) NOT NULL,
     caracter_final CHAR(1) NOT NULL DEFAULT 'F',
     categoria VARCHAR(50),
