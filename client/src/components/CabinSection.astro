@@ -834,21 +834,32 @@ import CabinPanel from "./CabinPanel.astro";
                 btn.setAttribute("data-codigo", item.codigo);
                 btn.setAttribute("data-seccion", seccion);
 
-                btn.addEventListener("click", () => {
+                btn.addEventListener("click", async () => {
                     const cabinaSeleccionada = cabinaSelector.value || "Cabina 1";
                     const cabinaPrefijo = cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                     const codigo = btn.getAttribute("data-codigo");
 
-                    // Desactivar sonido anterior
                     const sonidoPrevio = sonidoActivoPorCabina[cabinaSeleccionada];
+
+                    // === Si había un sonido activo, enviamos STOP antes de cambiar ===
                     if (sonidoPrevio && sonidoPrevio !== btn) {
+                        const codigoPrevio = sonidoPrevio.getAttribute("data-codigo");
+
+                        // Detener el sonido anterior
+                        enviarTrama(cabinaPrefijo, codigoSonidoControl.STOP, true);
+                        window.addSentLog(`[STOP] ${cabinaPrefijo}${codigoSonidoControl.STOP}F`);
+
+                        // Desactivar visualmente el sonido anterior
                         sonidoPrevio.classList.remove("bg-[#00bf63]", "text-white");
                         sonidoPrevio.classList.add("bg-[#efefef]");
                         const iconoPrevio = sonidoPrevio.querySelector(".text-green-800");
                         if (iconoPrevio) iconoPrevio.classList.add("hidden");
+
+                        // Esperar 0.5 s antes de continuar
+                        await new Promise((resolve) => setTimeout(resolve, 500));
                     }
 
-                    // Activar nuevo sonido
+                    // === Activar visualmente el nuevo sonido ===
                     btn.classList.remove("bg-[#efefef]");
                     btn.classList.add("bg-[#00bf63]", "text-white");
                     const icono = btn.querySelector(".text-green-800");
@@ -857,9 +868,14 @@ import CabinPanel from "./CabinPanel.astro";
                     sonidoActivoPorCabina[cabinaSeleccionada] = btn;
                     reproduciendoPorCabina[cabinaSeleccionada] = true;
 
-                    // Enviar trama de selección + PLAY implícito
-                    enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
-                    enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, true);     // <--- Aquí estaba el malnacido error ¯\_( ͡❛ ͜ʖ ͡❛)_/¯
+                    // === Enviar trama del nuevo sonido ===
+                    enviarTrama(cabinaPrefijo, codigo, true);
+                    window.addSentLog(`[SELECCION SONIDO] ${cabinaPrefijo}${codigo}F`);
+
+                    // Esperar 0.5 s y luego enviar PLAY
+                    await new Promise((resolve) => setTimeout(resolve, 500));
+                    enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, true);
+                    window.addSentLog(`[PLAY] ${cabinaPrefijo}${codigoSonidoControl.PLAY}F`);
 
                     // Habilitar controles de volumen
                     actualizarEstadoVolumen(panel, true);
