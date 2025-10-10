@@ -859,7 +859,7 @@ import CabinPanel from "./CabinPanel.astro";
 
                     // Enviar trama de selección + PLAY implícito
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
-                    enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, cabinaActiva);
+                    enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, true);     // <--- Aquí estaba el malnacido error ¯\_( ͡❛ ͜ʖ ͡❛)_/¯
 
                     // Habilitar controles de volumen
                     actualizarEstadoVolumen(panel, true);
