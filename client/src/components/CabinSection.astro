@@ -813,7 +813,6 @@ import CabinPanel from "./CabinPanel.astro";
         if (!contenedor || !botonesSeccion.length || !cabinaSelector) return;
 
         // Botones de control de sonido
-        const btnPlay = panel.querySelector("[data-sound-codigo='PLAY']");
         const btnVmas = panel.querySelector("[data-sound-codigo='VMAS']");
         const btnVmen = panel.querySelector("[data-sound-codigo='VMEN']");
         const btnStop = panel.querySelector("[data-sound-codigo='STOP']");
@@ -824,81 +823,69 @@ import CabinPanel from "./CabinPanel.astro";
         function mostrarSeccion(seccion) {
             contenedor.innerHTML = "";
             const datos = seccion === "sonidos" ? sonidosAmbientales : tinitus;
-
             datos.forEach((item) => {
                 const btn = document.createElement("button");
                 btn.className =
                     "w-full flex items-center justify-between bg-[#efefef] hover:bg-[#d9d9d9] px-4 py-2 mt-1 rounded-lg transition-colors";
-
                 btn.innerHTML = `
                     <span class="sonido-nombre">${item.nombre}</span>
+                    <span id="icono-${item.codigo}" class="text-green-800 hidden text-lg">▶</span>
                 `;
-                // <div class="flex items-center gap-2">
-                //    <span class="font-mono text-sm text-gray-600">${item.codigo}</span>
-                //    <span id="icono-${item.codigo}" class="text-green-800 hidden text-lg">▶</span>
-                // </div>
-
                 btn.setAttribute("data-codigo", item.codigo);
                 btn.setAttribute("data-seccion", seccion);
 
                 btn.addEventListener("click", () => {
-                    const cabinaSeleccionada =
-                        cabinaSelector?.value || "Cabina 1";
-                    const cabinaPrefijo =
-                        cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                    const cabinaSeleccionada = cabinaSelector.value || "Cabina 1";
+                    const cabinaPrefijo = cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                     const codigo = btn.getAttribute("data-codigo");
 
-                    const sonidoPrevio =
-                        sonidoActivoPorCabina[cabinaSeleccionada];
-                    if (sonidoPrevio) {
-                        sonidoPrevio.classList.remove(
-                            "bg-[#00bf63]",
-                            "text-white",
-                        );
+                    // Desactivar sonido anterior
+                    const sonidoPrevio = sonidoActivoPorCabina[cabinaSeleccionada];
+                    if (sonidoPrevio && sonidoPrevio !== btn) {
+                        sonidoPrevio.classList.remove("bg-[#00bf63]", "text-white");
                         sonidoPrevio.classList.add("bg-[#efefef]");
-
-                        // Ocultar ícono anterior
-                        const iconoPrevio =
-                            sonidoPrevio.querySelector(".text-green-800");
+                        const iconoPrevio = sonidoPrevio.querySelector(".text-green-800");
                         if (iconoPrevio) iconoPrevio.classList.add("hidden");
                     }
 
+                    // Activar nuevo sonido
                     btn.classList.remove("bg-[#efefef]");
                     btn.classList.add("bg-[#00bf63]", "text-white");
-                    sonidoActivoPorCabina[cabinaSeleccionada] = btn;
+                    const icono = btn.querySelector(".text-green-800");
+                    if (icono) icono.classList.remove("hidden");
 
-                    // No mostramos el ícono aquí (solo al dar PLAY)
+                    sonidoActivoPorCabina[cabinaSeleccionada] = btn;
+                    reproduciendoPorCabina[cabinaSeleccionada] = true;
+
+                    // Enviar trama de selección + PLAY implícito
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+                    enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, cabinaActiva);
+
+                    // Habilitar controles de volumen
+                    actualizarEstadoVolumen(panel, true);
                 });
 
-                // Restaurar botón como activo si corresponde
-                const codigoActivo =
-                    sonidoActivoPorCabina[panelKey]?.getAttribute(
-                        "data-codigo",
-                    );
+                // Restaurar estado si corresponde
+                const codigoActivo = sonidoActivoPorCabina[panelKey]?.getAttribute("data-codigo");
                 const esActivo = item.codigo === codigoActivo;
-
                 if (esActivo) {
                     btn.classList.remove("bg-[#efefef]");
                     btn.classList.add("bg-[#00bf63]", "text-white");
-                }
-
-                // Mostrar ícono ▶ si se está reproduciendo
-                const reproduciendo = reproduciendoPorCabina[panelKey];
-                if (esActivo && reproduciendo) {
-                    const icono = btn.querySelector(".text-green-800");
-                    if (icono) icono.classList.remove("hidden");
+                    if (reproduciendoPorCabina[panelKey]) {
+                        const icono = btn.querySelector(".text-green-800");
+                        if (icono) icono.classList.remove("hidden");
+                    }
                 }
 
                 contenedor.appendChild(btn);
             });
         }
 
-        // Cambio de sección
+        // Cambio de sección (sonidos / tinitus)
         botonesSeccion.forEach((btn) => {
             btn.addEventListener("click", () => {
                 botonesSeccion.forEach((b) =>
-                    b.classList.remove("bg-[#00bf63]", "text-white"),
+                    b.classList.remove("bg-[#00bf63]", "text-white")
                 );
                 btn.classList.add("bg-[#00bf63]", "text-white");
                 const seccion = btn.getAttribute("data-seccion");
@@ -934,52 +921,6 @@ import CabinPanel from "./CabinPanel.astro";
                     : "tinitus";
                 mostrarSeccion(seccionActiva);
                 restaurarSonidoActivo(panel);
-            });
-        }
-
-        // PLAY
-        if (btnPlay) {
-            btnPlay.addEventListener("click", () => {
-                if (!cabinaActiva) {
-                    mostrarNotificacion(
-                        "Por favor active la cabina antes de reproducir.",
-                        "error",
-                    );
-                    return;
-                }
-
-                const cabinaSeleccionada = cabinaSelector.value;
-                const cabinaPrefijo =
-                    cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
-
-                // Alternar estado
-                if (reproduciendoPorCabina[cabinaSeleccionada]) {
-                    // Detener
-                    btnPlay.classList.remove("bg-[#00bf63]", "text-white");
-                    btnPlay.classList.add("bg-[#d9d9d9]");
-                    enviarTrama(cabinaPrefijo, codigoSonidoControl.STOP, true);
-                    window.addSentLog(
-                        `[STOP] ${cabinaPrefijo}${codigoSonidoControl.STOP}F`,
-                    );
-                    reproduciendoPorCabina[cabinaSeleccionada] = false;
-                    botonPlayActivoPorCabina[cabinaSeleccionada] = null;
-                } else {
-                    // Reproducir
-                    btnPlay.classList.remove("bg-[#d9d9d9]");
-                    btnPlay.classList.add("bg-[#00bf63]", "text-white");
-                    enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, true);
-                    window.addSentLog(
-                        `[PLAY] ${cabinaPrefijo}${codigoSonidoControl.PLAY}F`,
-                    );
-                    reproduciendoPorCabina[cabinaSeleccionada] = true;
-                    botonPlayActivoPorCabina[cabinaSeleccionada] = btnPlay;
-                }
-
-                // Actualizar estado de volumen
-                actualizarEstadoVolumen(
-                    panel,
-                    reproduciendoPorCabina[cabinaSeleccionada],
-                );
             });
         }
 
@@ -1025,70 +966,50 @@ import CabinPanel from "./CabinPanel.astro";
                 const cabinaSeleccionada = cabinaSelector.value;
                 if (!reproduciendoPorCabina[cabinaSeleccionada]) return;
 
-                const nuevoVolumen = Math.min(
-                    100,
-                    volumenPorCabina[cabinaSeleccionada] + 10,
-                );
+                const nuevoVolumen = Math.min(100, volumenPorCabina[cabinaSeleccionada] + 10);
                 volumenPorCabina[cabinaSeleccionada] = nuevoVolumen;
-
                 actualizarBarraVolumen(panel, nuevoVolumen);
 
-                const cabinaPrefijo =
-                    cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                const cabinaPrefijo = cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                 enviarTrama(cabinaPrefijo, codigoSonidoControl.VMAS, true);
-                window.addSentLog(
-                    `[VMAS] ${cabinaPrefijo}${codigoSonidoControl.VMAS}F`,
-                );
+                window.addSentLog(`[VMAS] ${cabinaPrefijo}${codigoSonidoControl.VMAS}F`);
 
                 btnVmas.classList.add("opacity-50");
                 setTimeout(() => btnVmas.classList.remove("opacity-50"), 150);
             });
         }
 
-        // VMEN (-10)
+        // VMEN (-10) — ¡CORREGIDO! Se eliminó la línea "r;"
         if (btnVmen) {
             btnVmen.addEventListener("click", () => {
-                r;
                 const cabinaSeleccionada = cabinaSelector.value;
                 if (!reproduciendoPorCabina[cabinaSeleccionada]) return;
 
-                const nuevoVolumen = Math.max(
-                    0,
-                    volumenPorCabina[cabinaSeleccionada] - 10,
-                );
+                const nuevoVolumen = Math.max(0, volumenPorCabina[cabinaSeleccionada] - 10);
                 volumenPorCabina[cabinaSeleccionada] = nuevoVolumen;
-
                 actualizarBarraVolumen(panel, nuevoVolumen);
 
-                const cabinaPrefijo =
-                    cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                const cabinaPrefijo = cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                 enviarTrama(cabinaPrefijo, codigoSonidoControl.VMEN, true);
-                window.addSentLog(
-                    `[VMEN] ${cabinaPrefijo}${codigoSonidoControl.VMEN}F`,
-                );
+                window.addSentLog(`[VMEN] ${cabinaPrefijo}${codigoSonidoControl.VMEN}F`);
 
                 btnVmen.classList.add("opacity-50");
                 setTimeout(() => btnVmen.classList.remove("opacity-50"), 150);
             });
         }
 
-        // Inicializar
+        // Inicializar con "sonidos"
         const btnSonidos = panel.querySelector("#btn-sonidos");
-
         if (btnSonidos) {
             btnSonidos.classList.add("bg-[#00bf63]", "text-white");
             mostrarSeccion("sonidos");
         }
 
+        // Restaurar estado inicial
         const cabinaSeleccionadaInicial = cabinaSelector.value;
-        actualizarEstadoVolumen(
-            panel,
-            reproduciendoPorCabina[cabinaSeleccionadaInicial],
-        );
-        actualizarBarraVolumen(
-            panel,
-            volumenPorCabina[cabinaSeleccionadaInicial],
-        );
+        actualizarEstadoVolumen(panel, reproduciendoPorCabina[cabinaSeleccionadaInicial]);
+        actualizarBarraVolumen(panel, volumenPorCabina[cabinaSeleccionadaInicial]);
+        restaurarSonidoActivo(panel);
     }
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1287,14 +1208,6 @@ import CabinPanel from "./CabinPanel.astro";
             // Lógica de control de botones de sonido
             controlSoundButtons.forEach((btn) => {
                 btn.addEventListener("click", () => {
-                    if (!cabinaActiva) {
-                        mostrarNotificacion(
-                            "La cabina debe estar activa para controlar el audio.",
-                            "error",
-                        );
-                        return;
-                    }
-
                     const codigo = btn.getAttribute("data-sound-codigo");
                     const cabinaSelector = panel.querySelector(
                         "[data-select='cabina']",
