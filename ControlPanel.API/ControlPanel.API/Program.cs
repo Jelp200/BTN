@@ -6,11 +6,11 @@ using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// === Configuración de Clean Architecture: Inyección de Dependencias ===
+// === Configuraciï¿½n de Clean Architecture: Inyecciï¿½n de Dependencias ===
 builder.Services.AddSingleton<ITramaParser, TramaParser>();
 builder.Services.AddSingleton<ISerialService, SerialService>();
 
-// === Configuración existente ===
+// === Configuraciï¿½n existente ===
 
 // Habilitar CORS
 builder.Services.AddCors(options =>
@@ -36,7 +36,7 @@ var frontendDistPath = Path.GetFullPath(Path.Combine(
 // Validar que la carpeta exista
 if (!Directory.Exists(frontendDistPath))
 {
-    throw new DirectoryNotFoundException($"La carpeta del frontend no se encontró en: {frontendDistPath}");
+    throw new DirectoryNotFoundException($"La carpeta del frontend no se encontrï¿½ en: {frontendDistPath}");
 }
 
 // Middleware en orden correcto
@@ -50,7 +50,7 @@ app.UseDefaultFiles(new DefaultFilesOptions
     FileProvider = new PhysicalFileProvider(frontendDistPath)
 });
 
-// 3. Archivos estáticos (CSS, JS, imágenes, etc.)
+// 3. Archivos estï¿½ticos (CSS, JS, imï¿½genes, etc.)
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(frontendDistPath),
