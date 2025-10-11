@@ -353,7 +353,7 @@ import CabinPanel from "./CabinPanel.astro";
         }
     }
 
-    // Función para inicializar gráfica con Chart.js
+    // Función para inicializar y mantener actualizada la gráfica con nuevos datos
     async function initGrafica(panel, sensor = "X") {
         const graficaCanvas = panel.querySelector("#graficaPanel");
         if (!graficaCanvas) return;
@@ -361,30 +361,23 @@ import CabinPanel from "./CabinPanel.astro";
         const selectCabina = panel.querySelector("[data-select='cabina']");
         const cabina = selectCabina?.value.includes("1") ? "c1" : "c2";
 
-        //const selectSensor = panel.querySelector("[data-select='sensor']");
-        //const sensor = selectSensor ? selectSensor.value : "X"; // por defecto "X"
-
-        console.log("Sensor seleccionado:", sensor); // <- VERIFICA esto en consola
+        console.log("Sensor seleccionado:", sensor);
 
         try {
+            // Obtener datos iniciales
             const response = await fetch(
                 `http://localhost:5000/api/serial/datos/${cabina}`,
             );
-
-            if (!response.ok) {
-                // El servidor respondió con un estado de error (404, 500, etc.)
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
             const datos = await response.json();
-            console.log("Datos cabina:", datos);
-
             if (!Array.isArray(datos) || datos.length === 0) {
                 alert(`Sin datos disponibles para ${cabina.toUpperCase()}`);
                 return;
             }
 
-            const labels = datos.map((_, i) => `${i}`);
+            // 🔹 Crear labels y valores iniciales
+            const labels = datos.map((_, i) => `${i + 1}`);
             const valores = datos.map((d) => {
                 switch (sensor) {
                     case "T":
@@ -410,11 +403,12 @@ import CabinPanel from "./CabinPanel.astro";
                 }
             });
 
+            // 🔹 Si ya existe una gráfica previa, destrúyela una sola vez al inicio
             const existingChart = Chart.getChart(graficaCanvas);
             if (existingChart) existingChart.destroy();
 
             const ctx = graficaCanvas.getContext("2d");
-            graficaCanvas.chartInstance = new Chart(ctx, {
+            const chart = new Chart(ctx, {
                 type: "line",
                 data: {
                     labels,
@@ -422,7 +416,7 @@ import CabinPanel from "./CabinPanel.astro";
                         {
                             label: `${sensorConfig[sensor]?.label || "Dato"}`,
                             data: valores,
-                            borderColor: "#000",
+                            borderColor: "#004aad",
                             backgroundColor: "rgba(0, 74, 173, 0.2)",
                             tension: 0.3,
                             pointRadius: 0,
@@ -433,6 +427,7 @@ import CabinPanel from "./CabinPanel.astro";
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: false, // 🔹 evita retrasos al actualizar
                     scales: {
                         x: {
                             title: {
@@ -440,9 +435,6 @@ import CabinPanel from "./CabinPanel.astro";
                                 text: "Muestras",
                                 color: "#333",
                                 font: { weight: "bold" },
-                            },
-                            ticks: {
-                                display: false,
                             },
                             grid: { color: "#eee" },
                         },
@@ -457,92 +449,79 @@ import CabinPanel from "./CabinPanel.astro";
                         },
                     },
                     plugins: {
-                        legend: {
-                            display: true,
-                            labels: { color: "#333" },
-                        },
+                        legend: { display: true, labels: { color: "#333" } },
                     },
                 },
             });
 
+            // Guardar referencia
+            graficaCanvas.chartInstance = chart;
+
             // 🔁 Intervalo para actualizar cada 2 segundos
             setInterval(async () => {
                 try {
-                    const response_size = await fetch(
+                    // Obtener cantidad total de datos del backend
+                    const countResponse = await fetch(
                         `http://localhost:5000/api/serial/count/${cabina}`,
                     );
+                    if (!countResponse.ok)
+                        throw new Error(`Error HTTP: ${countResponse.status}`);
 
-                    if (!response.ok) {
-                        // El servidor respondió con un estado de error (404, 500, etc.)
-                        throw new Error(`Error HTTP: ${response.status}`);
-                    }
+                    const data_size = await countResponse.json();
+                    const countActual = chart.data.datasets[0].data.length;
 
-                    const data_size = await response_size.json();
+                    // Si hay nuevos datos
+                    if (data_size.count > countActual) {
+                        // Traer los datos faltantes (no solo el último, por si se acumularon varios)
+                        const nuevosResponse = await fetch(
+                            `http://localhost:5000/api/serial/datos/${cabina}`,
+                        );
+                        if (!nuevosResponse.ok)
+                            throw new Error(
+                                `Error HTTP: ${nuevosResponse.status}`,
+                            );
 
-                    //console.log("data_size.count",data_size);
-                    //console.log("valores.length",graficaCanvas.chartInstance.data.datasets[0].data.length);
+                        const nuevosDatos = await nuevosResponse.json();
 
-                    if (
-                        data_size.count >
-                        graficaCanvas.chartInstance.data.datasets[0].data.length
-                    ) {
-                        const response = await fetch(
-                            `http://localhost:5000/api/serial/ultimo-dato/${cabina}`,
+                        // Actualizar arrays
+                        const nuevosValores = nuevosDatos.map((d) => {
+                            switch (sensor) {
+                                case "T":
+                                    return d.t;
+                                case "H":
+                                    return d.h;
+                                case "UV":
+                                    return d.uv;
+                                case "CO2":
+                                    return d.cO2;
+                                case "O3":
+                                    return d.o3;
+                                case "dB":
+                                    return d.dB;
+                                case "X":
+                                    return d.x;
+                                case "Y":
+                                    return d.y;
+                                case "Z":
+                                    return d.z;
+                                default:
+                                    return 0;
+                            }
+                        });
+
+                        const nuevasLabels = nuevosDatos.map(
+                            (_, i) => `${i + 1}`,
                         );
 
-                        if (!response.ok) {
-                            // El servidor respondió con un estado de error (404, 500, etc.)
-                            throw new Error(`Error HTTP: ${response.status}`);
-                        }
+                        // 🔹 Reemplazar datasets por completo (mantiene el historial)
+                        chart.data.labels = nuevasLabels;
+                        chart.data.datasets[0].data = nuevosValores;
 
-                        const ultimoDato = await response.json();
-
-                        console.log(ultimoDato);
-
-                        let valor = 0;
-                        switch (sensor) {
-                            case "T":
-                                valor = ultimoDato.t;
-                                break;
-                            case "H":
-                                valor = ultimoDato.h;
-                                break;
-                            case "UV":
-                                valor = ultimoDato.uv;
-                                break;
-                            case "CO2":
-                                valor = ultimoDato.cO2;
-                                break;
-                            case "O3":
-                                valor = ultimoDato.o3;
-                                break;
-                            case "dB":
-                                valor = ultimoDato.dB;
-                                break;
-                            case "X":
-                                valor = ultimoDato.x;
-                                break;
-                            case "Y":
-                                valor = ultimoDato.y;
-                                break;
-                            case "Z":
-                                valor = ultimoDato.z;
-                                break;
-                            default:
-                                return;
-                        }
-
-                        const labels = graficaCanvas.chartInstance.data.labels; //graficaCanvas.chartInstance
-                        const data =
-                            graficaCanvas.chartInstance.data.datasets[0].data;
-
-                        labels.push(`${labels.length + 1}`);
-                        data.push(valor);
-
-                        graficaCanvas.chartInstance.update();
+                        // 🔹 Actualizar visualmente
+                        chart.update();
                     }
                 } catch (error) {
-                    console.error("Error al obtener el último dato:", error);
+                    console.error("Error al actualizar la gráfica:", error);
                 }
             }, 2000);
         } catch (error) {
@@ -835,28 +814,44 @@ import CabinPanel from "./CabinPanel.astro";
                 btn.setAttribute("data-seccion", seccion);
 
                 btn.addEventListener("click", async () => {
-                    const cabinaSeleccionada = cabinaSelector.value || "Cabina 1";
-                    const cabinaPrefijo = cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                    const cabinaSeleccionada =
+                        cabinaSelector.value || "Cabina 1";
+                    const cabinaPrefijo =
+                        cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                     const codigo = btn.getAttribute("data-codigo");
 
-                    const sonidoPrevio = sonidoActivoPorCabina[cabinaSeleccionada];
+                    const sonidoPrevio =
+                        sonidoActivoPorCabina[cabinaSeleccionada];
 
                     // === Si había un sonido activo, enviamos STOP antes de cambiar ===
                     if (sonidoPrevio && sonidoPrevio !== btn) {
-                        const codigoPrevio = sonidoPrevio.getAttribute("data-codigo");
+                        const codigoPrevio =
+                            sonidoPrevio.getAttribute("data-codigo");
 
                         // Detener el sonido anterior
-                        enviarTrama(cabinaPrefijo, codigoSonidoControl.STOP, true);
-                        window.addSentLog(`[STOP] ${cabinaPrefijo}${codigoSonidoControl.STOP}F`);
+                        enviarTrama(
+                            cabinaPrefijo,
+                            codigoSonidoControl.STOP,
+                            true,
+                        );
+                        window.addSentLog(
+                            `[STOP] ${cabinaPrefijo}${codigoSonidoControl.STOP}F`,
+                        );
 
                         // Desactivar visualmente el sonido anterior
-                        sonidoPrevio.classList.remove("bg-[#00bf63]", "text-white");
+                        sonidoPrevio.classList.remove(
+                            "bg-[#00bf63]",
+                            "text-white",
+                        );
                         sonidoPrevio.classList.add("bg-[#efefef]");
-                        const iconoPrevio = sonidoPrevio.querySelector(".text-green-800");
+                        const iconoPrevio =
+                            sonidoPrevio.querySelector(".text-green-800");
                         if (iconoPrevio) iconoPrevio.classList.add("hidden");
 
                         // Esperar 0.5 s antes de continuar
-                        await new Promise((resolve) => setTimeout(resolve, 500));
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 500),
+                        );
                     }
 
                     // === Activar visualmente el nuevo sonido ===
@@ -870,19 +865,26 @@ import CabinPanel from "./CabinPanel.astro";
 
                     // === Enviar trama del nuevo sonido ===
                     enviarTrama(cabinaPrefijo, codigo, true);
-                    window.addSentLog(`[SELECCION SONIDO] ${cabinaPrefijo}${codigo}F`);
+                    window.addSentLog(
+                        `[SELECCION SONIDO] ${cabinaPrefijo}${codigo}F`,
+                    );
 
                     // Esperar 0.5 s y luego enviar PLAY
                     await new Promise((resolve) => setTimeout(resolve, 500));
                     enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, true);
-                    window.addSentLog(`[PLAY] ${cabinaPrefijo}${codigoSonidoControl.PLAY}F`);
+                    window.addSentLog(
+                        `[PLAY] ${cabinaPrefijo}${codigoSonidoControl.PLAY}F`,
+                    );
 
                     // Habilitar controles de volumen
                     actualizarEstadoVolumen(panel, true);
                 });
 
                 // Restaurar estado si corresponde
-                const codigoActivo = sonidoActivoPorCabina[panelKey]?.getAttribute("data-codigo");
+                const codigoActivo =
+                    sonidoActivoPorCabina[panelKey]?.getAttribute(
+                        "data-codigo",
+                    );
                 const esActivo = item.codigo === codigoActivo;
                 if (esActivo) {
                     btn.classList.remove("bg-[#efefef]");
@@ -901,7 +903,7 @@ import CabinPanel from "./CabinPanel.astro";
         botonesSeccion.forEach((btn) => {
             btn.addEventListener("click", () => {
                 botonesSeccion.forEach((b) =>
-                    b.classList.remove("bg-[#00bf63]", "text-white")
+                    b.classList.remove("bg-[#00bf63]", "text-white"),
                 );
                 btn.classList.add("bg-[#00bf63]", "text-white");
                 const seccion = btn.getAttribute("data-seccion");
@@ -982,32 +984,44 @@ import CabinPanel from "./CabinPanel.astro";
                 const cabinaSeleccionada = cabinaSelector.value;
                 if (!reproduciendoPorCabina[cabinaSeleccionada]) return;
 
-                const nuevoVolumen = Math.min(100, volumenPorCabina[cabinaSeleccionada] + 10);
+                const nuevoVolumen = Math.min(
+                    100,
+                    volumenPorCabina[cabinaSeleccionada] + 10,
+                );
                 volumenPorCabina[cabinaSeleccionada] = nuevoVolumen;
                 actualizarBarraVolumen(panel, nuevoVolumen);
 
-                const cabinaPrefijo = cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                const cabinaPrefijo =
+                    cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                 enviarTrama(cabinaPrefijo, codigoSonidoControl.VMAS, true);
-                window.addSentLog(`[VMAS] ${cabinaPrefijo}${codigoSonidoControl.VMAS}F`);
+                window.addSentLog(
+                    `[VMAS] ${cabinaPrefijo}${codigoSonidoControl.VMAS}F`,
+                );
 
                 btnVmas.classList.add("opacity-50");
                 setTimeout(() => btnVmas.classList.remove("opacity-50"), 150);
             });
         }
 
-        // VMEN (-10) — ¡CORREGIDO! Se eliminó la línea "r;"
+        // VMEN (-10)
         if (btnVmen) {
             btnVmen.addEventListener("click", () => {
                 const cabinaSeleccionada = cabinaSelector.value;
                 if (!reproduciendoPorCabina[cabinaSeleccionada]) return;
 
-                const nuevoVolumen = Math.max(0, volumenPorCabina[cabinaSeleccionada] - 10);
+                const nuevoVolumen = Math.max(
+                    0,
+                    volumenPorCabina[cabinaSeleccionada] - 10,
+                );
                 volumenPorCabina[cabinaSeleccionada] = nuevoVolumen;
                 actualizarBarraVolumen(panel, nuevoVolumen);
 
-                const cabinaPrefijo = cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                const cabinaPrefijo =
+                    cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                 enviarTrama(cabinaPrefijo, codigoSonidoControl.VMEN, true);
-                window.addSentLog(`[VMEN] ${cabinaPrefijo}${codigoSonidoControl.VMEN}F`);
+                window.addSentLog(
+                    `[VMEN] ${cabinaPrefijo}${codigoSonidoControl.VMEN}F`,
+                );
 
                 btnVmen.classList.add("opacity-50");
                 setTimeout(() => btnVmen.classList.remove("opacity-50"), 150);
@@ -1023,8 +1037,14 @@ import CabinPanel from "./CabinPanel.astro";
 
         // Restaurar estado inicial
         const cabinaSeleccionadaInicial = cabinaSelector.value;
-        actualizarEstadoVolumen(panel, reproduciendoPorCabina[cabinaSeleccionadaInicial]);
-        actualizarBarraVolumen(panel, volumenPorCabina[cabinaSeleccionadaInicial]);
+        actualizarEstadoVolumen(
+            panel,
+            reproduciendoPorCabina[cabinaSeleccionadaInicial],
+        );
+        actualizarBarraVolumen(
+            panel,
+            volumenPorCabina[cabinaSeleccionadaInicial],
+        );
         restaurarSonidoActivo(panel);
     }
 
@@ -1050,10 +1070,16 @@ import CabinPanel from "./CabinPanel.astro";
             const sensorButtons = panel.querySelectorAll("button[data-sensor]");
 
             // Elementos de tiempo
-            const btnIniciarTemporizador = panel.querySelector("#btn-iniciar-temporizador");
-            const temporizadorBtnText = panel.querySelector("#temporizador-btn-text");
+            const btnIniciarTemporizador = panel.querySelector(
+                "#btn-iniciar-temporizador",
+            );
+            const temporizadorBtnText = panel.querySelector(
+                "#temporizador-btn-text",
+            );
             const tiempoMostrado = panel.querySelector("#tiempo-mostrado");
-            const botonDisparo = panel.querySelector('button[data-codigo="DISPARO"]'); // Botón de disparo
+            const botonDisparo = panel.querySelector(
+                'button[data-codigo="DISPARO"]',
+            ); // Botón de disparo
 
             // Elementos de estado visual
             const estadoCabina = panel.querySelector("#estado-cabina");
@@ -1272,11 +1298,11 @@ import CabinPanel from "./CabinPanel.astro";
                             codigo === "VMAS"
                                 ? Math.min(
                                       100,
-                                      volumenPorCabina[cabinaSeleccionada] + 10,
+                                      volumenPorCabina[cabinaSeleccionada] + 3,
                                   )
                                 : Math.max(
                                       0,
-                                      volumenPorCabina[cabinaSeleccionada] - 10,
+                                      volumenPorCabina[cabinaSeleccionada] - 3,
                                   );
 
                         volumenPorCabina[cabinaSeleccionada] = nuevoVolumen;
@@ -1532,39 +1558,43 @@ import CabinPanel from "./CabinPanel.astro";
 
             // Formatea segundos a MM:SS
             const formatearTiempo = (segundos) => {
-                const mins = Math.floor(segundos / 60).toString().padStart(2, '0');
-                const secs = (segundos % 60).toString().padStart(2, '0');
+                const mins = Math.floor(segundos / 60)
+                    .toString()
+                    .padStart(2, "0");
+                const secs = (segundos % 60).toString().padStart(2, "0");
                 return `${mins}:${secs}`;
             };
 
             // Actualiza el estado visual y lógico del botón de disparo
-            const actualizarEstadoBotonDisparo = (activado) => {
+            const actualizarEstadoBotonHumo = (activado) => {
                 if (activado) {
-                    botonDisparo.classList.remove("bg-[#d9d9d9]");
-                    botonDisparo.classList.add("bg-[#00bf63]");
-                    botonDisparo.setAttribute("aria-pressed", "true");
+                    botonHumo.classList.remove("bg-[#d9d9d9]");
+                    botonHumo.classList.add("bg-[#00bf63]");
+                    botonHumo.setAttribute("aria-pressed", "true");
                 } else {
-                    botonDisparo.classList.remove("bg-[#00bf63]");
-                    botonDisparo.classList.add("bg-[#d9d9d9]");
-                    botonDisparo.setAttribute("aria-pressed", "false");
+                    botonHumo.classList.remove("bg-[#00bf63]");
+                    botonHumo.classList.add("bg-[#d9d9d9]");
+                    botonHumo.setAttribute("aria-pressed", "false");
                 }
             };
 
             // Envía la trama correspondiente al estado del botón
-            const enviarTramaDisparo = (encendido) => {
-                const codigo = encendido ? codigoBoton.DISPARO.on : codigoBoton.DISPARO.off;
+            const enviarTramaHumo = (encendido) => {
+                const codigo = encendido
+                    ? codigoBoton.HUMO.on
+                    : codigoBoton.HUMO.off;
                 enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
             };
 
-            // Desactiva el botón de disparo y detiene todo
-            const desactivarDisparo = (enviarTramaAlDesactivar = true) => {
-                if (!botonDisparo) return;
+            // Desactiva calentamiento (solo si se requiere manualmente)
+            const desactivarHumo = (enviarTramaAlDesactivar = true) => {
+                if (!botonHumo) return;
 
-                actualizarEstadoBotonDisparo(false);
+                actualizarEstadoBotonHumo(false);
 
                 // Solo enviar trama si se indica
                 if (enviarTramaAlDesactivar) {
-                    enviarTramaDisparo(false); // Enviar trama OFF
+                    enviarTramaHumo(false); // Enviar trama OFF
                 }
 
                 if (intervalo) {
@@ -1577,46 +1607,40 @@ import CabinPanel from "./CabinPanel.astro";
             };
 
             // Inicia el temporizador y activa el botón de disparo
-            const activarDisparo = () => {
+            const activarHumo = () => {
                 if (!cabinaActiva) {
-                    alert("La cabina debe estar activa antes de usar esta función.");
+                    alert(
+                        "La cabina debe estar activa antes de usar esta función.",
+                    );
                     return false;
                 }
 
-                // Limpiar temporizador anterior si existe
-                if (intervalo) {
-                    clearInterval(intervalo);
-                }
+                if (intervalo) clearInterval(intervalo);
 
-                // Activar visualmente el botón de disparo
-                actualizarEstadoBotonDisparo(true);
-                enviarTramaDisparo(true); // Enviar trama ON
+                actualizarEstadoBotonHumo(true);
+                enviarTramaHumo(true);
 
-                // Reiniciar tiempo
-                tiempoRestante = 300;
+                tiempoRestante = 300; // 5 minutos
                 tiempoMostrado.textContent = formatearTiempo(tiempoRestante);
 
-                // Activar temporizador
                 temporizadorActivo = true;
                 actualizarEstadoBoton();
 
-                // Iniciar conteo
                 intervalo = setInterval(() => {
                     tiempoRestante--;
-
-                    tiempoMostrado.textContent = formatearTiempo(tiempoRestante);
+                    tiempoMostrado.textContent =
+                        formatearTiempo(tiempoRestante);
 
                     if (tiempoRestante <= 0) {
                         clearInterval(intervalo);
                         intervalo = null;
                         temporizadorActivo = false;
-                        actualizarEstadoBoton();    // Iniciar 5 min
-                        
-                        // Desactivar disparo sin enviar trama
-                        actualizarEstadoBotonDisparo(false);
+                        actualizarEstadoBoton();
 
-                        // Sonido de finalización
-                        new Audio('/sounds/alarm.mp3').play();
+                        // ⚠️ No se desactiva el humo ni se envía OFF
+                        // Solo se notifica que está lista
+                        new Audio("/sounds/alarm.mp3").play();
+                        alert("✅ Máquina de humo lista para disparar.");
                     }
                 }, 1000);
 
@@ -1636,51 +1660,78 @@ import CabinPanel from "./CabinPanel.astro";
             if (btnIniciarTemporizador) {
                 btnIniciarTemporizador.addEventListener("click", () => {
                     if (temporizadorActivo) {
-                        // Reiniciar: desactivar y volver a activar
-                        desactivarDisparo(true);    // Envía trama off
-                        activarDisparo();           // Envía trama on
+                        // Reinicia el calentamiento y el temporizador
+                        desactivarHumo(false); // no apaga la máquina
+                        activarHumo();
                     } else {
-                        activarDisparo();           // Solo activar
+                        activarHumo();
                     }
                 });
             }
 
-            // Botón de Disparo: activa/desactiva el ciclo
-            if (botonDisparo) {
-                botonDisparo.addEventListener("click", () => {
+            // Botón de Humo: activa el calentamiento con temporizador
+            if (botonHumo) {
+                botonHumo.addEventListener("click", () => {
                     // Si ya está activo, no hace nada (solo puede activarse por botón de control)
                     if (temporizadorActivo) return;
 
                     // Intenta activar el disparo
-                    activarDisparo();
+                    activarHumo();
+                });
+            }
+
+            // Botón Disparo: controla salida de humo (solo si máquina caliente)
+            if (botonDisparo && estadoHumo) {
+                botonDisparo.addEventListener("click", () => {
+                    if (!cabinaActiva) {
+                        alert(
+                            "La cabina debe estar activa antes de usar esta función.",
+                        );
+                        return;
+                    }
+
+                    // Se permite disparar si el botón de humo está activo
+                    const humoCalentando =
+                        botonHumo.getAttribute("aria-pressed") === "true";
+                    if (!humoCalentando) {
+                        alert(
+                            "Primero debes calentar la máquina de humo (botón Humo).",
+                        );
+                        return;
+                    }
+
+                    // Cambiar estado del humo (disparo)
+                    humoActivado = !humoActivado;
+
+                    if (humoActivado) {
+                        estadoHumo.classList.remove(
+                            "bg-[#ff5757]",
+                            "opacity-50",
+                        );
+                        estadoHumo.classList.add("bg-[#00bf63]", "opacity-100");
+                        enviarTrama(
+                            cabinaPrefijo,
+                            codigoBoton.DISPARO.on,
+                            cabinaActiva,
+                        );
+                    } else {
+                        estadoHumo.classList.remove(
+                            "bg-[#00bf63]",
+                            "opacity-100",
+                        );
+                        estadoHumo.classList.add("bg-[#ff5757]", "opacity-50");
+                        enviarTrama(
+                            cabinaPrefijo,
+                            codigoBoton.DISPARO.off,
+                            cabinaActiva,
+                        );
+                    }
                 });
             }
 
             // Inicializar estado
             actualizarEstadoBoton();
-            actualizarEstadoBotonDisparo(false); // Inicialmente apagado
-
-            // Botón Humo - Actualiza estado del detector
-            if (botonHumo && estadoHumo) {
-                botonHumo.addEventListener("click", () => {
-                    if (!cabinaActiva) {
-                        alert("La cabina debe estar activa antes de usar esta función.");
-                        return;
-                    }
-
-                    // Cambia el estado
-                    humoActivado = !humoActivado;
-
-                    // Actualiza el círculo de humo
-                    if (humoActivado) {
-                        estadoHumo.classList.remove("bg-[#ff5757]", "opacity-50");
-                        estadoHumo.classList.add("bg-[#00bf63]", "opacity-100");
-                    } else {
-                        estadoHumo.classList.remove("bg-[#00bf63]", "opacity-100");
-                        estadoHumo.classList.add("bg-[#ff5757]", "opacity-50");
-                    }
-                });
-            }
+            actualizarEstadoBotonHumo(false);
 
             // Manejo de botones de medición
             const medicionBotones = panel.querySelectorAll(".medicion-btn");
