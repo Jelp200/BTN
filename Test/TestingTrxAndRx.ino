@@ -1,13 +1,47 @@
+/*
+** #######################################################################################################################################
+**      Archivo: TestingTxAndRx.ino
+**      Proyecto: Botonera (BTN) - Test
+**      SO:
+**          - Windows 11
+**      Herramienta:
+**          - Visual Studio Code
+**          - Arduino IDE 23.6
+**      Autor:
+**          - Jorge Peña (Jelp200)
+**      Descripción:
+**          Programa de prueba para generación de tramas y visualización de tramas enviadas y comandos recibidos en una LCD 20 x 4
+** ######################################################################################################################################
+*/
+
+#include <LiquidCrystal.h>
+
 #define BAUD_RATE 9600
 
 // =====================================================
-// CONFIGURACIÓN
+// CONFIGURACIÓN LCD
 // =====================================================
-const unsigned long INTERVALO_ENVIO = 10000;   // 10 s
-const unsigned long RETARDO_INICIAL = 15000;   // 15 s
+const int RS = 12;
+const int EN = 11;
+const int D4 = 5;
+const int D5 = 4;
+const int D6 = 3;
+const int D7 = 2;
 
-unsigned long lastSendTimeC1 = 0;
-unsigned long lastSendTimeC2 = 0;
+LiquidCrystal lcd(RS, EN, D4, D5, D6, D7);
+
+// =====================================================
+// CONFIGURACIÓN DE SIMULACIÓN Y TIEMPOS
+// =====================================================
+const unsigned long INTERVALO_ENVIO = 10000;   // Cada 10 s
+const unsigned long RETARDO_INICIAL = 15000;   // Espera inicial 15 s
+const unsigned long RETRASO_CABINA2 = 3000;    // 3 s después de cabina 1
+const unsigned long INTERVALO_ENTRE_TRAMAS = 1000; // 1 s entre tramas de la misma cabina
+
+unsigned long lastCycleTime = 0;
+bool enviandoCabina1 = false;
+bool enviandoCabina2 = false;
+unsigned long lastTramaTime = 0;
 int indexC1 = 0;
 int indexC2 = 0;
 
@@ -34,155 +68,156 @@ const int cabina1_size = sizeof(cabina1_data) / sizeof(cabina1_data[0]);
 const int cabina2_size = sizeof(cabina2_data) / sizeof(cabina2_data[0]);
 
 // =====================================================
+// VARIABLES LCD (20x4)
+// =====================================================
+const int LCD_COLS = 20;
+const int LCD_ROWS = 4;
+String lcdLines[4] = {"", "", "", ""};
+
+// =====================================================
+// FUNCIONES LCD
+// =====================================================
+String ajustarTexto(const String &texto) {
+    if (texto.length() <= LCD_COLS) return texto;
+    return texto.substring(0, LCD_COLS);
+}
+
+void actualizarLCD(const String &nuevoTexto) {
+    for (int i = 0; i < LCD_ROWS - 1; i++) lcdLines[i] = lcdLines[i + 1];
+    lcdLines[LCD_ROWS - 1] = ajustarTexto(nuevoTexto);
+    for (int i = 0; i < LCD_ROWS; i++) {
+        lcd.setCursor(0, i);
+        lcd.print("                    ");
+        lcd.setCursor(0, i);
+        lcd.print(lcdLines[i]);
+    }
+}
+
+// =====================================================
 // INICIALIZACIÓN
 // =====================================================
-void setup()
-{
+void setup() {
     Serial.begin(BAUD_RATE);
+    Serial1.begin(BAUD_RATE);
     pinMode(13, OUTPUT);
-    Serial.println("✅ Arduino Mega listo. Esperando tramas de control...");
-    Serial.println("⏳ Envío de datos simulados iniciará en 15 segundos...");
+
+    lcd.begin(LCD_COLS, LCD_ROWS);
+    lcd.clear();
+    lcd.print("Arduino Mega 2560");
+    lcd.setCursor(0, 1);
+    lcd.print("LCD 20x4 - 9600 bps");
+
+    lcdLines[0] = "Arduino Mega 2560";
+    lcdLines[1] = "LCD 20x4 - 9600 bps";
+
+    Serial.println("✅ Arduino Mega listo. Enviando tramas alternadas...");
+    Serial1.println("✅ Arduino Mega listo. Enviando tramas alternadas...");
 }
 
 // =====================================================
 // LOOP PRINCIPAL
 // =====================================================
-void loop()
-{
+void loop() {
     unsigned long currentMillis = millis();
-
-    // ---------------------------
-    // 1️⃣ Recepción de comandos
-    // ---------------------------
     recibirComandos();
 
-    // ---------------------------
-    // 2️⃣ Envío de tramas simuladas
-    // ---------------------------
-    if (currentMillis >= RETARDO_INICIAL)
-    {
-        if (currentMillis - lastSendTimeC1 >= INTERVALO_ENVIO && indexC1 < cabina1_size)
-        {
-            Serial.println(cabina1_data[indexC1++]);
-            lastSendTimeC1 = currentMillis;
-        }
+    if (currentMillis < RETARDO_INICIAL) return;
 
-        if (currentMillis - lastSendTimeC2 >= INTERVALO_ENVIO && indexC2 < cabina2_size)
-        {
-            Serial.println(cabina2_data[indexC2++]);
-            lastSendTimeC2 = currentMillis;
-        }
+    // Iniciar ciclo de envío cada INTERVALO_ENVIO
+    if ((currentMillis - lastCycleTime) >= INTERVALO_ENVIO) {
+        enviandoCabina1 = true;
+        enviandoCabina2 = false;
+        indexC1 = 0;
+        indexC2 = 0;
+        lastTramaTime = currentMillis;
+        lastCycleTime = currentMillis;
+        actualizarLCD("Tx Cabina 1");
+    }
 
-        // Reinicia ciclos
-        if (indexC1 >= cabina1_size) indexC1 = 0;
-        if (indexC2 >= cabina2_size) indexC2 = 0;
+    // Enviar tramas Cabina 1
+    if (enviandoCabina1 && (currentMillis - lastTramaTime >= INTERVALO_ENTRE_TRAMAS)) {
+        enviarTrama(cabina1_data[indexC1]);
+        indexC1++;
+        lastTramaTime = currentMillis;
+        if (indexC1 >= cabina1_size) {
+            enviandoCabina1 = false;
+            enviandoCabina2 = true;
+            lastTramaTime = currentMillis + RETRASO_CABINA2; // espera 3s antes de C2
+            actualizarLCD("Tx Cabina 2");
+        }
+    }
+
+    // Enviar tramas Cabina 2
+    if (enviandoCabina2 && (currentMillis - lastTramaTime >= INTERVALO_ENTRE_TRAMAS)) {
+        enviarTrama(cabina2_data[indexC2]);
+        indexC2++;
+        lastTramaTime = currentMillis;
+        if (indexC2 >= cabina2_size) {
+            enviandoCabina2 = false;
+            actualizarLCD("End Cicle");
+        }
     }
 
     delay(10);
 }
 
 // =====================================================
-// FUNCIÓN: Recibir comandos de control tipo C1XXXF
+// FUNCIÓN: Enviar trama a ambos puertos
 // =====================================================
-void recibirComandos()
-{
-    if (Serial.available() >= 6)
-    {
+void enviarTrama(const char *trama) {
+    Serial.println(trama);   // TX0 → pin 1
+    Serial1.println(trama);  // TX1 → pin 18
+    actualizarLCD(String(trama));
+}
+
+// =====================================================
+// FUNCIÓN: Recibir comandos
+// =====================================================
+void recibirComandos() {
+    if (Serial.available() >= 6) {
         String trama = "";
-        while (Serial.available() && trama.length() < 7)
-        {
+        while (Serial.available() && trama.length() < 7) {
             char c = Serial.read();
-            if (c == '\n' || c == '\r')
-                break;
+            if (c == '\n' || c == '\r') break;
             trama += c;
         }
 
-        if ((trama.length() == 6 || trama.length() == 7) && trama.endsWith("F"))
-        {
+        if ((trama.length() == 6 || trama.length() == 7) && trama.endsWith("F")) {
             String cabina = trama.substring(0, 2);
             String codigoStr = trama.substring(2, 5);
-
             bool valido = true;
-            for (int i = 0; i < 3; i++)
-            {
-                if (!isDigit(codigoStr[i]))
-                {
-                    valido = false;
-                    break;
-                }
-            }
+            for (int i = 0; i < 3; i++) if (!isDigit(codigoStr[i])) valido = false;
 
-            if (valido && (cabina == "C1" || cabina == "C2"))
-            {
+            if (valido && (cabina == "C1" || cabina == "C2")) {
                 int codigo = codigoStr.toInt();
-                Serial.print("📡 Recibido → Cabina: ");
-                Serial.print(cabina);
-                Serial.print(" | Código: ");
-                Serial.println(codigo);
+                String msg = "Rec: " + cabina + codigoStr + "F";
+                actualizarLCD(msg);
+                Serial.print("📡 Recibido → ");
+                Serial1.print("📡 Recibido → ");
+                Serial.println(msg);
+                Serial1.println(msg);
                 procesarComando(cabina, codigo);
             }
-            else
-            {
-                Serial.println("⚠️ Trama inválida o formato incorrecto");
-            }
         }
-
-        while (Serial.available())
-            Serial.read();
+        while (Serial.available()) Serial.read();
     }
 }
 
 // =====================================================
 // FUNCIÓN: Procesar comando recibido
 // =====================================================
-void procesarComando(String cabina, int codigo)
-{
-    if (codigo >= 0 && codigo <= 17)
-    {
-        if (codigo % 2 == 0)
-        {
-            Serial.println("🔴 Apagando dispositivo...");
-            digitalWrite(13, LOW);
-        }
-        else
-        {
-            Serial.println("🟢 Encendiendo dispositivo...");
-            digitalWrite(13, HIGH);
-        }
-    }
-    else if (codigo >= 39 && codigo <= 88)
-    {
-        Serial.print("🔊 Reproduciendo sonido ");
-        Serial.println(codigo);
-    }
-    else if (codigo == 35)
-    {
-        Serial.println("▶️ PLAY");
-        digitalWrite(13, HIGH);
-    }
-    else if (codigo == 38)
-    {
-        Serial.println("⏹️ STOP");
-        digitalWrite(13, LOW);
-    }
-    else if (codigo == 36)
-    {
-        Serial.println("🔊 Volumen +10");
-        digitalWrite(13, HIGH);
-        delay(100);
-        digitalWrite(13, LOW);
-    }
-    else if (codigo == 37)
-    {
-        Serial.println("🔉 Volumen -10");
-        digitalWrite(13, HIGH);
-        delay(100);
-        digitalWrite(13, LOW);
-    }
-    else
-    {
-        Serial.print("Otros codigos: ");
-        Serial.println(codigo);
-        digitalWrite(13, LOW);
-    }
+void procesarComando(String cabina, int codigo) {
+    String mensaje = "";
+    if (codigo >= 0 && codigo <= 17) {
+        if (codigo % 2 == 0) { digitalWrite(13, LOW); mensaje = "Apagar " + cabina; }
+        else { digitalWrite(13, HIGH); mensaje = "Encender " + cabina; }
+    } else if (codigo >= 39 && codigo <= 88) mensaje = "Sonido " + String(codigo);
+    else if (codigo == 35) { digitalWrite(13, HIGH); mensaje = "PLAY"; }
+    else if (codigo == 38) { digitalWrite(13, LOW); mensaje = "STOP"; }
+    else if (codigo == 36) { digitalWrite(13, HIGH); delay(100); digitalWrite(13, LOW); mensaje = "Volumen +10"; }
+    else if (codigo == 37) { digitalWrite(13, HIGH); delay(100); digitalWrite(13, LOW); mensaje = "Volumen -10"; }
+    else { mensaje = "Cod:" + String(codigo); }
+
+    actualizarLCD(mensaje);
+    Serial1.println(mensaje);
 }
