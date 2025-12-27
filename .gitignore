@@ -13,6 +13,7 @@ dist-ssr
 *.local
 
 # Editor directories and files
+client/.astro
 .vs
 .vscode/*
 !.vscode/extensions.json
