@@ -19,8 +19,8 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
             <img src={logoAnahuac.src} alt="Logo Anáhuac Cancún" class="h-12" />
         </a>
 
-        <!-- Control de puertos COM -->
-        <div class="flex items-center gap-2 flex-wrap">
+        <!-- Control de puertos COM (OCULTO POR DEFECTO) -->
+        <div id="dev-com-controls" class="dev-feature hidden flex items-center gap-2 flex-wrap">
             <!-- Selector de Puerto -->
             <select
                 id="com-port-selector"
@@ -54,8 +54,8 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
             </button>
         </div>
 
-        <!-- Botones para Logs -->
-        <div class="relative">
+        <!-- Botones para Logs (OCULTO POR DEFECTO) -->
+        <div id="dev-log-controls" class="dev-feature hidden relative">
             <div class="flex gap-2">
                 <!-- Botón: Ver Tramas Enviadas -->
                 <button
@@ -143,6 +143,39 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
 
 <!-- Script para mostrar/ocultar ventanas de logs -->
 <script>
+    // Variable para detectar secuencia de teclas
+    let keySequence = "";
+    const DEV_CODE = "gitsdev";
+
+    // Detectar secuencia de teclas
+    document.addEventListener("keydown", (e) => {
+        keySequence += e.key.toLowerCase();
+        
+        // Mantener solo los últimos caracteres (longitud del código)
+        if (keySequence.length > DEV_CODE.length) {
+            keySequence = keySequence.slice(-DEV_CODE.length);
+        }
+
+        // Si se detecta la secuencia
+        if (keySequence === DEV_CODE) {
+            toggleDevFeatures();
+            keySequence = ""; // Resetear secuencia
+        }
+    });
+
+    // Función para toggle de features de desarrollo
+    function toggleDevFeatures() {
+        const devComControls = document.getElementById("dev-com-controls");
+        const devLogControls = document.getElementById("dev-log-controls");
+
+        if (devComControls) {
+            devComControls.classList.toggle("hidden");
+        }
+        if (devLogControls) {
+            devLogControls.classList.toggle("hidden");
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const btnToggleSent = document.getElementById("btn-toggle-sent");
         const btnToggleReceived = document.getElementById(
@@ -152,30 +185,34 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
         const logReceived = document.getElementById("log-received");
 
         // Mostrar u ocultar logs enviados
-        btnToggleSent.addEventListener("click", () => {
-            const isVisible = !logSent.classList.contains("hidden");
-            logSent.classList.toggle("hidden", isVisible);
-            btnToggleSent.setAttribute("aria-expanded", !isVisible);
+        if (btnToggleSent) {
+            btnToggleSent.addEventListener("click", () => {
+                const isVisible = !logSent.classList.contains("hidden");
+                logSent.classList.toggle("hidden", isVisible);
+                btnToggleSent.setAttribute("aria-expanded", !isVisible);
 
-            // Ocultar la otra ventana si está abierta
-            if (!logReceived.classList.contains("hidden")) {
-                logReceived.classList.add("hidden");
-                btnToggleReceived.setAttribute("aria-expanded", "false");
-            }
-        });
+                // Ocultar la otra ventana si está abierta
+                if (!logReceived.classList.contains("hidden")) {
+                    logReceived.classList.add("hidden");
+                    btnToggleReceived.setAttribute("aria-expanded", "false");
+                }
+            });
+        }
 
         // Mostrar u ocultar logs recibidos
-        btnToggleReceived.addEventListener("click", () => {
-            const isVisible = !logReceived.classList.contains("hidden");
-            logReceived.classList.toggle("hidden", isVisible);
-            btnToggleReceived.setAttribute("aria-expanded", !isVisible);
+        if (btnToggleReceived) {
+            btnToggleReceived.addEventListener("click", () => {
+                const isVisible = !logReceived.classList.contains("hidden");
+                logReceived.classList.toggle("hidden", isVisible);
+                btnToggleReceived.setAttribute("aria-expanded", !isVisible);
 
-            // Ocultar la otra ventana si está abierta
-            if (!logSent.classList.contains("hidden")) {
-                logSent.classList.add("hidden");
-                btnToggleSent.setAttribute("aria-expanded", "false");
-            }
-        });
+                // Ocultar la otra ventana si está abierta
+                if (!logSent.classList.contains("hidden")) {
+                    logSent.classList.add("hidden");
+                    btnToggleSent.setAttribute("aria-expanded", "false");
+                }
+            });
+        }
 
         // Ocultar logs si se hace clic fuera
         document.addEventListener("click", (e) => {
@@ -188,14 +225,18 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
             if (!clickedInSent) logSent.classList.add("hidden");
             if (!clickedInReceived) logReceived.classList.add("hidden");
 
-            btnToggleSent.setAttribute(
-                "aria-expanded",
-                !logSent.classList.contains("hidden"),
-            );
-            btnToggleReceived.setAttribute(
-                "aria-expanded",
-                !logReceived.classList.contains("hidden"),
-            );
+            if (btnToggleSent) {
+                btnToggleSent.setAttribute(
+                    "aria-expanded",
+                    !logSent.classList.contains("hidden"),
+                );
+            }
+            if (btnToggleReceived) {
+                btnToggleReceived.setAttribute(
+                    "aria-expanded",
+                    !logReceived.classList.contains("hidden"),
+                );
+            }
         });
 
         // Función global para agregar logs enviados
@@ -203,16 +244,16 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
             const logContainer = document.getElementById("log-sent-messages");
             if (!logContainer) return;
 
-            if (
-                logContainer.children.length === 1 &&
-                logContainer.firstChild.textContent === "No hay tramas aún..."
-            ) {
-                logContainer.innerHTML = "";
+            // Limpiar el mensaje placeholder
+            const placeholderElement = logContainer.querySelector(".text-center");
+            if (placeholderElement && placeholderElement.textContent.includes("No hay tramas aún")) {
+                placeholderElement.remove();
             }
 
+            const now = new Date().toLocaleTimeString();
             const logItem = document.createElement("div");
             logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
-            logItem.textContent = `🔵 ${message}`;
+            logItem.textContent = `🔵 [${now}] ${message}`;
             logContainer.appendChild(logItem);
             logContainer.scrollTop = logContainer.scrollHeight;
         };
@@ -222,22 +263,33 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
             const logContainer = document.getElementById(
                 "log-received-messages",
             );
-            _addLog(logContainer, message, "🟢");
-        };
-
-        // Función auxiliar para agregar logs
-        function _addLog(container, message, icono = "🟡") {
-            // Eliminar mensaje inicial
-            if (
-                container.children.length === 1 &&
-                container.firstChild.textContent === "No hay tramas aún..."
-            ) {
-                container.innerHTML = "";
+            
+            // Limpiar el mensaje placeholder
+            const placeholderElement = logContainer.querySelector(".text-center");
+            if (placeholderElement && placeholderElement.textContent.includes("No hay tramas aún")) {
+                placeholderElement.remove();
             }
 
+            const now = new Date().toLocaleTimeString();
             const logItem = document.createElement("div");
             logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
-            logItem.textContent = `${icono} ${message}`;
+            logItem.textContent = `🟢 [${now}] ${message}`;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        };
+
+        // Función auxiliar para agregar logs (ya no se usa, pero se mantiene por compatibilidad)
+        function _addLog(container, message, icono = "🟡") {
+            // Eliminar mensaje inicial
+            const placeholderElement = container.querySelector(".text-center");
+            if (placeholderElement && placeholderElement.textContent.includes("No hay tramas aún")) {
+                placeholderElement.remove();
+            }
+
+            const now = new Date().toLocaleTimeString();
+            const logItem = document.createElement("div");
+            logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
+            logItem.textContent = `${icono} [${now}] ${message}`;
             container.appendChild(logItem);
             container.scrollTop = container.scrollHeight;
         }
