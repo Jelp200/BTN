@@ -445,10 +445,18 @@ async function initGrafica(panel, sensor = "X") {
 
         // Guardar referencia
         graficaCanvas.chartInstance = chart;
+        graficaCanvas.lastDataCount = datos.length; // Rastrear cantidad de datos
+        graficaCanvas.sensor = sensor; // Guardar sensor actual
 
         // 🔁 Intervalo para actualizar cada 2 segundos
         setInterval(async () => {
             try {
+                // Si el sensor cambió, reiniciar
+                if (graficaCanvas.sensor !== sensor) {
+                    initGrafica(panel, sensor);
+                    return;
+                }
+
                 // Obtener cantidad total de datos del backend
                 const countResponse = await fetch(
                     `http://localhost:5000/api/serial/count/${cabina}`,
@@ -457,11 +465,11 @@ async function initGrafica(panel, sensor = "X") {
                     throw new Error(`Error HTTP: ${countResponse.status}`);
 
                 const data_size = await countResponse.json();
-                const countActual = chart.data.datasets[0].data.length;
+                const countActual = graficaCanvas.lastDataCount;
 
                 // Si hay nuevos datos
                 if (data_size.count > countActual) {
-                    // Traer los datos faltantes (no solo el último, por si se acumularon varios)
+                    // Traer todos los datos (para asegurar que tenemos la secuencia correcta)
                     const nuevosResponse = await fetch(
                         `http://localhost:5000/api/serial/datos/${cabina}`,
                     );
@@ -470,10 +478,10 @@ async function initGrafica(panel, sensor = "X") {
                             `Error HTTP: ${nuevosResponse.status}`,
                         );
 
-                    const nuevosDatos = await nuevosResponse.json();
+                    const todosDatos = await nuevosResponse.json();
 
-                    // Actualizar arrays
-                    const nuevosValores = nuevosDatos.map((d) => {
+                    // Extraer solo los valores del sensor seleccionado
+                    const nuevosSensorValores = todosDatos.map((d) => {
                         switch (sensor) {
                             case "T":
                                 return d.t;
@@ -498,16 +506,30 @@ async function initGrafica(panel, sensor = "X") {
                         }
                     });
 
-                    const nuevasLabels = nuevosDatos.map(
-                        (_, i) => `${i + 1}`,
+                    // Limitar a últimos 100 puntos para evitar sobrecarga
+                    const maxPuntos = 100;
+                    let valoresFinales = nuevosSensorValores;
+                    let indiceInicio = 0;
+
+                    if (valoresFinales.length > maxPuntos) {
+                        indiceInicio = valoresFinales.length - maxPuntos;
+                        valoresFinales = valoresFinales.slice(indiceInicio);
+                    }
+
+                    // Crear labels para los datos finales
+                    const nuevasLabels = valoresFinales.map(
+                        (_, i) => `${indiceInicio + i + 1}`,
                     );
 
-                    // 🔹 Reemplazar datasets por completo (mantiene el historial)
+                    // 🔹 Actualizar datos de la gráfica
                     chart.data.labels = nuevasLabels;
-                    chart.data.datasets[0].data = nuevosValores;
+                    chart.data.datasets[0].data = valoresFinales;
+
+                    // 🔹 Actualizar contador
+                    graficaCanvas.lastDataCount = todosDatos.length;
 
                     // 🔹 Actualizar visualmente
-                    chart.update();
+                    chart.update("none"); // "none" evita animaciones
                 }
             } catch (error) {
                 console.error("Error al actualizar la gráfica:", error);
