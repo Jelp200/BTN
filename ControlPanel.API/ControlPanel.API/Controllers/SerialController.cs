@@ -159,6 +159,15 @@ public class SerialController : ControllerBase
         return Ok(new { Count = count });
     }
 
+    // GET: api/serial/count/{cabina}
+    // Devuelve el conteo de datos de una cabina específica
+    [HttpGet("count/{cabina}")]
+    public async Task<IActionResult> GetDataCountByCabina(string cabina)
+    {
+        var count = await _serialService.GetTramaCountByCabinaAsync(cabina);
+        return Ok(new { count = count });
+    }
+
     // =============================================
     // DATOS DE SENSORES
     // =============================================
@@ -187,7 +196,21 @@ public class SerialController : ControllerBase
     public async Task<IActionResult> GetDatosCabina1()
     {
         var datos = await _serialService.GetAllDatosAsync();
-        return Ok(datos.Where(d => d.Cabina == "C1").ToList());
+        var resultado = datos.Where(d => d.Cabina == "C1").Select(d => new
+        {
+            cabina = d.Cabina,
+            timestamp = d.Timestamp,
+            x = d.X,
+            y = d.Y,
+            z = d.Z,
+            t = d.T,
+            h = d.H,
+            uv = d.UV,
+            cO2 = d.CO2,
+            o3 = d.O3,
+            dB = d.dB
+        }).ToList();
+        return Ok(resultado);
     }
 
     // GET: api/serial/datos/c2
@@ -196,7 +219,21 @@ public class SerialController : ControllerBase
     public async Task<IActionResult> GetDatosCabina2()
     {
         var datos = await _serialService.GetAllDatosAsync();
-        return Ok(datos.Where(d => d.Cabina == "C2").ToList());
+        var resultado = datos.Where(d => d.Cabina == "C2").Select(d => new
+        {
+            cabina = d.Cabina,
+            timestamp = d.Timestamp,
+            x = d.X,
+            y = d.Y,
+            z = d.Z,
+            t = d.T,
+            h = d.H,
+            uv = d.UV,
+            cO2 = d.CO2,
+            o3 = d.O3,
+            dB = d.dB
+        }).ToList();
+        return Ok(resultado);
     }
 
     // GET: api/serial/ultimo-dato/c1
