@@ -28,7 +28,6 @@ client/.astro
 
 # Archivos grandes
 *.exe
-*.iss
 
 # Ignorar carpetas bin y obj en todos los proyectos
 **/bin
