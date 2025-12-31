@@ -276,7 +276,7 @@ async function desconectarPuertoSerial() {
 async function fetchDatosPorCabina(cabina) {
     try {
         const response = await fetch(
-            `http://localhost:5000/api/serial/ultimo-dato/${cabina.toLowerCase()}`,
+            `http://localhost:5000/api/serial/datos/${cabina.toLowerCase()}`,
         );
 
         if (!response.ok) {
