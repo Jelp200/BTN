@@ -126,19 +126,21 @@ Write-Section "📦 COPIANDO BINARIOS A CARPETA DIST"
 $controlPanelPublish = Join-Path $controlPanelPath "bin\Release\net8.0\win-x64\publish"
 $hostAppPublish = Join-Path $hostAppPath "bin\Release\net8.0-windows\win-x64\publish"
 
-Write-Status "Copiando ControlPanel.API.exe..." "info"
+Write-Status "Copiando ControlPanel.API (todo el publish)..." "info"
 if (Test-Path (Join-Path $controlPanelPublish "ControlPanel.API.exe")) {
-    Copy-Item (Join-Path $controlPanelPublish "ControlPanel.API.exe") $installerDistPath -Force
-    Write-Status "✅ ControlPanel.API.exe copiado" "success"
+    # Limpiar contenido previo de dist (excepto wwwroot si existe)
+    Get-ChildItem $installerDistPath -Force | Where-Object { $_.Name -ne "wwwroot" } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Copy-Item (Join-Path $controlPanelPublish "*") $installerDistPath -Recurse -Force
+    Write-Status "✅ ControlPanel.API publish copiado" "success"
 } else {
     Write-Status "ERROR: No se encontró ControlPanel.API.exe en $controlPanelPublish" "error"
     exit 1
 }
 
-Write-Status "Copiando HostApp.exe..." "info"
+Write-Status "Copiando HostApp (todo el publish)..." "info"
 if (Test-Path (Join-Path $hostAppPublish "HostApp.exe")) {
-    Copy-Item (Join-Path $hostAppPublish "HostApp.exe") $installerDistPath -Force
-    Write-Status "✅ HostApp.exe copiado" "success"
+    Copy-Item (Join-Path $hostAppPublish "*") $installerDistPath -Recurse -Force
+    Write-Status "✅ HostApp publish copiado" "success"
 } else {
     Write-Status "ERROR: No se encontró HostApp.exe en $hostAppPublish" "error"
     exit 1
