@@ -53,15 +53,11 @@ LanguageDetectionMethod=uilanguage
 ; Archivos a Incluir
 ; ============================================================================
 [Files]
-; Backend API - En la misma carpeta que HostApp
-Source: "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\dist\ControlPanel.API.exe"; \
-DestDir: "{app}"; Flags: ignoreversion
+; Copiar TODO el contenido publicado (exe + dlls + runtimes + assets)
+Source: "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\dist\*"; \
+DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-; Frontend/Host App
-Source: "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\dist\HostApp.exe"; \
-DestDir: "{app}"; Flags: ignoreversion
-
-; Archivos estáticos (wwwroot)
+; Archivos estáticos (wwwroot) - asegurar copia completa
 Source: "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\dist\wwwroot\*"; \
 DestDir: "{app}\wwwroot"; Flags: ignoreversion recursesubdirs createallsubdirs
 
