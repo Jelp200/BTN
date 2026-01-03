@@ -28,6 +28,7 @@ client/.astro
 
 # Archivos grandes
 *.exe
+# TODO: Agregar .iss despues de las pruebas
 
 # Ignorar carpetas bin y obj en todos los proyectos
 **/bin
