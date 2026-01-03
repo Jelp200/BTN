@@ -65,7 +65,12 @@ namespace HostApp
         {
             try
             {
-                var apiExe = Path.Combine("ControlPanel.API.exe");
+                // Directorio donde está instalado HostApp.exe
+                string appDirectory = Path.GetDirectoryName(Application.ExecutablePath)!;
+                Debug.WriteLine($"📁 Directorio de aplicación: {appDirectory}");
+
+                // Ejecutable de la API en la misma carpeta
+                var apiExe = Path.Combine(appDirectory, "ControlPanel.API.exe");
 
                 // Validar que el ejecutable exista en la misma carpeta que HostApp
                 if (!File.Exists(apiExe))
@@ -101,14 +106,31 @@ namespace HostApp
                     {
                         FileName = apiExe,
                         Arguments = "--urls=http://localhost:5000", // La API escuchará en este puerto
-                        UseShellExecute = true,
+                        UseShellExecute = false, // Ejecutar directamente, no vía shell
+                        WorkingDirectory = appDirectory, // Asegurar directorio correcto
                         CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
                     }
+                };
+
+                // Capturar salida para diagnóstico
+                _apiProcess.OutputDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                        Debug.WriteLine("[API OUT] " + e.Data);
+                };
+                _apiProcess.ErrorDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                        Debug.WriteLine("[API ERR] " + e.Data);
                 };
 
                 // Lanzar la API
                 _apiProcess.Start();
+                _apiProcess.BeginOutputReadLine();
+                _apiProcess.BeginErrorReadLine();
 
                 // Esperar a que la API esté lista para recibir solicitudes
                 if (await WaitForServerAsync("http://localhost:5000", 30000))
