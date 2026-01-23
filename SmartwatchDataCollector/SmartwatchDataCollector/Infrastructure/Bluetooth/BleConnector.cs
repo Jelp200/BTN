@@ -9,11 +9,11 @@ namespace SmartwatchDataCollector.Infrastructure.Bluetooth
     public class BleConnector : IBleConnector
     {
         private BluetoothLEDevice? _device;
+        private GattSession? _gattSession; // Mantenemos la sesión activa
         public event Action<GattData>? OnDataReceived;
 
         public async Task ConnectAsync(string macAddress)
         {
-            // Convertimos la MAC de Hex String a ulong
             ulong address = Convert.ToUInt64(macAddress, 16);
 
             Console.WriteLine($"Conectando a {macAddress}...");
@@ -21,10 +21,32 @@ namespace SmartwatchDataCollector.Infrastructure.Bluetooth
 
             if (_device == null) throw new Exception("No se pudo establecer conexión.");
 
+            // ============================================================
+            // CONFIGURACIÓN DE MTU Y SESIÓN
+            // ============================================================
+            _gattSession = await GattSession.FromDeviceIdAsync(_device.BluetoothDeviceId);
+
+            if (_gattSession != null)
+            {
+                // Mantener la conexión activa aunque no haya tráfico
+                _gattSession.MaintainConnection = true;
+
+                // Suscribirse al evento de cambio de MTU para confirmar
+                _gattSession.MaxPduSizeChanged += (s, args) =>
+                {
+                    Console.WriteLine($"[INFO] MTU actualizado por el sistema a: {s.MaxPduSize} bytes");
+                };
+
+                // En Windows, no podemos "forzar" un número exacto como en Android,
+                // pero al llamar a este método, Windows negocia el máximo posible (hasta 517).
+                // Como tu reloj soporta 247, Windows aceptará ese valor automáticamente.
+                Console.WriteLine("Negociando MTU con el dispositivo...");
+            }
+            // ============================================================
+
             Console.WriteLine("Conexión exitosa. Explorando servicios...");
 
-            // Obtenemos los servicios del reloj
-            var servicesResult = await _device.GetGattServicesAsync();
+            var servicesResult = await _device.GetGattServicesAsync(BluetoothCacheMode.Uncached);
 
             if (servicesResult.Status == GattCommunicationStatus.Success)
             {
@@ -52,23 +74,27 @@ namespace SmartwatchDataCollector.Infrastructure.Bluetooth
                 {
                     var writer = new DataWriter();
                     writer.WriteBytes(data);
-                    await character.WriteValueAsync(writer.DetachBuffer());
-                    Console.WriteLine($"[TX] Comando enviado a {charUuid}: {BitConverter.ToString(data)}");
+
+                    // Usamos WriteWithoutResponse si la característica lo requiere (como vimos en tus logs para ae01)
+                    var writeOption = character.CharacteristicProperties.HasFlag(GattCharacteristicProperties.WriteWithoutResponse)
+                                      ? GattWriteOption.WriteWithoutResponse
+                                      : GattWriteOption.WriteWithResponse;
+
+                    await character.WriteValueAsync(writer.DetachBuffer(), writeOption);
+                    Console.WriteLine($"[TX] Enviado a {charUuid}: {BitConverter.ToString(data)}");
                 }
             }
         }
 
         private async Task ExploreCharacteristics(GattDeviceService service)
         {
-            var charResult = await service.GetCharacteristicsAsync();
+            var charResult = await service.GetCharacteristicsAsync(BluetoothCacheMode.Uncached);
             if (charResult.Status == GattCommunicationStatus.Success)
             {
                 foreach (var character in charResult.Characteristics)
                 {
-                    // Intentamos leer el valor actual de cada característica
                     Console.WriteLine($"  - Característica: {character.Uuid} | Propiedades: {character.CharacteristicProperties}");
 
-                    // Si permite notificaciones, nos suscribimos (aquí es donde llegan los datos en vivo)
                     if (character.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Notify))
                     {
                         await SubscribeToCharacteristic(character);
@@ -79,21 +105,28 @@ namespace SmartwatchDataCollector.Infrastructure.Bluetooth
 
         private async Task SubscribeToCharacteristic(GattCharacteristic characteristic)
         {
-            var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
-            if (status == GattCommunicationStatus.Success)
+            try
             {
-                characteristic.ValueChanged += (s, args) =>
+                var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
+                if (status == GattCommunicationStatus.Success)
                 {
-                    var reader = DataReader.FromBuffer(args.CharacteristicValue);
-                    byte[] input = new byte[reader.UnconsumedBufferLength];
-                    reader.ReadBytes(input);
+                    characteristic.ValueChanged += (s, args) =>
+                    {
+                        var reader = DataReader.FromBuffer(args.CharacteristicValue);
+                        byte[] input = new byte[reader.UnconsumedBufferLength];
+                        reader.ReadBytes(input);
 
-                    OnDataReceived?.Invoke(new GattData(characteristic.Service.Uuid.ToString(), characteristic.Uuid.ToString(), input));
-                };
-                Console.WriteLine($"    [!] Suscrito a notificaciones de: {characteristic.Uuid}");
+                        OnDataReceived?.Invoke(new GattData(characteristic.Service.Uuid.ToString(), characteristic.Uuid.ToString(), input));
+                    };
+                    Console.WriteLine($"    [!] Suscrito a: {characteristic.Uuid}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"    [ERROR] No se pudo suscribir a {characteristic.Uuid}: {ex.Message}");
             }
         }
 
-        public Task SubscribeToNotificationsAsync() => Task.CompletedTask; // Implementado arriba
+        public Task SubscribeToNotificationsAsync() => Task.CompletedTask;
     }
 }
