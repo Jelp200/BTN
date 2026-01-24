@@ -1,8 +1,18 @@
 ---
-// HeaderLogos.astro
+//* HeaderLogos.astro *//
 
-import logoAnahuac from "../../public/logos/logo-anahuac.svg";
-import logoGITSe from "../../public/logos/logo-gitse.svg";
+/* Importar logos e imagenes */
+import logoPC from "../../public/logos/logo-anahuac.svg";
+import logoGT from "../../public/logos/logo-gitse.svg";
+import uC from "../../public/logos/uC.svg";
+import ucUno from "../../public/logos/uc-arduino-uno.svg";
+import ucMega from "../../public/logos/uc-arduino-mega.svg";
+import ucEsp32 from "../../public/logos/uc-esp32.svg";
+import ucMsp430 from "../../public/logos/uc-msp430.svg";
+import iconConnect from "../../public/logos/icon-connect.svg";
+
+/* Importar estilos */
+import "../styles/header.css";
 ---
 
 <!-- Header sticky -->
@@ -10,48 +20,60 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
     <div
         class="w-full flex flex-wrap justify-between items-center gap-4 px-6 py-1 bg-white border-b border-gray-200"
     >
-        <!-- Logo Anáhuac -->
-        <a
-            href="https://cancun.anahuac.mx/sitio/ "
-            target="_blank"
-            rel="noopener noreferrer"
+        <!-- Logo PC -->
+        <img src={logoPC.src} alt="Logo PC" class="h-12" />
+
+        <!-- Controles de desarrollo (OCULTOS POR DEFECTO) -->
+        <div
+            id="dev-com-controls"
+            class="dev-feature hidden items-center gap-2 flex-wrap"
         >
-            <img src={logoAnahuac.src} alt="Logo Anáhuac Cancún" class="h-12" />
-        </a>
+            <!-- Grupo: uC + Puerto + Acciones (misma fila) -->
+            <div class="flex items-center gap-2 flex-nowrap">
+                <!-- Selector de uC (a la izquierda del selector de puertos) -->
+                <select
+                    id="uc-selector"
+                    class="select-with-icon px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-44"
+                    style={`background-image: url('${uC.src}')`}
+                >
+                    <option disabled selected>Seleccionar Microcontrolador</option>
+                    <option value="uno" data-icon={ucUno.src}>Arduino Uno</option>
+                    <option value="mega" data-icon={ucMega.src}>Arduino Mega</option>
+                    <option value="esp32" data-icon={ucEsp32.src}>ESP32</option>
+                    <option value="msp430" data-icon={ucMsp430.src}>MSP430</option>
+                </select>
 
-        <!-- Control de puertos COM (OCULTO POR DEFECTO) -->
-        <div id="dev-com-controls" class="dev-feature hidden flex items-center gap-2 flex-wrap">
-            <!-- Selector de Puerto -->
-            <select
-                id="com-port-selector"
-                class="px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-[160px]"
-            >
-                <option disabled selected>Seleccionar Puerto</option>
-            </select>
+                <!-- Selector de Puerto -->
+                <select
+                    id="com-port-selector"
+                    class="px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-40"
+                >
+                    <option disabled selected>Seleccionar Puerto</option>
+                </select>
 
-            <!-- Botón: Escanear Puertos -->
-            <button
-                id="btn-scan-com"
-                class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded border border-gray-300"
-            >
-                🔄 Escanear
-            </button>
+                <!-- Botón: Escanear Puertos -->
+                <button
+                    id="btn-scan-com"
+                    class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded border border-gray-300"
+                    >🔄 Escanear</button
+                >
 
-            <!-- Botón: Conectar Puerto -->
-            <button
-                id="btn-connect-com"
-                class="bg-[#00bf63] hover:bg-[#00a152] px-3 py-2 text-sm text-white rounded"
-            >
-                🔌 Conectar
-            </button>
+                <!-- Botón: Conectar Puerto -->
+                <button
+                    id="btn-connect-com"
+                    class="bg-[#00bf63] hover:bg-[#00a152] px-3 py-2 text-sm text-white rounded flex items-center gap-2"
+                >
+                    <img src={iconConnect.src} alt="Conectar" class="w-4 h-4" />
+                    <span>Conectar</span>
+                </button>
+            </div>
 
             <!-- Botón: Desconectar Puerto -->
             <button
                 id="btn-disconnect-com"
                 class="bg-[#ff4d4d] hover:bg-[#d94343] px-3 py-2 text-sm text-white rounded hidden"
+                >🔓 Desconectar</button
             >
-                🔓 Desconectar
-            </button>
         </div>
 
         <!-- Botones para Logs (OCULTO POR DEFECTO) -->
@@ -62,20 +84,16 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
                     id="btn-toggle-sent"
                     class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded"
                     aria-expanded="false"
-                    aria-controls="log-sent"
+                    aria-controls="log-sent">📤 Enviadas</button
                 >
-                    📤 Enviadas
-                </button>
 
                 <!-- Botón: Ver Tramas Recibidas -->
                 <button
                     id="btn-toggle-received"
                     class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded"
                     aria-expanded="false"
-                    aria-controls="log-received"
+                    aria-controls="log-received">📥 Recibidas</button
                 >
-                    📥 Recibidas
-                </button>
             </div>
 
             <!-- Ventana de Logs - Tramas Enviadas -->
@@ -115,183 +133,10 @@ import logoGITSe from "../../public/logos/logo-gitse.svg";
             </div>
         </div>
 
-        <!-- Logo GITSe -->
-        <img src={logoGITSe.src} alt="Logo GITSe" class="h-10" />
+        <!-- Logo GT -->
+        <img src={logoGT.src} alt="Logo GT" class="h-12" />
     </div>
 </header>
 
-<!-- Estilos personalizados para scroll -->
-<style>
-    .log-window {
-        scrollbar-width: thin;
-        scrollbar-color: #a6a6a6 #f1f1f1;
-    }
-
-    .log-window::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .log-window::-webkit-scrollbar-thumb {
-        background: #a6a6a6;
-        border-radius: 4px;
-    }
-
-    .log-window::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-</style>
-
-<!-- Script para mostrar/ocultar ventanas de logs -->
-<script>
-    // Variable para detectar secuencia de teclas
-    let keySequence = "";
-    const DEV_CODE = "gitsdev";
-
-    // Detectar secuencia de teclas
-    document.addEventListener("keydown", (e) => {
-        keySequence += e.key.toLowerCase();
-        
-        // Mantener solo los últimos caracteres (longitud del código)
-        if (keySequence.length > DEV_CODE.length) {
-            keySequence = keySequence.slice(-DEV_CODE.length);
-        }
-
-        // Si se detecta la secuencia
-        if (keySequence === DEV_CODE) {
-            toggleDevFeatures();
-            keySequence = ""; // Resetear secuencia
-        }
-    });
-
-    // Función para toggle de features de desarrollo
-    function toggleDevFeatures() {
-        const devComControls = document.getElementById("dev-com-controls");
-        const devLogControls = document.getElementById("dev-log-controls");
-
-        if (devComControls) {
-            devComControls.classList.toggle("hidden");
-        }
-        if (devLogControls) {
-            devLogControls.classList.toggle("hidden");
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const btnToggleSent = document.getElementById("btn-toggle-sent");
-        const btnToggleReceived = document.getElementById(
-            "btn-toggle-received",
-        );
-        const logSent = document.getElementById("log-sent");
-        const logReceived = document.getElementById("log-received");
-
-        // Mostrar u ocultar logs enviados
-        if (btnToggleSent) {
-            btnToggleSent.addEventListener("click", () => {
-                const isVisible = !logSent.classList.contains("hidden");
-                logSent.classList.toggle("hidden", isVisible);
-                btnToggleSent.setAttribute("aria-expanded", !isVisible);
-
-                // Ocultar la otra ventana si está abierta
-                if (!logReceived.classList.contains("hidden")) {
-                    logReceived.classList.add("hidden");
-                    btnToggleReceived.setAttribute("aria-expanded", "false");
-                }
-            });
-        }
-
-        // Mostrar u ocultar logs recibidos
-        if (btnToggleReceived) {
-            btnToggleReceived.addEventListener("click", () => {
-                const isVisible = !logReceived.classList.contains("hidden");
-                logReceived.classList.toggle("hidden", isVisible);
-                btnToggleReceived.setAttribute("aria-expanded", !isVisible);
-
-                // Ocultar la otra ventana si está abierta
-                if (!logSent.classList.contains("hidden")) {
-                    logSent.classList.add("hidden");
-                    btnToggleSent.setAttribute("aria-expanded", "false");
-                }
-            });
-        }
-
-        // Ocultar logs si se hace clic fuera
-        document.addEventListener("click", (e) => {
-            const clickedInSent =
-                logSent.contains(e.target) || btnToggleSent.contains(e.target);
-            const clickedInReceived =
-                logReceived.contains(e.target) ||
-                btnToggleReceived.contains(e.target);
-
-            if (!clickedInSent) logSent.classList.add("hidden");
-            if (!clickedInReceived) logReceived.classList.add("hidden");
-
-            if (btnToggleSent) {
-                btnToggleSent.setAttribute(
-                    "aria-expanded",
-                    !logSent.classList.contains("hidden"),
-                );
-            }
-            if (btnToggleReceived) {
-                btnToggleReceived.setAttribute(
-                    "aria-expanded",
-                    !logReceived.classList.contains("hidden"),
-                );
-            }
-        });
-
-        // Función global para agregar logs enviados
-        window.addSentLog = function (message) {
-            const logContainer = document.getElementById("log-sent-messages");
-            if (!logContainer) return;
-
-            // Limpiar el mensaje placeholder
-            const placeholderElement = logContainer.querySelector(".text-center");
-            if (placeholderElement && placeholderElement.textContent.includes("No hay tramas aún")) {
-                placeholderElement.remove();
-            }
-
-            const now = new Date().toLocaleTimeString();
-            const logItem = document.createElement("div");
-            logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
-            logItem.textContent = `🔵 [${now}] ${message}`;
-            logContainer.appendChild(logItem);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        };
-
-        // Función global para agregar logs recibidos
-        window.addReceivedLog = function (message) {
-            const logContainer = document.getElementById(
-                "log-received-messages",
-            );
-            
-            // Limpiar el mensaje placeholder
-            const placeholderElement = logContainer.querySelector(".text-center");
-            if (placeholderElement && placeholderElement.textContent.includes("No hay tramas aún")) {
-                placeholderElement.remove();
-            }
-
-            const now = new Date().toLocaleTimeString();
-            const logItem = document.createElement("div");
-            logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
-            logItem.textContent = `🟢 [${now}] ${message}`;
-            logContainer.appendChild(logItem);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        };
-
-        // Función auxiliar para agregar logs (ya no se usa, pero se mantiene por compatibilidad)
-        function _addLog(container, message, icono = "🟡") {
-            // Eliminar mensaje inicial
-            const placeholderElement = container.querySelector(".text-center");
-            if (placeholderElement && placeholderElement.textContent.includes("No hay tramas aún")) {
-                placeholderElement.remove();
-            }
-
-            const now = new Date().toLocaleTimeString();
-            const logItem = document.createElement("div");
-            logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
-            logItem.textContent = `${icono} [${now}] ${message}`;
-            container.appendChild(logItem);
-            container.scrollTop = container.scrollHeight;
-        }
-    });
-</script>
+<!-- Script cliente -->
+<script type="module" src="/src/scripts/devLogs.ts"></script>

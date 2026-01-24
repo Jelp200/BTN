@@ -1,5 +1,5 @@
 ---
-// ControlButtonGraphic.astro
+//* ControlButtonGraphic.astro *//
 
 const { isActive = false, ...restProps } = Astro.props;
 ---
@@ -9,7 +9,7 @@ const { isActive = false, ...restProps } = Astro.props;
     <button
         type="button"
         {...restProps}
-        class="graphic-btn w-[270px] h-[30px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors"
+        class="graphic-btn w-67.5 h-7.5 flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors"
     >
         <img src="/icons/graphic.svg" class="w-5 h-5" alt="Graphic icon" />
     </button>

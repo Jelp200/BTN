@@ -1,36 +1,33 @@
 ---
-// CabinPanel.astro
+//* CabinPanel.astro *//
 
-//* IMPORTS
-import WindowsAndSelectorsButtons from "./WindowsAndSelectorsButtons.astro";
-import ControlButtonSection from "./ControlButtonSection.astro";
-import DivisorLine from "./DivisorLine.astro";
-import TwoColumnsSection from "./TwoColumnsSection.astro";
-import LedSection from "./LedSection.astro";
-import CabinStateAndButtonActions from "./CabinStateAndButtonActions.astro";
-import GraphicSection from "./GraphicSection.astro";
-import IndicatorSection from "./IndicatorSection.astro";
-import SelectedColorAndSmokeState from "./SelectedColorAndSmokeState.astro";
+/* Imports de componentes del panel generales */
+import WindowsAndSelectorsButtons from "./panel/WindowsAndSelectorsButtons.astro";
+
+/* Import de componentes (seccion de controles) */
+import ControlesSection from "./panel/controles/ControlesSection.astro";
+
+/* Import de componentes (seccion de graficas) */
+import GraficasSection from "./panel/graficas/GraficasSection.astro";
+import BiometriaSection from "./panel/biometria/BiometriaSection.astro";
 ---
 
-<!-- * CONTENEDOR PRINCIPAL RESPONSIVO * -->
 <div class="panel-container w-full bg-[#efefef] shadow-lg rounded-lg p-4">
-    <!-- Contenido del panel -->
+    <!-- Botones de Ventanas y Selectores -->
     <WindowsAndSelectorsButtons />
+    
+    <!-- Contenido de la pestaña "Controles" -->
     <div class="tab-content" data-tab-content="controles">
-        <ControlButtonSection />
-        <DivisorLine />
-        <TwoColumnsSection />
-        <DivisorLine />
-        <LedSection />
-        <DivisorLine />
-        <CabinStateAndButtonActions />
+        <ControlesSection />
     </div>
+
+    <!-- Contenido de la pestaña "Gráficas" -->
     <div class="tab-content hidden" data-tab-content="graficas">
-        <GraphicSection />
-        <DivisorLine />
-        <IndicatorSection />
-        <DivisorLine />
-        <SelectedColorAndSmokeState />
+        <GraficasSection />
+    </div>
+
+    <!-- Contenido de la pestaña "Biometría" -->
+    <div class="tab-content hidden" data-tab-content="biometria">
+        <BiometriaSection />
     </div>
 </div>

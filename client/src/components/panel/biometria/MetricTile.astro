@@ -1,0 +1,15 @@
+<!-- MetricTile.astro --><!-- Props: title, iconSrc -->
+<div
+    class="flex items-center gap-2 bg-white border border-[#bababa] rounded-lg px-3 py-2"
+>
+    <div
+        class="w-7 h-7 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]"
+    >
+        {
+            Astro.props.iconSrc ? (
+                <img src={Astro.props.iconSrc} alt="icon" class="w-4 h-4" />
+            ) : null
+        }
+    </div>
+    <div class="text-sm font-semibold text-[#111827]">{Astro.props.title}</div>
+</div>

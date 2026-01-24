@@ -1,17 +1,15 @@
 ---
-// CabinStateAndButtonActions.astro
+//* CabinStateAndButtonActions.astro *//
 ---
 
 <div class="flex items-center justify-between">
     <!-- Círculo de estado con texto -->
-    <div class="flex items-center gap-2">
-        <div
-            id="estado-cabina"
-            class="w-25 h-8 rounded-xl bg-[#ff5757] text-white flex items-center justify-center text-s font-semibold shadow-inner transition-colors"
-        >
-            INACTIVA
-        </div>
-        <span class="text-black text-sm">Estado de la cabina</span>
+    <div
+        id="estado-cabina"
+        class="w-30 h-8 rounded-xl bg-[#ff5757] text-white flex items-center justify-center gap-2 text-s font-semibold shadow-inner transition-colors"
+    >
+        <img src="/icons/active-inactive.svg" alt="CSV" class="w-5 h-5" />
+        INACTIVA
     </div>
 
     <!-- Botones Enviar y Parar a la derecha -->

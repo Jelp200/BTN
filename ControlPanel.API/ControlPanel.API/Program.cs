@@ -1,6 +1,7 @@
 using ControlPanel.API.Application;
 using ControlPanel.API.Domain;
 using ControlPanel.API.Infrastructure;
+using ControlPanel.API.Smartwatch.Services;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // === Configuraci�n de Clean Architecture: Inyecci�n de Dependencias ===
 builder.Services.AddSingleton<ITramaParser, TramaParser>();
 builder.Services.AddSingleton<ISerialService, SerialService>();
+builder.Services.AddSingleton<ISmartwatchService, SmartwatchService>();
 
 // === Configuraci�n existente ===
 

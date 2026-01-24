@@ -101,6 +101,7 @@ window.addEventListener("DOMContentLoaded", () => {
     inicializarBotonesHeader();
     iniciarIntervalos();
     inicializarPaneles();
+    inicializarBiometria();
 });
 
 function inicializarBotonesHeader() {
@@ -158,12 +159,196 @@ function inicializarPaneles() {
     const panels = document.querySelectorAll(".panel-container");
     panels.forEach((panel) => {
         initTwoColumnsSection(panel);
+        initTabs(panel);
     });
+}
+
+function inicializarBiometria() {
+    // Usar delegación de eventos en el documento para mayor robustez
+    document.addEventListener("click", async (event) => {
+        const connectBtn = event.target.closest("[data-action='connect-watch']");
+        const disconnectBtn = event.target.closest("[data-action='disconnect-watch']");
+        
+        if (connectBtn) {
+            console.log("[Biometría] Click en botón CONECTAR");
+            
+            const originalText = connectBtn.textContent;
+            connectBtn.disabled = true;
+            connectBtn.textContent = "Conectando...";
+
+            const requestPayload = { deviceName: "ET570", scanTimeoutMs: 15000 };
+            
+            // Log enviado
+            console.log("[Biometría] Enviando solicitud:", requestPayload);
+            window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/connect\nPayload: ${JSON.stringify(requestPayload)}`);
+
+            try {
+                const response = await fetch("http://localhost:5000/api/smartwatch/connect", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestPayload),
+                });
+
+                const data = await response.json().catch(() => ({}));
+                
+                console.log("[Biometría] Respuesta recibida:", { status: response.status, data });
+                window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data)}`);
+                
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || "No se pudo conectar al reloj");
+                }
+
+                const nombre = data.device?.name || "reloj";
+                console.log("[Biometría] Reloj conectado:", nombre);
+                window.mostrarNotificacion?.(`Reloj conectado (${nombre})`, { tipo: "success" });
+            } catch (error) {
+                console.error("[Biometría] Error conectando reloj:", error);
+                const mensaje = error?.message || "No se pudo conectar al reloj";
+                window.addReceivedLog?.(`[SMARTWATCH] ❌ Error: ${mensaje}`);
+                window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+                alert(mensaje);
+            } finally {
+                connectBtn.disabled = false;
+                connectBtn.textContent = originalText;
+            }
+        } 
+        else if (disconnectBtn) {
+            console.log("[Biometría] Click en botón DESCONECTAR");
+            
+            const originalText = disconnectBtn.textContent;
+            disconnectBtn.disabled = true;
+            disconnectBtn.textContent = "Desconectando...";
+
+            // Log enviado
+            console.log("[Biometría] Enviando solicitud de desconexión");
+            window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/disconnect`);
+
+            try {
+                const response = await fetch("http://localhost:5000/api/smartwatch/disconnect", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                const data = await response.json().catch(() => ({}));
+                
+                console.log("[Biometría] Respuesta recibida:", { status: response.status, data });
+                window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data)}`);
+                
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || "No se pudo desconectar del reloj");
+                }
+
+                console.log("[Biometría] Reloj desconectado");
+                window.mostrarNotificacion?.("Reloj desconectado", { tipo: "success" });
+            } catch (error) {
+                console.error("[Biometría] Error desconectando reloj:", error);
+                const mensaje = error?.message || "No se pudo desconectar del reloj";
+                window.addReceivedLog?.(`[SMARTWATCH] ❌ Error: ${mensaje}`);
+                window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+                alert(mensaje);
+            } finally {
+                disconnectBtn.disabled = false;
+                disconnectBtn.textContent = originalText;
+            }
+        }
+    });
+
+    console.log("[Biometría] Delegación de eventos inicializada para [data-action='connect-watch'] y [data-action='disconnect-watch']");
 }
 
 /* *********************************************************************
 ****************************** FUNCIONES *******************************
 ********************************************************************* */
+// Inicializa el toggle visual de pestañas dentro de un panel
+function initTabs(panel) {
+    if (!panel || panel.dataset.tabsInitialized === "true") return;
+
+    const dbg = "[Tabs]";
+    console.log(dbg, "initTabs() on panel", panel);
+
+    // Soporta botones con clase .tab-button o atributo [data-tab]
+    const tabButtons = panel.querySelectorAll(".tab-button, [data-tab]");
+    const tabContents = panel.querySelectorAll("[data-tab-content]");
+
+    console.log(dbg, `found buttons=${tabButtons.length}, contents=${tabContents.length}`);
+
+    // Si no hay pestañas, marcar como inicializado y salir
+    if (!tabButtons.length || !tabContents.length) {
+        panel.dataset.tabsInitialized = "true";
+        return;
+    }
+
+    const norm = (s) => (s || "").toString().toLowerCase().trim();
+
+    function activateTab(tabName) {
+        const target = norm(tabName);
+        console.log(dbg, `activateTab('${target}')`);
+
+        // Actualiza estado visual de botones
+        tabButtons.forEach((btn) => {
+            const name = btn.dataset.tab || btn.getAttribute("data-tab");
+            const nameN = norm(name);
+            const isActive = nameN === target;
+            btn.classList.toggle("active", isActive);
+            btn.setAttribute("aria-selected", isActive ? "true" : "false");
+            // Ajuste visual explícito del fondo para reflejar estado activo
+            btn.classList.toggle("bg-[#d9d9d9]", isActive);
+            btn.classList.toggle("bg-transparent", !isActive);
+            // Gestionar tabindex para accesibilidad
+            btn.setAttribute("tabindex", isActive ? "0" : "-1");
+            if (isActive) console.log(dbg, "button active:", nameN);
+        });
+
+        // Muestra/oculta contenido asociado
+        let matched = 0;
+        tabContents.forEach((section) => {
+            const name =
+                section.dataset.tabContent ||
+                section.getAttribute("data-tab-content");
+            const nameN = norm(name);
+            const show = nameN === target;
+            section.classList.toggle("hidden", !show);
+            if (show) {
+                matched += 1;
+                console.log(dbg, "showing content:", nameN, section);
+            }
+        });
+
+        if (matched === 0) {
+            console.warn(dbg, `no content matched for '${target}'`);
+        }
+
+        try {
+            mostrarNotificacion?.(`Pestaña activa: ${target}`, { tipo: "info" });
+        } catch {}
+        console.log(dbg, `activated '${target}'`);
+    }
+
+    // Bind de eventos de click
+    tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const name = btn.dataset.tab || btn.getAttribute("data-tab");
+            const nameN = norm(name);
+            console.log(dbg, "click on tab:", nameN);
+            try {
+                mostrarNotificacion?.(`Click pestaña: ${nameN}`, { tipo: "info" });
+            } catch {}
+            if (name) activateTab(name);
+        });
+    });
+
+    // Estado inicial: botón activo o primera pestaña
+    const initialBtn =
+        Array.from(tabButtons).find((b) => b.classList.contains("active")) ||
+        tabButtons[0];
+    const initialName =
+        initialBtn?.dataset.tab || initialBtn?.getAttribute("data-tab");
+    console.log(dbg, "initial tab:", norm(initialName));
+    if (initialName) activateTab(initialName);
+
+    panel.dataset.tabsInitialized = "true";
+    console.log(dbg, "initialized for panel");
+}
 // Escanear puertos COM del sistema
 async function escanearPuertosCOM() {
     const selector = document.getElementById("com-port-selector");

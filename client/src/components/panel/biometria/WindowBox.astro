@@ -1,0 +1,15 @@
+<!-- WindowBox.astro --><!-- Props: title, iconSrc -->
+<div
+    class="relative bg-white border border-[#bababa] rounded-lg min-h-40 md:min-h-60"
+>
+    <div
+        class="absolute left-3 top-3 flex items-center gap-2 bg-[#e9fbe9] text-[#22c55e] text-xs font-semibold rounded-full px-2 py-1 border border-[#cfeecf]"
+    >
+        {
+            Astro.props.iconSrc ? (
+                <img src={Astro.props.iconSrc} alt="icon" class="w-4 h-4" />
+            ) : null
+        }
+        <span>{Astro.props.title}</span>
+    </div>
+</div>

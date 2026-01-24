@@ -1,5 +1,5 @@
 ---
-// ControlIndicador.astro
+//* ControlIndicador.astro *//
 
 const { icon, isActive = false, medicion = "N/A" } = Astro.props;
 ---
@@ -9,7 +9,7 @@ const { icon, isActive = false, medicion = "N/A" } = Astro.props;
     <!-- Botón fijo -->
     <button
         type="button"
-        class="control-btn w-[90px] h-[30px] flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors"
+        class="control-btn w-22.5 h-7.5 flex items-center justify-center space-x-2 px-3 py-2 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-white rounded-lg transition-colors"
         data-codigo={icon}
     >
         <!-- Icono fijo -->
@@ -18,7 +18,7 @@ const { icon, isActive = false, medicion = "N/A" } = Astro.props;
 
     <!-- Caja de texto con altura fija -->
     <div
-        class="medicion-display w-[150px] h-[30px] flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold"
+        class="medicion-display w-37.5 h-7.5 flex items-center justify-center bg-white border border-gray-300 text-sm text-gray-700 rounded-lg font-semibold"
         data-medicion={icon}
     >
         {medicion}
