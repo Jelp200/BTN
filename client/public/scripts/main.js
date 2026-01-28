@@ -11,6 +11,23 @@ let reproduciendoPorCabina = { "Cabina 1": false, "Cabina 2": false };
 let botonPlayActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
 let sonidoActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
 
+//* Estados para gráficas biométricas
+let biometricChartsEnabled = false;
+let biometricWatchConnected = false;
+let biometricChartInstances = {
+    pulse: null,
+    oxygen: null,
+    temperature: null,
+    glucose: null,
+};
+let biometricChartData = {
+    pulse: [],
+    oxygen: [],
+    temperature: [],
+    glucose: [],
+};
+let biometricUpdateInterval = null;
+
 /* *********************************************************************
 *************************** MAPEO DE CODIGOS ***************************
 ********************************************************************* */
@@ -172,9 +189,9 @@ function inicializarBiometria() {
         if (connectBtn) {
             console.log("[Biometría] Click en botón CONECTAR");
             
-            const originalText = connectBtn.textContent;
+            const originalText = connectBtn.innerHTML;
             connectBtn.disabled = true;
-            connectBtn.textContent = "Conectando...";
+            connectBtn.innerHTML = "Conectando...";
 
             const requestPayload = { deviceName: "ET570", scanTimeoutMs: 15000 };
             
@@ -201,6 +218,16 @@ function inicializarBiometria() {
                 const nombre = data.device?.name || "reloj";
                 console.log("[Biometría] Reloj conectado:", nombre);
                 window.mostrarNotificacion?.(`Reloj conectado (${nombre})`, { tipo: "success" });
+                
+                // ✅ MARCAR RELOJ COMO CONECTADO
+                biometricWatchConnected = true;
+                
+                // Inicializar gráficas si el tab de biometría ya está visible
+                const biometriaTab = document.querySelector("[data-tab-content='biometria']");
+                if (biometriaTab && !biometriaTab.classList.contains("hidden") && !biometricChartsEnabled) {
+                    console.log("[BiometricCharts] Tab de biometría ya visible. Inicializando gráficas...");
+                    initBiometricCharts();
+                }
             } catch (error) {
                 console.error("[Biometría] Error conectando reloj:", error);
                 const mensaje = error?.message || "No se pudo conectar al reloj";
@@ -209,15 +236,14 @@ function inicializarBiometria() {
                 alert(mensaje);
             } finally {
                 connectBtn.disabled = false;
-                connectBtn.textContent = originalText;
+                connectBtn.innerHTML = originalText;
             }
         } 
         else if (disconnectBtn) {
             console.log("[Biometría] Click en botón DESCONECTAR");
             
-            const originalText = disconnectBtn.textContent;
+            const originalHTML = disconnectBtn.innerHTML;
             disconnectBtn.disabled = true;
-            disconnectBtn.textContent = "Desconectando...";
 
             // Log enviado
             console.log("[Biometría] Enviando solicitud de desconexión");
@@ -240,6 +266,10 @@ function inicializarBiometria() {
 
                 console.log("[Biometría] Reloj desconectado");
                 window.mostrarNotificacion?.("Reloj desconectado", { tipo: "success" });
+                
+                // ✅ MARCAR RELOJ COMO DESCONECTADO Y DETENER GRÁFICAS
+                biometricWatchConnected = false;
+                stopBiometricCharts();
             } catch (error) {
                 console.error("[Biometría] Error desconectando reloj:", error);
                 const mensaje = error?.message || "No se pudo desconectar del reloj";
@@ -248,12 +278,280 @@ function inicializarBiometria() {
                 alert(mensaje);
             } finally {
                 disconnectBtn.disabled = false;
-                disconnectBtn.textContent = originalText;
+                disconnectBtn.innerHTML = originalHTML;
             }
         }
     });
 
     console.log("[Biometría] Delegación de eventos inicializada para [data-action='connect-watch'] y [data-action='disconnect-watch']");
+}
+
+/**
+ * Genera datos aleatorios ilustrativos para biometría
+ */
+function generateBiometricData() {
+    return {
+        pulse: Math.floor(Math.random() * 40) + 60, // 60-100 bpm
+        oxygen: Math.floor(Math.random() * 5) + 95, // 95-100 %
+        temperature: (Math.random() * 2 + 36.5).toFixed(1), // 36.5-38.5 °C
+        glucose: Math.floor(Math.random() * 40) + 100, // 100-140 mg/dL
+    };
+}
+
+/**
+ * Inicializa la gráfica biométrica única cuando se conecta el smartwatch
+ */
+function initBiometricCharts() {
+    if (biometricChartsEnabled) return; // Ya está activa
+    
+    console.log("[BiometricCharts] Inicializando gráfica biométrica");
+    
+    // Limpiar datos previos
+    biometricChartData = {
+        pulse: [],
+        oxygen: [],
+        temperature: [],
+        glucose: [],
+    };
+
+    // Validar que Chart esté disponible
+    if (typeof Chart === "undefined") {
+        console.error("[BiometricCharts] ❌ Chart.js no está cargado");
+        return;
+    }
+
+    // Generar timestamps para las primeras 10 muestras
+    const now = new Date();
+    const labels = [];
+    for (let i = 9; i >= 0; i--) {
+        const time = new Date(now - i * 60000);
+        labels.push(time.toLocaleTimeString());
+    }
+
+    // Generar datos iniciales
+    for (let i = 0; i < 10; i++) {
+        const data = generateBiometricData();
+        biometricChartData.pulse.push(data.pulse);
+        biometricChartData.oxygen.push(data.oxygen);
+        biometricChartData.temperature.push(parseFloat(data.temperature));
+        biometricChartData.glucose.push(data.glucose);
+    }
+
+    // Configuración de escalas y colores
+    const metricConfigs = {
+        pulse: { 
+            label: "Pulso (bpm)", 
+            yScale: { min: 50, max: 120 }, 
+            borderColor: "#e74c3c", 
+            bgColor: "rgba(231, 76, 60, 0.2)" 
+        },
+        oxygen: { 
+            label: "Oxigenación (%)", 
+            yScale: { min: 90, max: 100 }, 
+            borderColor: "#3498db", 
+            bgColor: "rgba(52, 152, 219, 0.2)" 
+        },
+        temperature: { 
+            label: "Temperatura (°C)", 
+            yScale: { min: 35, max: 40 }, 
+            borderColor: "#f39c12", 
+            bgColor: "rgba(243, 156, 18, 0.2)" 
+        },
+        glucose: { 
+            label: "Glucosa (mg/dL)", 
+            yScale: { min: 80, max: 160 }, 
+            borderColor: "#9b59b6", 
+            bgColor: "rgba(155, 89, 182, 0.2)" 
+        },
+    };
+
+    // Crear gráfica única
+    try {
+        const canvas = document.getElementById("biometricChart");
+        console.log("[BiometricCharts] Buscando canvas...", { canvasFound: !!canvas });
+        
+        if (!canvas) {
+            console.error("[BiometricCharts] ❌ Canvas #biometricChart no encontrado");
+            console.log("[BiometricCharts] DOM en este momento:", document.body.innerHTML.substring(0, 500));
+            return;
+        }
+
+        // Validar dimensiones del canvas
+        console.log("[BiometricCharts] Canvas encontrado. Dimensiones:", {
+            width: canvas.width,
+            height: canvas.height,
+            offsetWidth: canvas.offsetWidth,
+            offsetHeight: canvas.offsetHeight,
+            clientWidth: canvas.clientWidth,
+            clientHeight: canvas.clientHeight
+        });
+
+        // Verificar que el contenedor padre tiene dimensiones
+        const container = canvas.parentElement;
+        console.log("[BiometricCharts] Contenedor padre:", {
+            display: window.getComputedStyle(container).display,
+            width: window.getComputedStyle(container).width,
+            height: window.getComputedStyle(container).height,
+            hidden: container.classList.contains("hidden")
+        });
+
+        console.log("[BiometricCharts] Chart.js está disponible. Creando gráfica...");
+        
+        const ctx = canvas.getContext("2d");
+        console.log("[BiometricCharts] Contexto 2D obtenido:", !!ctx);
+        const defaultMetric = "pulse";
+        const config = metricConfigs[defaultMetric];
+
+        biometricChartInstances.pulse = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels,
+                datasets: [{
+                    label: config.label,
+                    data: biometricChartData[defaultMetric],
+                    borderColor: config.borderColor,
+                    backgroundColor: config.bgColor,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: config.borderColor,
+                    fill: true,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                scales: {
+                    y: { 
+                        ...config.yScale, 
+                        grid: { color: "#eee" },
+                        title: { display: true, text: config.label }
+                    },
+                    x: { grid: { color: "#eee" } },
+                },
+                plugins: { 
+                    legend: { display: true, labels: { color: "#333" } },
+                    title: { display: true, text: config.label }
+                },
+            },
+        });
+
+        console.log("[BiometricCharts] ✓ Gráfica biométrica creada");
+
+        // Inicializar selector de métrica
+        const selector = document.getElementById("biometricMetricSelector");
+        if (selector) {
+            selector.addEventListener("change", (e) => {
+                updateBiometricMetric(e.target.value, labels, metricConfigs);
+            });
+            console.log("[BiometricCharts] ✓ Selector de métrica inicializado");
+        }
+
+        biometricChartsEnabled = true;
+
+        // Actualizar gráficas cada minuto (60000 ms)
+        biometricUpdateInterval = setInterval(updateBiometricCharts, 60000);
+        console.log("[BiometricCharts] ✓ Gráfica iniciada. Se actualizará cada minuto.");
+    } catch (err) {
+        console.error("[BiometricCharts] ❌ Error creando gráfica:", err);
+    }
+}
+
+/**
+ * Cambia la métrica mostrada en la gráfica
+ */
+function updateBiometricMetric(metric, labels, metricConfigs) {
+    if (!biometricChartInstances.pulse) return;
+
+    const config = metricConfigs[metric];
+    const chart = biometricChartInstances.pulse;
+
+    console.log(`[BiometricCharts] Cambiando métrica a: ${metric}`);
+
+    chart.data.datasets[0].label = config.label;
+    chart.data.datasets[0].data = biometricChartData[metric];
+    chart.data.datasets[0].borderColor = config.borderColor;
+    chart.data.datasets[0].backgroundColor = config.bgColor;
+    chart.data.datasets[0].pointBackgroundColor = config.borderColor;
+
+    // Actualizar escalas
+    chart.options.scales.y.min = config.yScale.min;
+    chart.options.scales.y.max = config.yScale.max;
+
+    chart.update();
+}
+
+/**
+ * Actualiza las gráficas biométricas cada minuto
+ */
+function updateBiometricCharts() {
+    if (!biometricChartsEnabled || !biometricChartInstances.pulse) return;
+
+    console.log("[BiometricCharts] Actualizando datos");
+
+    // Generar nuevo dato
+    const newData = generateBiometricData();
+    
+    // Agregar nuevo dato y eliminar el más antiguo (mantener máximo 10)
+    biometricChartData.pulse.push(newData.pulse);
+    biometricChartData.oxygen.push(newData.oxygen);
+    biometricChartData.temperature.push(parseFloat(newData.temperature));
+    biometricChartData.glucose.push(newData.glucose);
+
+    if (biometricChartData.pulse.length > 10) {
+        biometricChartData.pulse.shift();
+        biometricChartData.oxygen.shift();
+        biometricChartData.temperature.shift();
+        biometricChartData.glucose.shift();
+    }
+
+    // Actualizar labels (timestamp) - últimos 10 minutos
+    const now = new Date();
+    const newLabels = [];
+    for (let i = Math.min(9, biometricChartData.pulse.length - 1); i >= 0; i--) {
+        const time = new Date(now - i * 60000);
+        newLabels.push(time.toLocaleTimeString());
+    }
+
+    // Actualizar la gráfica única (usa pulse como principal, pero todos tienen datos)
+    const chart = biometricChartInstances.pulse;
+    chart.data.labels = newLabels;
+    
+    // Obtener métrica seleccionada actualmente
+    const selector = document.getElementById("biometricMetricSelector");
+    const selectedMetric = selector ? selector.value : "pulse";
+    
+    // Actualizar dataset con la métrica seleccionada
+    chart.data.datasets[0].data = biometricChartData[selectedMetric];
+    chart.update();
+}
+
+/**
+ * Detiene las gráficas biométricas
+ */
+function stopBiometricCharts() {
+    console.log("[BiometricCharts] Deteniendo gráficas");
+
+    // Limpiar intervalo
+    if (biometricUpdateInterval) {
+        clearInterval(biometricUpdateInterval);
+        biometricUpdateInterval = null;
+    }
+
+    // Destruir gráficas
+    Object.values(biometricChartInstances).forEach(chart => {
+        if (chart) chart.destroy();
+    });
+
+    biometricChartInstances = {
+        pulse: null,
+        oxygen: null,
+        temperature: null,
+        glucose: null,
+    };
+
+    biometricChartsEnabled = false;
+    console.log("[BiometricCharts] Gráficas detenidas");
 }
 
 /* *********************************************************************
@@ -316,6 +614,12 @@ function initTabs(panel) {
 
         if (matched === 0) {
             console.warn(dbg, `no content matched for '${target}'`);
+        }
+
+        // ✅ Si se activa el tab de biometría y el reloj está conectado, inicializar gráficas
+        if (target === "biometria" && biometricWatchConnected && !biometricChartsEnabled) {
+            console.log("[BiometricCharts] Tab de biometría visible. Inicializando gráficas...");
+            initBiometricCharts();
         }
 
         try {
