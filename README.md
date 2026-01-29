@@ -8,7 +8,9 @@ Interfaz centralizada (web/escritorio) para el control de actuadores y monitoreo
 
 ## 🧱 Arquitectura general del sistema
 
-![AGS]()
+![AGS](imgs\AGS.png)
+
+## 🕸️ Arquitectura de la aplicación
 
 ![AS]()
 
