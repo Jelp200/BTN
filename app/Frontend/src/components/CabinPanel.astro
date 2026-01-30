@@ -1,0 +1,33 @@
+---
+//* CabinPanel.astro *//
+
+/* Imports de componentes del panel generales */
+import WindowsAndSelectorsButtons from "./panel/WindowsAndSelectorsButtons.astro";
+
+/* Import de componentes (seccion de controles) */
+import ControlesSection from "./panel/controles/ControlesSection.astro";
+
+/* Import de componentes (seccion de graficas) */
+import GraficasSection from "./panel/graficas/GraficasSection.astro";
+import BiometriaSection from "./panel/biometria/BiometriaSection.astro";
+---
+
+<div class="panel-container w-full bg-[#efefef] shadow-lg rounded-lg p-4">
+    <!-- Botones de Ventanas y Selectores -->
+    <WindowsAndSelectorsButtons />
+    
+    <!-- Contenido de la pestaña "Controles" -->
+    <div class="tab-content" data-tab-content="controles">
+        <ControlesSection />
+    </div>
+
+    <!-- Contenido de la pestaña "Gráficas" -->
+    <div class="tab-content hidden" data-tab-content="graficas">
+        <GraficasSection />
+    </div>
+
+    <!-- Contenido de la pestaña "Biometría" -->
+    <div class="tab-content hidden" data-tab-content="biometria">
+        <BiometriaSection />
+    </div>
+</div>

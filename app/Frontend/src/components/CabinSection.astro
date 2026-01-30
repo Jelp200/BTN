@@ -1,0 +1,18 @@
+---
+//* CabinSection.astro *//
+
+/* Import de componentes */
+import CabinPanel from "./CabinPanel.astro";
+---
+
+<div class="flex flex-col md:flex-row gap-6 p-6">
+    <CabinPanel />
+    <CabinPanel />
+</div>
+
+<!-- CDN de Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom "></script>
+
+<!-- Script principal -->
+<script type="module" src="/scripts/main.js"></script>

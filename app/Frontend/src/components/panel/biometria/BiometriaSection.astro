@@ -1,0 +1,30 @@
+---
+//* BiometriaSection.astro *//
+
+import SummaryMetricsRow from "./SummaryMetricsRow.astro";
+import ProfileCard from "./ProfileCard.astro";
+import PersonalDataForm from "./PersonalDataForm.astro";
+import BiometricCharts from "./BiometricCharts.astro";
+import DivisorLine from "../DivisorLine.astro";
+---
+
+<div class="flex flex-col gap-2">
+    <!-- Gráficas biométricas (Pulso, Oxigenación, Temperatura, Glucosa) -->
+    <BiometricCharts />
+    
+    <DivisorLine />
+
+    <!-- Abajo: tarjeta usuario + métricas + formulario -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 items-start">
+        <!-- Izquierda: Perfil -->
+        <div class="md:col-span-1">
+            <ProfileCard />
+        </div>
+
+        <!-- Derecha: Métricas y datos personales -->
+        <div class="md:col-span-3 flex flex-col gap-2">
+            <SummaryMetricsRow />
+            <PersonalDataForm />
+        </div>
+    </div>
+</div>

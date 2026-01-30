@@ -1,0 +1,12 @@
+---
+//* SoundControlButton.astro *//
+
+const { icon, "data-sound-codigo": dataSoundCodigo } = Astro.props;
+---
+
+<button
+    class="sound-control-btn flex flex-col items-center space-y-1 p-4 text-black hover:bg-[#a6a6a6] bg-[#d9d9d9] rounded-lg transition-all"
+    data-sound-codigo={dataSoundCodigo}
+>
+    <img src={`/icons/${icon}.svg`} class="w-4 h-4 status-icon" />
+</button>

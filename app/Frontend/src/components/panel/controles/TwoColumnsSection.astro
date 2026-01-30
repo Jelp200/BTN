@@ -1,0 +1,170 @@
+---
+//* TwoColumnsSection.astro *//
+
+import SoundControlButtons from "./SoundControlButtons.astro";
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+    <!-- Línea divisora centrada (solo en pantallas medianas y mayores) -->
+    <div
+        class="absolute inset-y-0 left-1/2 -ml-px border border-[#a6a6a6] pointer-events-none hidden md:block"
+        aria-hidden="true"
+    >
+    </div>
+
+    <!-- Columna izquierda -->
+    <div class="space-y-4">
+        <div class="flex gap-4">
+            <!-- Botón de Humo -->
+            <button
+                class="control-btn w-full flex flex-col items-center justify-center text-center bg-[#d9d9d9] hover:bg-[#a6a6a6] text-black rounded-lg transition-colors"
+                data-codigo="HUMO"
+                aria-label="Activar humo"
+            >
+                <img
+                    src="/icons/humo.svg"
+                    alt="Icono de humo"
+                    class="w-8 h-8 mx-auto"
+                />
+                <span class="block mt-1 text-sm">Humo</span>
+            </button>
+
+            <!-- Botón de Disparo -->
+            <button
+                class="control-btn w-full flex flex-col items-center justify-center text-center space-y-1 p-8 bg-[#d9d9d9] hover:bg-[#a6a6a6] text-black rounded-lg transition-all"
+                data-codigo="DISPARO"
+                aria-label="Activar disparo"
+            >
+                <img
+                    src="/icons/disparo.svg"
+                    alt="Icono de disparo"
+                    class="w-8 h-8 mx-auto"
+                />
+                <span class="text-sm">Disparo</span>
+            </button>
+        </div>
+
+        <!-- Campo de tiempo mostrado -->
+        <p class="text-md text-[black]">
+            Tiempo restante:
+            <span id="tiempo-mostrado" class="font-semibold">05:00</span>
+        </p>
+
+        <!-- Botón para iniciar/reiniciar el temporizador -->
+        <div>
+            <label class="block text-sm font-medium text-black mb-1">
+                Temporizador:
+            </label>
+            <button
+                id="btn-iniciar-temporizador"
+                class="bg-[#d9d9d9] hover:bg-[#a6a6a6] text-black px-4 py-2 rounded-lg transition-colors flex items-center gap-2 w-full"
+                aria-label="Iniciar o reiniciar temporizador de 5 minutos"
+            >
+                <span id="temporizador-btn-text">Iniciar 5 min</span>
+                <img
+                    src="/icons/flecha.svg"
+                    alt="Iniciar temporizador"
+                    class="h-6 w-10"
+                />
+            </button>
+        </div>
+    </div>
+
+    <!-- Columna derecha -->
+    <div class="space-y-4">
+        <!-- Selector de sección -->
+        <div class="flex justify-center gap-2" role="tablist">
+            <button
+                id="btn-sonidos"
+                class="seccion-btn bg-[#d9d9d9] hover:bg-[#a6a6a6] px-2 py-2 rounded-lg transition-colors"
+                data-seccion="sonidos"
+                aria-selected="false"
+                role="tab"
+                tabindex="0"
+            >
+                Sonidos Ambientales
+            </button>
+            <button
+                id="btn-tinitus"
+                class="seccion-btn bg-[#d9d9d9] hover:bg-[#a6a6a6] px-2 py-2 rounded-lg transition-colors"
+                data-seccion="tinitus"
+                aria-selected="false"
+                role="tab"
+                tabindex="0"
+            >
+                Tinitus
+            </button>
+        </div>
+
+        <!-- Contenedor de opciones con scroll -->
+        <div
+            class="seccion-contenido max-h-20 overflow-y-auto bg-white border border-[#ccc] rounded-lg p-2"
+            role="tabpanel"
+        >
+            <!-- Los botones se inyectan desde el script principal -->
+            <div
+                class="flex items-center justify-center h-12 text-sm text-gray-500"
+                id="loading-state"
+            >
+                Selecciona una sección
+            </div>
+        </div>
+
+        <!-- Botones de control de audio -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <SoundControlButtons icon="vmas" data-sound-codigo="VMAS" />
+            <SoundControlButtons icon="vmen" data-sound-codigo="VMEN" />
+            <SoundControlButtons icon="stop" data-sound-codigo="STOP" />
+        </div>
+
+        <!-- Barra de volumen estilizada -->
+        <div class="volume-control space-y-2">
+            <div class="flex items-center gap-2">
+                <!-- Icono de volumen bajo -->
+                <svg
+                    class="w-5 h-5 text-gray-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                >
+                    <path d="M9 4a1 1 0 00-1 1v10a1 1 0 102 0V5a1 1 0 00-1-1z"
+                    ></path>
+                    <path d="M5 8a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z"
+                    ></path>
+                    <path d="M15 8a3 3 0 00-3 3v0a3 3 0 003 3v-6z"></path>
+                </svg>
+
+                <!-- Barra de progreso -->
+                <div
+                    class="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden"
+                >
+                    <div
+                        id="volume-bar-fill"
+                        class="bg-linear-to-r from-[#00bf63] to-[#00a152] h-full rounded-full transition-all duration-300 ease-in-out"
+                        style="width: 50%"
+                    >
+                    </div>
+                </div>
+
+                <!-- Icono de volumen alto -->
+                <svg
+                    class="w-5 h-5 text-gray-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                >
+                    <path d="M9 4a1 1 0 00-1 1v10a1 1 0 102 0V5a1 1 0 00-1-1z"
+                    ></path>
+                    <path d="M5 8a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z"
+                    ></path>
+                    <path d="M15 8a3 3 0 00-3 3v0a3 3 0 003 3v-6z"></path>
+                    <path d="M18 9a1 1 0 00-1 1v0a1 1 0 102 0v0a1 1 0 00-1-1z"
+                    ></path>
+                </svg>
+            </div>
+
+            <!-- Valor numérico del volumen -->
+            <div class="text-center text-sm text-gray-600">
+                <span id="volume-value">50</span>%
+            </div>
+        </div>
+    </div>
+</div>
