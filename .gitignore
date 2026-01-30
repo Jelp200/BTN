@@ -1,0 +1,39 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+client/.astro
+.vs
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sw?
+.env
+.env.production
+
+# Archivos grandes
+*.exe
+# TODO: Agregar .iss despues de las pruebas
+
+# Ignorar carpetas bin y obj en todos los proyectos
+**/bin
+**/obj
+**/wwwroot
+
+# Ignore package files
+package-lock.json
