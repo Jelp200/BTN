@@ -197,7 +197,7 @@ function inicializarBiometria() {
             
             // Log enviado
             console.log("[Biometría] Enviando solicitud:", requestPayload);
-            window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/connect\nPayload: ${JSON.stringify(requestPayload)}`);
+            window.addSentLog?.(`[SMARTWATCH] \nPOST /api/smartwatch/connect\nPayload: ${JSON.stringify(requestPayload, null, 2)}`);
 
             try {
                 const response = await fetch("http://localhost:5000/api/smartwatch/connect", {
@@ -209,7 +209,7 @@ function inicializarBiometria() {
                 const data = await response.json().catch(() => ({}));
                 
                 console.log("[Biometría] Respuesta recibida:", { status: response.status, data });
-                window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data)}`);
+                window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
                 
                 if (!response.ok || !data.success) {
                     throw new Error(data.message || "No se pudo conectar al reloj");
