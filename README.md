@@ -8,40 +8,40 @@ Interfaz centralizada (web/escritorio) para el control de actuadores y monitoreo
 
 ## 🧱 Arquitectura general del sistema
 
-![AGS](imgs\AGS.png)
+![AGS](imgs/AGS.png)
 
-## 🕸️ Arquitectura de la aplicación
+## 🕸️ Arquitectura del sistema
 
-![AS]()
+![AS](imgs/AS.png)
 
 ---
 
-## :file_folder: Organizacion carpetas
+## 📁 Organización carpetas
 
 ```plaintext
-BTN/
-├── app/
+📁 BTN/
+├── 🖥️ app/
 |   ├── Escritorio/
-|   |   ├── ControlPanel.API/
 |   |   └── HostApp/
+|   ├── Backend/
+|   |   └── ControlPanel.API/
 |   └── Frontend/
-├── docs/
-├── imgs/
-|   └── DF/
-├── test/
-|   ├── BotoneraSerial/
-|   └── PanelControlApp/
-├── uC/
-|   ├── Codigos nuevos/
-|   └── Codigos originales/
+├── 📃 docs/
+├── 🖼️ imgs/
+├── 🧪 test/
+|   ├── Microcontroller/
+|   ├── client/
+|   ├── SmartWatchController/
+|   ├── ControlPanel.API/
+|   └── HostApp/
 ├── .gitignore/
 ├── LICENSE/
-└── README.md/
+└── README.md/		<--- Este archivo
 ```
 
 ---
 
-## :shipit: Copiar proyecto
+##  👨🏽‍💻 Copiar proyecto
 
 ```sh
 git clone https://github.com/Jelp200/BTN.git
