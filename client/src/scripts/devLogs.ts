@@ -1,4 +1,17 @@
 // ===============================
+// Extender la interfaz Window
+// ===============================
+declare global {
+    interface Window {
+        addSentLog: (message: string) => void;
+        addReceivedLog: (message: string) => void;
+        isDevModeActive: boolean;
+    }
+}
+
+export {};
+
+// ===============================
 // Detectar secuencia de teclas
 // ===============================
 
@@ -6,6 +19,9 @@
 if (typeof document !== 'undefined') {
     let keySequence: string = "";
     const DEV_CODE: string = "gitsdev";
+    
+    // Variable global para rastrear si dev mode está activo
+    (window as any).isDevModeActive = false;
 
     document.addEventListener("keydown", (e: KeyboardEvent) => {
         keySequence += e.key.toLowerCase();
@@ -30,7 +46,30 @@ if (typeof document !== 'undefined') {
 
         devComControls?.classList.toggle("hidden");
         devLogControls?.classList.toggle("hidden");
+        
+        // Actualizar estado global
+        (window as any).isDevModeActive = !((window as any).isDevModeActive);
     }
+    
+    // ===============================
+    // Proteger menú contextual
+    // ===============================
+    document.addEventListener("contextmenu", (e: MouseEvent) => {
+        // Si dev mode no está activo, prevenir el menú contextual
+        if (!(window as any).isDevModeActive) {
+            e.preventDefault();
+        }
+    });
+    
+    // ===============================
+    // Proteger tecla F12 (Developer Tools)
+    // ===============================
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        // Si dev mode no está activo, prevenir F12
+        if (!(window as any).isDevModeActive && e.key === "F12") {
+            e.preventDefault();
+        }
+    });
 
     // ===============================
     // DOM Ready
