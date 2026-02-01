@@ -1,0 +1,25 @@
+.log-window {
+    scrollbar-width: thin;
+    scrollbar-color: #a6a6a6 #f1f1f1;
+}
+
+.log-window::-webkit-scrollbar {
+    width: 8px;
+}
+
+.log-window::-webkit-scrollbar-thumb {
+    background: #a6a6a6;
+    border-radius: 4px;
+}
+
+.log-window::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Select estilizado con icono a la izquierda */
+.select-with-icon {
+    background-repeat: no-repeat;
+    background-position: 8px center;
+    background-size: 18px 18px;
+    padding-left: 34px; /* espacio para el icono */
+}
