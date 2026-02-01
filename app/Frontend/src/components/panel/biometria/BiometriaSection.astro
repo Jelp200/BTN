@@ -1,6 +1,4 @@
 ---
-//* BiometriaSection.astro *//
-
 import SummaryMetricsRow from "./SummaryMetricsRow.astro";
 import ProfileCard from "./ProfileCard.astro";
 import PersonalDataForm from "./PersonalDataForm.astro";
@@ -11,7 +9,7 @@ import DivisorLine from "../DivisorLine.astro";
 <div class="flex flex-col gap-2">
     <!-- Gráficas biométricas (Pulso, Oxigenación, Temperatura, Glucosa) -->
     <BiometricCharts />
-    
+
     <DivisorLine />
 
     <!-- Abajo: tarjeta usuario + métricas + formulario -->
@@ -24,7 +22,9 @@ import DivisorLine from "../DivisorLine.astro";
         <!-- Derecha: Métricas y datos personales -->
         <div class="md:col-span-3 flex flex-col gap-2">
             <SummaryMetricsRow />
-            <PersonalDataForm />
         </div>
+    </div>
+    <div class="flex justify-center">
+        <PersonalDataForm />
     </div>
 </div>
