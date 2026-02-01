@@ -10,6 +10,7 @@ let volumenPorCabina = { "Cabina 1": 0, "Cabina 2": 0 };
 let reproduciendoPorCabina = { "Cabina 1": false, "Cabina 2": false };
 let botonPlayActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
 let sonidoActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
+let estadoCalor = "off";
 
 //* Estados para gráficas biométricas
 let biometricChartsEnabled = false;
@@ -32,15 +33,15 @@ let biometricUpdateInterval = null;
 *************************** MAPEO DE CODIGOS ***************************
 ********************************************************************* */
 const codigoBoton = {
-    VIBRACION: { off: "006", on: "007" },
-    VENTILADOR: { off: "008", on: "009" },
-    EXTRACTOR: { off: "010", on: "011" },
     FRIO: { off: "000", on: "001" },
-    CALOR: { off: "002", on: "003" },
-    HUMEDAD: { off: "004", on: "005" },
-    DESHUMIDIFICADOR: { off: "012", on: "013" },
-    HUMO: { off: "014", on: "015" },
-    DISPARO: { off: "016", on: "017" },
+    CALOR: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
+    HUMEDAD: { off: "007", on: "008" },
+    VIBRACION: { off: "009", on: "010" },
+    VENTILADOR: { off: "011", on: "012" },
+    EXTRACTOR: { off: "013", on: "014" },
+    DESHUMIDIFICADOR: { off: "015", on: "016" },
+    HUMO: { off: "017", on: "018" },
+    DISPARO: { off: "019", on: "020" },
 };
 
 const codigoSonidoControl = {
@@ -88,7 +89,6 @@ const tinitus = [
     { nombre: "Tono 8kHz", codigo: "089" },
 ];
 
-// Trama STOP
 const TRAMA_STOP = "038";
 
 const sensorConfig = {
@@ -102,6 +102,14 @@ const sensorConfig = {
     Y: { frecuencia: 1, label: "Aceleración Y (m/s²)" },
     Z: { frecuencia: 1, label: "Aceleración Z (m/s²)" },
 };
+
+const calorCycle = [
+    "on",
+    "low",
+    "medium",
+    "high",
+    "off",
+];
 
 // Exponer constantes en window para acceso global
 window.codigoBoton = codigoBoton;
@@ -286,21 +294,6 @@ function inicializarBiometria() {
     console.log("[Biometría] Delegación de eventos inicializada para [data-action='connect-watch'] y [data-action='disconnect-watch']");
 }
 
-/**
- * Genera datos aleatorios ilustrativos para biometría
- */
-function generateBiometricData() {
-    return {
-        pulse: Math.floor(Math.random() * 40) + 60, // 60-100 bpm
-        oxygen: Math.floor(Math.random() * 5) + 95, // 95-100 %
-        temperature: (Math.random() * 2 + 36.5).toFixed(1), // 36.5-38.5 °C
-        glucose: Math.floor(Math.random() * 40) + 100, // 100-140 mg/dL
-    };
-}
-
-/**
- * Inicializa la gráfica biométrica única cuando se conecta el smartwatch
- */
 function initBiometricCharts() {
     if (biometricChartsEnabled) return; // Ya está activa
     
@@ -455,103 +448,6 @@ function initBiometricCharts() {
     } catch (err) {
         console.error("[BiometricCharts] ❌ Error creando gráfica:", err);
     }
-}
-
-/**
- * Cambia la métrica mostrada en la gráfica
- */
-function updateBiometricMetric(metric, labels, metricConfigs) {
-    if (!biometricChartInstances.pulse) return;
-
-    const config = metricConfigs[metric];
-    const chart = biometricChartInstances.pulse;
-
-    console.log(`[BiometricCharts] Cambiando métrica a: ${metric}`);
-
-    chart.data.datasets[0].label = config.label;
-    chart.data.datasets[0].data = biometricChartData[metric];
-    chart.data.datasets[0].borderColor = config.borderColor;
-    chart.data.datasets[0].backgroundColor = config.bgColor;
-    chart.data.datasets[0].pointBackgroundColor = config.borderColor;
-
-    // Actualizar escalas
-    chart.options.scales.y.min = config.yScale.min;
-    chart.options.scales.y.max = config.yScale.max;
-
-    chart.update();
-}
-
-/**
- * Actualiza las gráficas biométricas cada minuto
- */
-function updateBiometricCharts() {
-    if (!biometricChartsEnabled || !biometricChartInstances.pulse) return;
-
-    console.log("[BiometricCharts] Actualizando datos");
-
-    // Generar nuevo dato
-    const newData = generateBiometricData();
-    
-    // Agregar nuevo dato y eliminar el más antiguo (mantener máximo 10)
-    biometricChartData.pulse.push(newData.pulse);
-    biometricChartData.oxygen.push(newData.oxygen);
-    biometricChartData.temperature.push(parseFloat(newData.temperature));
-    biometricChartData.glucose.push(newData.glucose);
-
-    if (biometricChartData.pulse.length > 10) {
-        biometricChartData.pulse.shift();
-        biometricChartData.oxygen.shift();
-        biometricChartData.temperature.shift();
-        biometricChartData.glucose.shift();
-    }
-
-    // Actualizar labels (timestamp) - últimos 10 minutos
-    const now = new Date();
-    const newLabels = [];
-    for (let i = Math.min(9, biometricChartData.pulse.length - 1); i >= 0; i--) {
-        const time = new Date(now - i * 60000);
-        newLabels.push(time.toLocaleTimeString());
-    }
-
-    // Actualizar la gráfica única (usa pulse como principal, pero todos tienen datos)
-    const chart = biometricChartInstances.pulse;
-    chart.data.labels = newLabels;
-    
-    // Obtener métrica seleccionada actualmente
-    const selector = document.getElementById("biometricMetricSelector");
-    const selectedMetric = selector ? selector.value : "pulse";
-    
-    // Actualizar dataset con la métrica seleccionada
-    chart.data.datasets[0].data = biometricChartData[selectedMetric];
-    chart.update();
-}
-
-/**
- * Detiene las gráficas biométricas
- */
-function stopBiometricCharts() {
-    console.log("[BiometricCharts] Deteniendo gráficas");
-
-    // Limpiar intervalo
-    if (biometricUpdateInterval) {
-        clearInterval(biometricUpdateInterval);
-        biometricUpdateInterval = null;
-    }
-
-    // Destruir gráficas
-    Object.values(biometricChartInstances).forEach(chart => {
-        if (chart) chart.destroy();
-    });
-
-    biometricChartInstances = {
-        pulse: null,
-        oxygen: null,
-        temperature: null,
-        glucose: null,
-    };
-
-    biometricChartsEnabled = false;
-    console.log("[BiometricCharts] Gráficas detenidas");
 }
 
 /* *********************************************************************
@@ -1548,6 +1444,167 @@ function initTwoColumnsSection(panel) {
     restaurarSonidoActivo(panel);
 }
 
+// Función para manejar el ciclo de calor
+function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
+    const currentIndex = calorCycle.indexOf(estadoCalor);
+    const nextIndex = (currentIndex + 1) % calorCycle.length;
+    estadoCalor = calorCycle[nextIndex];
+
+    btn.classList.remove("bg-[#d9d9d9]", "bg-[#00bf63]");
+
+    if (estadoCalor === "off") {
+        btn.classList.add("bg-[#d9d9d9]");
+        enviarTrama(
+            cabinaPrefijo,
+            codigoBoton.CALOR.off,
+            cabinaActiva
+        );
+        actualizarLedCalor(panel, "off");
+        return;
+    }
+
+    btn.classList.add("bg-[#00bf63]");
+    enviarTrama(
+        cabinaPrefijo,
+        codigoBoton.CALOR[estadoCalor],
+        cabinaActiva
+    );
+    actualizarLedCalor(panel, estadoCalor);
+}
+
+// Función para actualizar el LED de calor según el estado
+function actualizarLedCalor(panel, estado) {
+    const btnCalor = panel.querySelector(
+        'button[data-codigo="CALOR"]'
+    );
+    if (!btnCalor) return;
+
+    const led = btnCalor.querySelector(".led-indicator");
+    if (!led) return;
+
+    led.classList.remove(
+        "bg-gray-400",
+        "bg-red-500",
+        "bg-yellow-400",
+        "bg-green-500"
+    );
+
+    switch (estado) {
+        case "low":
+            led.classList.add("bg-red-500");
+            break;
+        case "medium":
+            led.classList.add("bg-yellow-400");
+            break;
+        case "high":
+            led.classList.add("bg-green-500");
+            break;
+        default:
+            led.classList.add("bg-gray-400");
+    }
+}
+
+// Función para generar datos aleatorios ilustrativos para biometría
+function generateBiometricData() {
+    return {
+        pulse: Math.floor(Math.random() * 40) + 60, // 60-100 bpm
+        oxygen: Math.floor(Math.random() * 5) + 95, // 95-100 %
+        temperature: (Math.random() * 2 + 36.5).toFixed(1), // 36.5-38.5 °C
+        glucose: Math.floor(Math.random() * 40) + 100, // 100-140 mg/dL
+    };
+}
+
+// Función para cambiar la métrica mostrada en la gráfica biométrica
+function updateBiometricMetric(metric, labels, metricConfigs) {
+    if (!biometricChartInstances.pulse) return;
+
+    const config = metricConfigs[metric];
+    const chart = biometricChartInstances.pulse;
+
+    console.log(`[BiometricCharts] Cambiando métrica a: ${metric}`);
+
+    chart.data.datasets[0].label = config.label;
+    chart.data.datasets[0].data = biometricChartData[metric];
+    chart.data.datasets[0].borderColor = config.borderColor;
+    chart.data.datasets[0].backgroundColor = config.bgColor;
+    chart.data.datasets[0].pointBackgroundColor = config.borderColor;
+
+    // Actualizar escalas
+    chart.options.scales.y.min = config.yScale.min;
+    chart.options.scales.y.max = config.yScale.max;
+
+    chart.update();
+}
+
+// Función para actualizar los datos de las gráficas biométricas
+function updateBiometricCharts() {
+    if (!biometricChartsEnabled || !biometricChartInstances.pulse) return;
+
+    console.log("[BiometricCharts] Actualizando datos");
+
+    // Generar nuevo dato
+    const newData = generateBiometricData();
+    
+    // Agregar nuevo dato y eliminar el más antiguo (mantener máximo 10)
+    biometricChartData.pulse.push(newData.pulse);
+    biometricChartData.oxygen.push(newData.oxygen);
+    biometricChartData.temperature.push(parseFloat(newData.temperature));
+    biometricChartData.glucose.push(newData.glucose);
+
+    if (biometricChartData.pulse.length > 10) {
+        biometricChartData.pulse.shift();
+        biometricChartData.oxygen.shift();
+        biometricChartData.temperature.shift();
+        biometricChartData.glucose.shift();
+    }
+
+    // Actualizar labels (timestamp) - últimos 10 minutos
+    const now = new Date();
+    const newLabels = [];
+    for (let i = Math.min(9, biometricChartData.pulse.length - 1); i >= 0; i--) {
+        const time = new Date(now - i * 60000);
+        newLabels.push(time.toLocaleTimeString());
+    }
+
+    // Actualizar la gráfica única (usa pulse como principal, pero todos tienen datos)
+    const chart = biometricChartInstances.pulse;
+    chart.data.labels = newLabels;
+    
+    // Obtener métrica seleccionada actualmente
+    const selector = document.getElementById("biometricMetricSelector");
+    const selectedMetric = selector ? selector.value : "pulse";
+    
+    // Actualizar dataset con la métrica seleccionada
+    chart.data.datasets[0].data = biometricChartData[selectedMetric];
+    chart.update();
+}
+
+// Función para detener y limpiar las gráficas biométricas
+function stopBiometricCharts() {
+    console.log("[BiometricCharts] Deteniendo gráficas");
+
+    // Limpiar intervalo
+    if (biometricUpdateInterval) {
+        clearInterval(biometricUpdateInterval);
+        biometricUpdateInterval = null;
+    }
+
+    // Destruir gráficas
+    Object.values(biometricChartInstances).forEach(chart => {
+        if (chart) chart.destroy();
+    });
+
+    biometricChartInstances = {
+        pulse: null,
+        oxygen: null,
+        temperature: null,
+        glucose: null,
+    };
+
+    biometricChartsEnabled = false;
+    console.log("[BiometricCharts] Gráficas detenidas");
+}
+
 /* *********************************************************************
 ********************* MANEJO DE PANELES (C1 & C2) **********************
 ********************************************************************* */
@@ -1690,7 +1747,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Saltar el botón de DISPARO
                 if (codigo === "DISPARO") {
-                    return; // no agregar evento aquí
+                    return;
+                }
+
+                if (codigo === "CALOR") {
+                    manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel);
+                    return;
                 }
 
                 if (isActive) {
@@ -1995,6 +2057,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                     }
                 });
+
+                // Reiniciar estado de calor
+                estadoCalor = "off";
+                actualizarLedCalor(panel, "off");
 
                 // Enviar trama STOP (038) a ambos paneles
                 const panels =

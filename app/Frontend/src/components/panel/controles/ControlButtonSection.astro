@@ -1,12 +1,13 @@
 ---
 //* ControlButtonSection.astro *//
 import ControlButton from "./ControlButton.astro";
+import ControlButtonCalor from "./ControlButtonCalor.astro";
 ---
 
 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
     <!-- Usamos el componente ControlButton con data-codigo -->
     <ControlButton label="Frío" icon="frio" data-codigo="FRIO" />
-    <ControlButton label="Calor" icon="calor" data-codigo="CALOR" />
+    <ControlButtonCalor label="Calor" icon="calor" data-codigo="CALOR" />
     <ControlButton label="Humedad" icon="humedad" data-codigo="HUMEDAD" />
     <ControlButton label="Vibración" icon="vibracion" data-codigo="VIBRACION" />
     <ControlButton label="Ventilador" icon="ventilador" data-codigo="VENTILADOR" />
