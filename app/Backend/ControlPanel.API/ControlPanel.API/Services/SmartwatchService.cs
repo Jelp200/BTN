@@ -24,6 +24,8 @@ namespace ControlPanel.API.Services
         private int _bpmMeasurementCount = 0;
         private DateTime _lastBpmMeasurementTime = DateTime.MinValue;
         private bool _bpmMonitoringActive = false;
+        private DateTime _lastBpmSessionEndedUtc = DateTime.MinValue;
+        private static readonly TimeSpan BpmSessionCooldown = TimeSpan.FromMinutes(5);
         private const int MAX_BPM_MEASUREMENTS = 10;
         private const int BPM_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
     
@@ -410,6 +412,29 @@ namespace ControlPanel.API.Services
                 Console.WriteLine("[SMARTWATCH] ✗ No hay reloj conectado");
                 return false;
             }
+
+            if (_spo2MonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ⚠ SpO2 activo. No se puede iniciar BPM");
+                return false;
+            }
+
+            if (_bpmMonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ⚠ BPM ya está activo. Ignorando solicitud");
+                return false;
+            }
+
+            if (_lastBpmSessionEndedUtc != DateTime.MinValue)
+            {
+                var elapsed = DateTime.UtcNow - _lastBpmSessionEndedUtc;
+                if (elapsed < BpmSessionCooldown)
+                {
+                    var remaining = BpmSessionCooldown - elapsed;
+                    Console.WriteLine($"[SMARTWATCH] ⏳ Cooldown BPM activo. Faltan {remaining.TotalSeconds:F0}s");
+                    return false;
+                }
+            }
             
             var batteryServiceUuid = new Guid("F0080001-0451-4000-B000-000000000000");
             var batteryConfigUuid = new Guid("F0080003-0451-4000-B000-000000000000");
@@ -476,8 +501,10 @@ namespace ControlPanel.API.Services
                 _bpmMonitoringActive = false;
                 _bpmMeasurementCount = 0;
                 _lastBpmMeasurementTime = DateTime.MinValue;
+                _lastBpmSessionEndedUtc = DateTime.UtcNow;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Estado de medición BPM reseteado");
+                Console.WriteLine($"[SMARTWATCH] ⏲️ Cooldown BPM iniciado ({BpmSessionCooldown.TotalMinutes:F0} min)");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
             }
             catch (Exception ex)
@@ -490,8 +517,7 @@ namespace ControlPanel.API.Services
         }
         
         /// <summary>
-        /// Start SpO2 (blood oxygen) monitoring by sending {0xD2, 0x01} to F0080003
-        /// Based on HEAD_SPO2H_ORIGAL = 0xD2 from H Band protocol
+        /// Start SpO2 (blood oxygen) monitoring by sending {0x80, 0x01} to F0080003
         /// </summary>
         public async Task<bool> StartSpO2MonitoringAsync(CancellationToken cancellationToken)
         {
@@ -503,6 +529,18 @@ namespace ControlPanel.API.Services
             {
                 Console.WriteLine("[SMARTWATCH] ✗ No hay reloj conectado");
                 return false;
+            }
+
+            if (_spo2MonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ⚠ SpO2 ya está activo. Ignorando solicitud");
+                return false;
+            }
+
+            if (_bpmMonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ℹ BPM activo. Deteniendo BPM antes de iniciar SpO2...");
+                await StopBpmMonitoringAsync(cancellationToken);
             }
             
             var batteryServiceUuid = new Guid("F0080001-0451-4000-B000-000000000000");
@@ -541,7 +579,7 @@ namespace ControlPanel.API.Services
         }
         
         /// <summary>
-        /// Stop SpO2 monitoring by sending {0xD2, 0x00} to F0080003
+        /// Stop SpO2 monitoring by sending {0x80, 0x02} to F0080003
         /// </summary>
         private async Task StopSpo2MonitoringAsync(CancellationToken cancellationToken)
         {
@@ -554,7 +592,7 @@ namespace ControlPanel.API.Services
             
             try
             {
-                // Send STOP SpO2 command: {0xD2, 0x00}
+                // Send STOP SpO2 command: {0x80, 0x02}
                 byte[] stopSpo2Command = { 0x80, 0x02 };
                 
                 Console.WriteLine($"[SMARTWATCH] Enviando comando STOP SpO2: [0x80, 0x02]");

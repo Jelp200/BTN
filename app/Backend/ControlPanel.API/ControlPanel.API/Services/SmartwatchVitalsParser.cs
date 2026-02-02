@@ -19,7 +19,8 @@ namespace ControlPanel.API.Services
         
         // H Band protocol head bytes (from BleProfile.java)
         private const byte HEAD_RATE_CURRENT_READ = 0xD0;  // -48 in Java = 208 unsigned ← BPM HEAD BYTE
-        private const byte HEAD_SPO2H_ORIGAL = 0xD2;       // -46 in Java = 210 unsigned  
+        private const byte HEAD_SPO2_PACKET = 0x80;        // SpO2 data packet header for 0x80-based frames
+        private const byte HEAD_SPO2H_ORIGAL = 0xD2;       // Legacy SpO2 head (older parser)
         private const byte HEAD_TEMPTURE_ORIGAL = 0x88;    // -120 in Java = 136 unsigned
         private const byte HEAD_BP = 0x90;                 // -112 in Java = 144 unsigned
         private const byte HEAD_AI_QA_STOP_RECORDING = 0xA1; // -95 in Java = 161 unsigned (SmartWatch AI function)
@@ -75,8 +76,9 @@ namespace ControlPanel.API.Services
                     Console.WriteLine($"[PARSER] ✗ ParseHeartRate retornó null");
                     break;
 
+                case HEAD_SPO2_PACKET:
                 case HEAD_SPO2H_ORIGAL:
-                    Console.WriteLine($"[PARSER] → Detectado head byte SpO2 (0xD2)");
+                    Console.WriteLine($"[PARSER] → Detectado head byte SpO2 (0x{headByte:X2})");
                     var spo2 = ParseSpO2(data.RawValue);
                     if (spo2.HasValue)
                     {
@@ -199,11 +201,14 @@ namespace ControlPanel.API.Services
         }
 
         /// <summary>
-        /// Parse H Band SpO2 (0xD2 head byte)
-        /// Based on H Band source - similar structure to heart rate
-        /// - intArray[1] = SpO2 percentage value
-        /// - intArray[5] = state (0,2,3 = valid, same as BPM)
-        /// - Valid range: 70-100%
+        /// Parse H Band SpO2
+        /// New packet format (head 0x80):
+        /// - byte[1] = spState (estado módulo SpO2)
+        /// - byte[2] = watchState (estado reloj)
+        /// - byte[3] = value (SpO2 % o código especial)
+        /// - byte[4] = checking flag (1 o 2 -> medición en progreso)
+        /// - byte[5] = checkingProgress (0-100)
+        /// Legacy format (head 0xD2) is still accepted.
         /// </summary>
         private static double? ParseSpO2(byte[] value)
         {
@@ -214,32 +219,65 @@ namespace ControlPanel.API.Services
                 return null;
             }
 
-            // Convert signed bytes to unsigned ints (like Java's byte2HexToIntArr)
-            int[] intArray = new int[value.Length];
-            for (int i = 0; i < value.Length; i++)
+            bool isLegacyFormat = value[0] == HEAD_SPO2H_ORIGAL;
+            if (isLegacyFormat)
             {
-                intArray[i] = value[i] & 0xFF;
-            }
-            
-            Console.WriteLine($"[PARSER] intArray: [{string.Join(", ", intArray)}]");
-
-            int spO2 = intArray[1];
-            Console.WriteLine($"[PARSER] SpO2 raw value (intArray[1]): {spO2}%");
-
-            // Check state if available (index 5) - same as BPM
-            if (intArray.Length >= 6)
-            {
-                int state = intArray[5];
-                Console.WriteLine($"[PARSER] State (intArray[5]): {state}");
-                // State must be 0, 2, or 3 for valid reading
-                if (state != 0 && state != 2 && state != 3)
+                // Legacy format based on intArray[1]
+                int[] intArray = new int[value.Length];
+                for (int i = 0; i < value.Length; i++)
                 {
-                    Console.WriteLine($"[PARSER] ✗ Estado inválido: {state} (debe ser 0, 2 o 3)");
+                    intArray[i] = value[i] & 0xFF;
+                }
+                
+                Console.WriteLine($"[PARSER] intArray: [{string.Join(", ", intArray)}]");
+
+                int spO2Legacy = intArray[1];
+                Console.WriteLine($"[PARSER] SpO2 legacy raw value (intArray[1]): {spO2Legacy}%");
+
+                // Check state if available (index 5) - same as BPM
+                if (intArray.Length >= 6)
+                {
+                    int state = intArray[5];
+                    Console.WriteLine($"[PARSER] State (intArray[5]): {state}");
+                    if (state != 0 && state != 2 && state != 3)
+                    {
+                        Console.WriteLine($"[PARSER] ✗ Estado inválido: {state} (debe ser 0, 2 o 3)");
+                        return null;
+                    }
+                }
+
+                if (spO2Legacy < 70 || spO2Legacy > 100)
+                {
+                    Console.WriteLine($"[PARSER] ✗ SpO2 fuera de rango válido (70-100): {spO2Legacy}%");
                     return null;
                 }
+
+                Console.WriteLine($"[PARSER] ✓ SpO2 válido (legacy): {spO2Legacy}%");
+                return spO2Legacy;
             }
 
-            // Validate SpO2 range (70-100%)
+            if (value.Length < 6)
+            {
+                Console.WriteLine($"[PARSER] ✗ Array muy corto para trama SpO2 0x80 (mínimo 6 bytes)");
+                return null;
+            }
+
+            int spState = value[1] & 0xFF;
+            int watchState = value[2] & 0xFF;
+            int spO2 = value[3] & 0xFF;
+            int checkingFlag = value[4] & 0xFF;
+            int checkingProgress = value[5] & 0xFF;
+
+            Console.WriteLine($"[PARSER] spState: {spState}, watchState: {watchState}");
+            Console.WriteLine($"[PARSER] checkingFlag: {checkingFlag}, progress: {checkingProgress}%");
+            Console.WriteLine($"[PARSER] SpO2 raw value (byte[3]): {spO2}%");
+
+            if (checkingFlag == 1 || checkingFlag == 2)
+            {
+                Console.WriteLine($"[PARSER] ⏳ Medición en progreso ({checkingProgress}%)");
+                return null;
+            }
+
             if (spO2 < 70 || spO2 > 100)
             {
                 Console.WriteLine($"[PARSER] ✗ SpO2 fuera de rango válido (70-100): {spO2}%");

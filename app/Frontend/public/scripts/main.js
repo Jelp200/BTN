@@ -28,6 +28,10 @@ let biometricChartData = {
     glucose: [],
 };
 let biometricUpdateInterval = null;
+let biometricLastMetric = "pulse";
+let biometricLastBpmRequestAt = 0;
+let biometricLastSpo2RequestAt = 0;
+const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 
 /* *********************************************************************
 *************************** MAPEO DE CODIGOS ***************************
@@ -1544,12 +1548,91 @@ async function fetchBiometricHistory(limit = 10) {
     }
 }
 
+async function requestBpmMeasurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar BPM");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastBpmRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud BPM por cooldown");
+        return;
+    }
+
+    biometricLastBpmRequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición BPM (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bpm`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bpm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de BPM");
+        }
+
+        window.mostrarNotificacion?.("Medición de BPM iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de BPM";
+        console.warn("[BiometricCharts] Error iniciando BPM:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
+async function requestSpo2Measurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar SpO2");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastSpo2RequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud SpO2 por cooldown");
+        return;
+    }
+
+    biometricLastSpo2RequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición SpO2 (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-spo2`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-spo2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de SpO2");
+        }
+
+        window.mostrarNotificacion?.("Medición de SpO2 iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de SpO2";
+        console.warn("[BiometricCharts] Error iniciando SpO2:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
 // Función para cambiar la métrica mostrada en la gráfica biométrica
 function updateBiometricMetric(metric, labels, metricConfigs) {
     if (!biometricChartInstances.pulse) return;
 
     const config = metricConfigs[metric];
     const chart = biometricChartInstances.pulse;
+    const previousMetric = biometricLastMetric;
+
+    biometricLastMetric = metric;
 
     console.log(`[BiometricCharts] Cambiando métrica a: ${metric}`);
 
@@ -1564,6 +1647,14 @@ function updateBiometricMetric(metric, labels, metricConfigs) {
     chart.options.scales.y.max = config.yScale.max;
 
     chart.update();
+
+    if (metric !== previousMetric) {
+        if (metric === "oxygen") {
+            requestSpo2Measurement("selector");
+        } else if (metric === "pulse") {
+            requestBpmMeasurement("selector");
+        }
+    }
 }
 
 // Función para actualizar los datos de las gráficas biométricas
