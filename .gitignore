@@ -25,6 +25,7 @@ client/.astro
 *.sw?
 .env
 .env.production
+app/Frontend/.astro
 
 # Archivos grandes
 source/HBand-decompiled/*
