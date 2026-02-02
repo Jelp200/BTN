@@ -59,5 +59,90 @@ namespace ControlPanel.API.Controllers
 
             return result.Success ? Ok(response) : BadRequest(response);
         }
+
+        [HttpGet("vitals/latest")]
+        public IActionResult GetLatestVitals()
+        {
+            var vitals = _smartwatchService.GetLatestVitals();
+            if (vitals == null)
+            {
+                return Ok(new { success = false, message = "Sin datos biométricos disponibles.", data = (object?)null });
+            }
+
+            return Ok(new { success = true, data = vitals });
+        }
+
+        [HttpGet("vitals/history")]
+        public IActionResult GetVitalsHistory([FromQuery] int limit = 60)
+        {
+            var data = _smartwatchService.GetRecentVitals(limit);
+            return Ok(new { success = true, data });
+        }
+
+        /// <summary>
+        /// Start SpO2 (blood oxygen) monitoring
+        /// Will collect 10 measurements over 60 seconds and then automatically stop
+        /// </summary>
+        [HttpPost("vitals/start-spo2")]
+        public async Task<IActionResult> StartSpO2Monitoring()
+        {
+            try
+            {
+                var success = await _smartwatchService.StartSpO2MonitoringAsync(HttpContext.RequestAborted);
+                
+                if (success)
+                {
+                    return Ok(new { 
+                        success = true, 
+                        message = "Medición de SpO2 iniciada. Se tomarán 10 mediciones durante 60 segundos." 
+                    });
+                }
+                
+                return BadRequest(new { 
+                    success = false, 
+                    message = "No se pudo iniciar la medición de SpO2. Verifica que el reloj esté conectado." 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = $"Error al iniciar medición de SpO2: {ex.Message}" 
+                });
+            }
+        }
+
+        /// <summary>
+        /// Start BPM (heart rate) monitoring
+        /// Will collect 10 measurements over 60 seconds and then automatically stop
+        /// </summary>
+        [HttpPost("vitals/start-bpm")]
+        public async Task<IActionResult> StartBpmMonitoring()
+        {
+            try
+            {
+                var success = await _smartwatchService.StartBpmMonitoringAsync(HttpContext.RequestAborted);
+                
+                if (success)
+                {
+                    return Ok(new { 
+                        success = true, 
+                        message = "Medición de BPM iniciada. Se tomarán 10 mediciones durante 60 segundos." 
+                    });
+                }
+                
+                return BadRequest(new { 
+                    success = false, 
+                    message = "No se pudo iniciar la medición de BPM. Verifica que el reloj esté conectado." 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = $"Error al iniciar medición de BPM: {ex.Message}" 
+                });
+            }
+        }
     }
 }

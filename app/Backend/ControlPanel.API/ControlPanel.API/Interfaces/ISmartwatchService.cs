@@ -6,6 +6,18 @@ namespace ControlPanel.API.Interfaces
     {
         Task<SmartwatchConnectionResult> ConnectAsync(string targetName, int scanTimeoutMs, CancellationToken cancellationToken);
         Task<SmartwatchDisconnectResult> DisconnectAsync(CancellationToken cancellationToken);
+        SmartwatchVitals? GetLatestVitals();
+        IReadOnlyList<SmartwatchVitals> GetRecentVitals(int maxCount);
+        
+        /// <summary>
+        /// Start BPM (heart rate) monitoring - will collect 10 measurements over 60 seconds
+        /// </summary>
+        Task<bool> StartBpmMonitoringAsync(CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// Start SpO2 (blood oxygen) monitoring - will collect 10 measurements over 60 seconds
+        /// </summary>
+        Task<bool> StartSpO2MonitoringAsync(CancellationToken cancellationToken);
     }
 
     public record SmartwatchConnectionResult(bool Success, string Message, WatchDevice? Device = null);

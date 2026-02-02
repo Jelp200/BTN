@@ -10,14 +10,21 @@
 *************************************************************************** */
 using ControlPanel.API.Interfaces;
 using ControlPanel.API.Services;
+using ControlPanel.API.Bluetooth;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================= INYECCION DE DEPENDENCIAS =======================
+// Serial Services
 builder.Services.AddSingleton<ITramaParser, TramaParser>();
 builder.Services.AddSingleton<ISerialService, SerialService>();
+
+// Smartwatch Services
+builder.Services.AddSingleton<IBleScanner, BleScanner>();
+builder.Services.AddSingleton<IBleConnector, BleConnector>();
+builder.Services.AddSingleton<SessionLogger>();
 builder.Services.AddSingleton<ISmartwatchService, SmartwatchService>();
 
 // ======================== CONFIGURACION EXISTENTE ========================
