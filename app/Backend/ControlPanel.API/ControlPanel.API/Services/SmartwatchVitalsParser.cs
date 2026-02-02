@@ -21,7 +21,8 @@ namespace ControlPanel.API.Services
         private const byte HEAD_RATE_CURRENT_READ = 0xD0;  // -48 in Java = 208 unsigned ← BPM HEAD BYTE
         private const byte HEAD_SPO2_PACKET = 0x80;        // SpO2 data packet header for 0x80-based frames
         private const byte HEAD_SPO2H_ORIGAL = 0xD2;       // Legacy SpO2 head (older parser)
-        private const byte HEAD_TEMPTURE_ORIGAL = 0x88;    // -120 in Java = 136 unsigned
+        private const byte HEAD_TEMPTURE_DETECT = 0x87;    // Temperature COMMAND byte (from Wireshark)
+        private const byte HEAD_TEMPTURE_ORIGAL = 0x88;    // -120 in Java = 136 unsigned (Temperature DATA response)
         private const byte HEAD_BP = 0x90;                 // -112 in Java = 144 unsigned
         private const byte HEAD_AI_QA_STOP_RECORDING = 0xA1; // -95 in Java = 161 unsigned (SmartWatch AI function)
         private const byte HEAD_PWD_RESPONSE = 0xA7;       // -89 in Java = 167 unsigned (Authentication response)
@@ -87,8 +88,9 @@ namespace ControlPanel.API.Services
                     }
                     break;
 
+                case HEAD_TEMPTURE_DETECT:
                 case HEAD_TEMPTURE_ORIGAL:
-                    Console.WriteLine($"[PARSER] → Detectado head byte Temperatura (0x88)");
+                    Console.WriteLine($"[PARSER] → Detectado head byte Temperatura (0x{headByte:X2})");
                     var temp = ParseTemperature(data.RawValue);
                     if (temp.HasValue)
                     {
@@ -290,25 +292,64 @@ namespace ControlPanel.API.Services
 
         /// <summary>
         /// Parse H Band temperature (0x88 head byte)
-        /// Protocol TBD - placeholder
+        /// <summary>
+        /// Parse H Band temperature (0x87 or 0x88 head byte)
+        /// Based on TemptureDetectHandler.java from H Band APK:
+        /// - byte[0] = 0x87 (command/response) or 0x88 (data)
+        /// - byte[1] = 0x01 (command type)
+        /// - byte[2] = state (0x01 = start/measuring, 0x02 = stop)
+        /// - byte[3] = progress/state flags
+        /// - byte[4] = checking flag (0x0A = measuring, etc.)
+        /// - byte[5-6] = temperature value (little endian, divide by 10)
+        /// - byte[7-8] = additional temperature data
+        /// Protocol: Temperature comes in bytes 5-6 as 16-bit little endian, divide by 10
         /// </summary>
         private static double? ParseTemperature(byte[] value)
         {
-            if (value.Length < 2)
+            Console.WriteLine($"[PARSER-TEMP] Parseando temperatura de {value.Length} bytes");
+            Console.WriteLine($"[PARSER-TEMP] Datos completos: [{string.Join(", ", value.Select(b => $"0x{b:X2}"))}]");
+            
+            if (value.Length < 7)
+            {
+                Console.WriteLine($"[PARSER-TEMP] ✗ Datos insuficientes (mínimo 7 bytes)");
                 return null;
+            }
 
+            // Convert to unsigned int array
             int[] intArray = new int[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
                 intArray[i] = value[i] & 0xFF;
             }
 
-            double temperatureC = intArray[1];
-
-            // Validate range (human body: 30-45°C)
-            if (temperatureC < 30 || temperatureC > 45)
+            byte state = value[2];
+            byte checkingFlag = value[4];
+            
+            Console.WriteLine($"[PARSER-TEMP]   byte[2] state = 0x{state:X2} ({(state == 0x01 ? "START/MEASURING" : state == 0x02 ? "STOP" : "UNKNOWN")})");
+            Console.WriteLine($"[PARSER-TEMP]   byte[4] checkingFlag = 0x{checkingFlag:X2}");
+            
+            // If state is STOP (0x02) or all temperature bytes are zero, ignore
+            if (state == 0x02 || (value[5] == 0 && value[6] == 0))
+            {
+                Console.WriteLine($"[PARSER-TEMP] ℹ Medición en progreso o comando de control, no hay datos válidos");
                 return null;
+            }
 
+            // Temperature is in bytes 5-6 as 16-bit little endian, divide by 10
+            // Example: [0x4F, 0x01] = 0x014F = 335 / 10 = 33.5°C
+            int tempRaw = (intArray[6] << 8) | intArray[5];
+            double temperatureC = tempRaw / 10.0;
+            
+            Console.WriteLine($"[PARSER-TEMP]   byte[5-6] = 0x{intArray[5]:X2} 0x{intArray[6]:X2} → raw={tempRaw} → {temperatureC}°C");
+
+            // Validate range (human body: 20-45°C, allow wider range for device)
+            if (temperatureC < 20 || temperatureC > 45)
+            {
+                Console.WriteLine($"[PARSER-TEMP] ✗ Temperatura fuera de rango válido (20-45°C): {temperatureC}°C");
+                return null;
+            }
+
+            Console.WriteLine($"[PARSER-TEMP] ✓ Temperatura válida: {temperatureC}°C");
             return temperatureC;
         }
 

@@ -31,6 +31,7 @@ let biometricUpdateInterval = null;
 let biometricLastMetric = "pulse";
 let biometricLastBpmRequestAt = 0;
 let biometricLastSpo2RequestAt = 0;
+let biometricLastTemperatureRequestAt = 0;
 const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 
 /* *********************************************************************
@@ -1624,6 +1625,44 @@ async function requestSpo2Measurement(source = "ui") {
     }
 }
 
+async function requestTemperatureMeasurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Temperatura");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastTemperatureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud Temperatura por cooldown");
+        return;
+    }
+
+    biometricLastTemperatureRequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición Temperatura (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-temperature`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-temperature", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de Temperatura");
+        }
+
+        window.mostrarNotificacion?.("Medición de Temperatura iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de Temperatura";
+        console.warn("[BiometricCharts] Error iniciando Temperatura:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
 // Función para cambiar la métrica mostrada en la gráfica biométrica
 function updateBiometricMetric(metric, labels, metricConfigs) {
     if (!biometricChartInstances.pulse) return;
@@ -1653,6 +1692,8 @@ function updateBiometricMetric(metric, labels, metricConfigs) {
             requestSpo2Measurement("selector");
         } else if (metric === "pulse") {
             requestBpmMeasurement("selector");
+        } else if (metric === "temperature") {
+            requestTemperatureMeasurement("selector");
         }
     }
 }

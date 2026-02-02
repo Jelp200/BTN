@@ -36,6 +36,13 @@ namespace ControlPanel.API.Services
         private const int MAX_SPO2_MEASUREMENTS = 10;
         private const int SPO2_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
 
+        // Temperature measurement control - 10 measurements over 1 minute
+        private int _temperatureMeasurementCount = 0;
+        private DateTime _lastTemperatureMeasurementTime = DateTime.MinValue;
+        private bool _temperatureMonitoringActive = false;
+        private const int MAX_TEMPERATURE_MEASUREMENTS = 10;
+        private const int TEMPERATURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
+
         public SmartwatchService(IBleScanner scanner, IBleConnector connector, SessionLogger sessionLogger)
         {
             _scanner = scanner;
@@ -290,10 +297,55 @@ namespace ControlPanel.API.Services
                     }
                 }
             }
-            if (update.SpO2.HasValue)
-                Console.WriteLine($"[SMARTWATCH]   SpO2: {update.SpO2.Value}%");
+            
+            // Control de medición Temperatura
             if (update.TemperatureC.HasValue)
+            {
                 Console.WriteLine($"[SMARTWATCH]   Temp: {update.TemperatureC.Value}°C");
+                
+                if (_temperatureMonitoringActive && update.TemperatureC.Value > 0)
+                {
+                    var timeSinceLastMeasurement = (DateTime.UtcNow - _lastTemperatureMeasurementTime).TotalMilliseconds;
+                    
+                    if (timeSinceLastMeasurement >= TEMPERATURE_MEASUREMENT_INTERVAL_MS || _temperatureMeasurementCount == 0)
+                    {
+                        _temperatureMeasurementCount++;
+                        _lastTemperatureMeasurementTime = DateTime.UtcNow;
+                        
+                        Console.WriteLine($"[SMARTWATCH] 📊 Medición Temperatura {_temperatureMeasurementCount}/{MAX_TEMPERATURE_MEASUREMENTS} registrada");
+                        Console.WriteLine($"[SMARTWATCH]    Valor: {update.TemperatureC.Value}°C");
+                        Console.WriteLine($"[SMARTWATCH]    Tiempo desde última: {timeSinceLastMeasurement:F0}ms");
+                        
+                        if (_temperatureMeasurementCount >= MAX_TEMPERATURE_MEASUREMENTS)
+                        {
+                            Console.WriteLine($"[SMARTWATCH] ✓✓✓ Completadas {MAX_TEMPERATURE_MEASUREMENTS} mediciones Temperatura en ~60s");
+                            Console.WriteLine($"[SMARTWATCH] Deteniendo monitoreo Temperatura para permitir otras mediciones...");
+                            
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await StopTemperatureMonitoringAsync(CancellationToken.None);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"[SMARTWATCH] ⚠ Error deteniendo Temperatura: {ex.Message}");
+                                }
+                            });
+                        }
+                        else
+                        {
+                            var remaining = MAX_TEMPERATURE_MEASUREMENTS - _temperatureMeasurementCount;
+                            var estimatedTimeRemaining = remaining * (TEMPERATURE_MEASUREMENT_INTERVAL_MS / 1000);
+                            Console.WriteLine($"[SMARTWATCH]    Faltan {remaining} mediciones (~{estimatedTimeRemaining}s)");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[SMARTWATCH] ⏳ Temperatura recibida pero esperando intervalo (faltan {TEMPERATURE_MEASUREMENT_INTERVAL_MS - timeSinceLastMeasurement:F0}ms)");
+                    }
+                }
+            }
 
             lock (_vitalsLock)
             {
@@ -615,6 +667,126 @@ namespace ControlPanel.API.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"[SMARTWATCH] ✗ Error al detener monitoreo SpO2: {ex.Message}");
+                Console.WriteLine($"[SMARTWATCH]   {ex.GetType().Name}");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Start Temperature monitoring by sending {0x87, 0x01, 0x01, ...} (20 bytes) to F0080003
+        /// Based on TemptureDetectHandler from H Band APK
+        /// </summary>
+        public async Task<bool> StartTemperatureMonitoringAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            Console.WriteLine("[SMARTWATCH] 🌡️ Iniciando monitoreo Temperatura...");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            
+            if (!_isConnected)
+            {
+                Console.WriteLine("[SMARTWATCH] ✗ No hay reloj conectado");
+                return false;
+            }
+
+            if (_temperatureMonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ⚠ Temperatura ya está activa. Ignorando solicitud");
+                return false;
+            }
+
+            if (_bpmMonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ℹ BPM activo. Deteniendo BPM antes de iniciar Temperatura...");
+                await StopBpmMonitoringAsync(cancellationToken);
+            }
+
+            if (_spo2MonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ℹ SpO2 activo. Deteniendo SpO2 antes de iniciar Temperatura...");
+                await StopSpo2MonitoringAsync(cancellationToken);
+            }
+            
+            var batteryServiceUuid = new Guid("F0080001-0451-4000-B000-000000000000");
+            var batteryConfigUuid = new Guid("F0080003-0451-4000-B000-000000000000");
+            
+            try
+            {
+                // Send START Temperature command: {0x87, 0x01, 0x01, 0x00, ...} (20 bytes)
+                byte[] tempStartCommand = new byte[20];
+                tempStartCommand[0] = 0x87;  // HEAD_TEMPTURE_DETECT
+                tempStartCommand[1] = 0x01;  // Command type
+                tempStartCommand[2] = 0x01;  // Start (0x02 = stop)
+                // Rest are zeros
+                
+                Console.WriteLine($"[SMARTWATCH] Enviando comando START Temperatura: [0x87, 0x01, 0x01, ...]");
+                Console.WriteLine($"[SMARTWATCH]   Service: {batteryServiceUuid}");
+                Console.WriteLine($"[SMARTWATCH]   Characteristic: {batteryConfigUuid}");
+                
+                await _connector.WriteAsync(batteryServiceUuid, batteryConfigUuid, tempStartCommand, cancellationToken);
+                
+                // Initialize Temperature measurement state
+                _temperatureMonitoringActive = true;
+                _temperatureMeasurementCount = 0;
+                _lastTemperatureMeasurementTime = DateTime.UtcNow;
+                
+                Console.WriteLine($"[SMARTWATCH] ✓ Comando START Temperatura enviado correctamente");
+                Console.WriteLine($"[SMARTWATCH] 📊 Control de medición Temperatura activado: {MAX_TEMPERATURE_MEASUREMENTS} mediciones en ~60s");
+                Console.WriteLine($"[SMARTWATCH] Esperando datos de temperatura del reloj...");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SMARTWATCH] ✗ Error al iniciar monitoreo Temperatura: {ex.Message}");
+                Console.WriteLine($"[SMARTWATCH]   {ex.GetType().Name}");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Stop Temperature monitoring by sending {0x87, 0x01, 0x02, ...} (20 bytes) to F0080003
+        /// </summary>
+        private async Task StopTemperatureMonitoringAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            Console.WriteLine("[SMARTWATCH] 🛑 Deteniendo monitoreo Temperatura...");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            
+            var batteryServiceUuid = new Guid("F0080001-0451-4000-B000-000000000000");
+            var batteryConfigUuid = new Guid("F0080003-0451-4000-B000-000000000000");
+            
+            try
+            {
+                // Send STOP Temperature command: {0x87, 0x01, 0x02, 0x00, ...} (20 bytes)
+                byte[] tempStopCommand = new byte[20];
+                tempStopCommand[0] = 0x87;  // HEAD_TEMPTURE_DETECT
+                tempStopCommand[1] = 0x01;  // Command type
+                tempStopCommand[2] = 0x02;  // Stop
+                // Rest are zeros
+                
+                Console.WriteLine($"[SMARTWATCH] Enviando comando STOP Temperatura: [0x87, 0x01, 0x02, ...]");
+                Console.WriteLine($"[SMARTWATCH]   Service: {batteryServiceUuid}");
+                Console.WriteLine($"[SMARTWATCH]   Characteristic: {batteryConfigUuid}");
+                
+                await _connector.WriteAsync(batteryServiceUuid, batteryConfigUuid, tempStopCommand, cancellationToken);
+                
+                Console.WriteLine($"[SMARTWATCH] ✓ Comando STOP Temperatura enviado correctamente");
+                Console.WriteLine($"[SMARTWATCH] El reloj ahora está disponible para medir otros signos vitales");
+                
+                // Reset measurement state
+                _temperatureMonitoringActive = false;
+                _temperatureMeasurementCount = 0;
+                _lastTemperatureMeasurementTime = DateTime.MinValue;
+                
+                Console.WriteLine($"[SMARTWATCH] ✓ Estado de medición Temperatura reseteado");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SMARTWATCH] ✗ Error al detener monitoreo Temperatura: {ex.Message}");
                 Console.WriteLine($"[SMARTWATCH]   {ex.GetType().Name}");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
                 throw;

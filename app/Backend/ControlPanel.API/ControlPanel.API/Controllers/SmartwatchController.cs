@@ -144,5 +144,38 @@ namespace ControlPanel.API.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Start Temperature monitoring
+        /// Will collect 10 measurements over 60 seconds and then automatically stop
+        /// </summary>
+        [HttpPost("vitals/start-temperature")]
+        public async Task<IActionResult> StartTemperatureMonitoring()
+        {
+            try
+            {
+                var success = await _smartwatchService.StartTemperatureMonitoringAsync(HttpContext.RequestAborted);
+                
+                if (success)
+                {
+                    return Ok(new { 
+                        success = true, 
+                        message = "Medición de Temperatura iniciada. Se tomarán 10 mediciones durante 60 segundos." 
+                    });
+                }
+                
+                return BadRequest(new { 
+                    success = false, 
+                    message = "No se pudo iniciar la medición de Temperatura. Verifica que el reloj esté conectado." 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = $"Error al iniciar medición de Temperatura: {ex.Message}" 
+                });
+            }
+        }
     }
 }
