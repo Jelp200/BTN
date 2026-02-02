@@ -1483,24 +1483,24 @@ function actualizarLedCalor(panel, estado) {
     if (!led) return;
 
     led.classList.remove(
-        "bg-gray-400",
-        "bg-red-500",
-        "bg-yellow-400",
-        "bg-green-500"
+        "bg-[#b4b4b4]",
+        "bg-[#ffbd59]",
+        "bg-[#ff914d]",
+        "bg-[#ff3131]"
     );
 
     switch (estado) {
         case "low":
-            led.classList.add("bg-red-500");
+            led.classList.add("bg-[#ffbd59]");
             break;
         case "medium":
-            led.classList.add("bg-yellow-400");
+            led.classList.add("bg-[#ff914d]");
             break;
         case "high":
-            led.classList.add("bg-green-500");
+            led.classList.add("bg-[#ff3131]");
             break;
         default:
-            led.classList.add("bg-gray-400");
+            led.classList.add("bg-[#b4b4b4]");
     }
 }
 
