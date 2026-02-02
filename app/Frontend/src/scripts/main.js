@@ -321,13 +321,12 @@ function initBiometricCharts() {
         labels.push(time.toLocaleTimeString());
     }
 
-    // Generar datos iniciales
+    // Inicializar con datos vacíos (se llena desde backend)
     for (let i = 0; i < 10; i++) {
-        const data = generateBiometricData();
-        biometricChartData.pulse.push(data.pulse);
-        biometricChartData.oxygen.push(data.oxygen);
-        biometricChartData.temperature.push(parseFloat(data.temperature));
-        biometricChartData.glucose.push(data.glucose);
+        biometricChartData.pulse.push(null);
+        biometricChartData.oxygen.push(null);
+        biometricChartData.temperature.push(null);
+        biometricChartData.glucose.push(null);
     }
 
     // Configuración de escalas y colores
@@ -442,9 +441,14 @@ function initBiometricCharts() {
 
         biometricChartsEnabled = true;
 
-        // Actualizar gráficas cada minuto (60000 ms)
-        biometricUpdateInterval = setInterval(updateBiometricCharts, 60000);
-        console.log("[BiometricCharts] ✓ Gráfica iniciada. Se actualizará cada minuto.");
+        // Cargar historial inicial desde backend
+        seedBiometricHistory(labels, metricConfigs);
+
+        // Actualizar gráficas cada 5 segundos
+        biometricUpdateInterval = setInterval(() => {
+            updateBiometricCharts();
+        }, 5000);
+        console.log("[BiometricCharts] ✓ Gráfica iniciada. Se actualizará cada 5 segundos.");
     } catch (err) {
         console.error("[BiometricCharts] ❌ Error creando gráfica:", err);
     }
@@ -1504,14 +1508,40 @@ function actualizarLedCalor(panel, estado) {
     }
 }
 
-// Función para generar datos aleatorios ilustrativos para biometría
-function generateBiometricData() {
-    return {
-        pulse: Math.floor(Math.random() * 40) + 60, // 60-100 bpm
-        oxygen: Math.floor(Math.random() * 5) + 95, // 95-100 %
-        temperature: (Math.random() * 2 + 36.5).toFixed(1), // 36.5-38.5 °C
-        glucose: Math.floor(Math.random() * 40) + 100, // 100-140 mg/dL
-    };
+async function fetchLatestBiometricData() {
+    try {
+        const response = await fetch("http://localhost:5000/api/Smartwatch/vitals/latest");
+        if (!response.ok) return null;
+
+        const payload = await response.json();
+        if (!payload?.success || !payload?.data) return null;
+
+        return {
+            pulse: payload.data.pulseBpm ?? null,
+            oxygen: payload.data.spO2 ?? null,
+            temperature: payload.data.temperatureC ?? null,
+            glucose: null,
+            timestampUtc: payload.data.timestampUtc ?? null,
+        };
+    } catch (error) {
+        console.warn("[BiometricCharts] No se pudo obtener datos del backend:", error);
+        return null;
+    }
+}
+
+async function fetchBiometricHistory(limit = 10) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/Smartwatch/vitals/history?limit=${limit}`);
+        if (!response.ok) return [];
+
+        const payload = await response.json();
+        if (!payload?.success || !Array.isArray(payload?.data)) return [];
+
+        return payload.data;
+    } catch (error) {
+        console.warn("[BiometricCharts] No se pudo obtener historial del backend:", error);
+        return [];
+    }
 }
 
 // Función para cambiar la métrica mostrada en la gráfica biométrica
@@ -1537,32 +1567,27 @@ function updateBiometricMetric(metric, labels, metricConfigs) {
 }
 
 // Función para actualizar los datos de las gráficas biométricas
-function updateBiometricCharts() {
+async function updateBiometricCharts() {
     if (!biometricChartsEnabled || !biometricChartInstances.pulse) return;
 
-    console.log("[BiometricCharts] Actualizando datos");
-
-    // Generar nuevo dato
-    const newData = generateBiometricData();
+    const newData = await fetchLatestBiometricData();
+    if (!newData) return;
     
-    // Agregar nuevo dato y eliminar el más antiguo (mantener máximo 10)
-    biometricChartData.pulse.push(newData.pulse);
-    biometricChartData.oxygen.push(newData.oxygen);
-    biometricChartData.temperature.push(parseFloat(newData.temperature));
-    biometricChartData.glucose.push(newData.glucose);
+    if (newData.pulse !== null) biometricChartData.pulse.push(newData.pulse);
+    if (newData.oxygen !== null) biometricChartData.oxygen.push(newData.oxygen);
+    if (newData.temperature !== null) biometricChartData.temperature.push(parseFloat(newData.temperature));
+    if (newData.glucose !== null) biometricChartData.glucose.push(newData.glucose);
 
-    if (biometricChartData.pulse.length > 10) {
-        biometricChartData.pulse.shift();
-        biometricChartData.oxygen.shift();
-        biometricChartData.temperature.shift();
-        biometricChartData.glucose.shift();
-    }
+    if (biometricChartData.pulse.length > 10) biometricChartData.pulse.shift();
+    if (biometricChartData.oxygen.length > 10) biometricChartData.oxygen.shift();
+    if (biometricChartData.temperature.length > 10) biometricChartData.temperature.shift();
+    if (biometricChartData.glucose.length > 10) biometricChartData.glucose.shift();
 
-    // Actualizar labels (timestamp) - últimos 10 minutos
+    // Actualizar labels (timestamp) - últimos 10 registros
     const now = new Date();
     const newLabels = [];
     for (let i = Math.min(9, biometricChartData.pulse.length - 1); i >= 0; i--) {
-        const time = new Date(now - i * 60000);
+        const time = new Date(now - i * 5000);
         newLabels.push(time.toLocaleTimeString());
     }
 
@@ -1576,6 +1601,32 @@ function updateBiometricCharts() {
     
     // Actualizar dataset con la métrica seleccionada
     chart.data.datasets[0].data = biometricChartData[selectedMetric];
+    chart.update();
+}
+
+async function seedBiometricHistory(labels, metricConfigs) {
+    const history = await fetchBiometricHistory(10);
+    if (!history.length) return;
+
+    biometricChartData.pulse = history.map((item) => item.pulseBpm ?? null);
+    biometricChartData.oxygen = history.map((item) => item.spO2 ?? null);
+    biometricChartData.temperature = history.map((item) => item.temperatureC ?? null);
+    biometricChartData.glucose = history.map(() => null);
+
+    const chart = biometricChartInstances.pulse;
+    const selector = document.getElementById("biometricMetricSelector");
+    const selectedMetric = selector ? selector.value : "pulse";
+
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = biometricChartData[selectedMetric];
+
+    const config = metricConfigs[selectedMetric];
+    chart.data.datasets[0].label = config.label;
+    chart.data.datasets[0].borderColor = config.borderColor;
+    chart.data.datasets[0].backgroundColor = config.bgColor;
+    chart.options.scales.y.min = config.yScale.min;
+    chart.options.scales.y.max = config.yScale.max;
+
     chart.update();
 }
 
