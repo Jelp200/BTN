@@ -27,6 +27,9 @@ client/.astro
 .env.production
 
 # Archivos grandes
+source/HBand-decompiled/*
+source/H_Band/*
+*.apk
 *.exe
 # TODO: Agregar .iss despues de las pruebas
 
