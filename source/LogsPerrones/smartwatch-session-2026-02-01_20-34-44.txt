@@ -1,0 +1,3610 @@
+﻿═══════════════════════════════════════════════════════════════════
+[SESSION-LOGGER] 📝 GRABACIÓN DE LOGS INICIADA
+[SESSION-LOGGER] Archivo: smartwatch-session-2026-02-01_20-34-44.txt
+[SESSION-LOGGER] Timestamp: 2026-02-01 20:34:44.818
+═══════════════════════════════════════════════════════════════════
+
+[SMARTWATCH] → Datos recibidos del reloj [02:34:50.563]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[SMARTWATCH] ⚠ Ignorando datos: reloj no marcado como conectado
+
+═══════════════════════════════════════════════════════════════════
+[BLE-EXPLORE] 🔍 DESCUBRIMIENTO COMPLETO DE SERVICIOS GATT
+═══════════════════════════════════════════════════════════════════
+[BLE-EXPLORE] Total de servicios encontrados: 7
+
+[BLE-EXPLORE] 📦 Servicio: 00001800-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000180000001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 5
+[BLE-EXPLORE]      • 00002a00-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002a0000001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read Write 
+[BLE-EXPLORE]      • 00002a01-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002a0100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 00002a04-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002a0400001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 00002aa6-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002aa600001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 00002ac9-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002ac900001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+
+[BLE-EXPLORE] 📦 Servicio: 0000ae40-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000ae4000001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • 0000ae41-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae4100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+[BLE-EXPLORE]      • 0000ae42-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae4200001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Notify 
+
+[BLE-EXPLORE] 📦 Servicio: f0020001-0451-4000-b000-000000000000
+[BLE-EXPLORE]    UUID (normalizado): f002000104514000b000000000000000
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • f0020002-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f002000204514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Notify 
+[BLE-EXPLORE]      • f0020003-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f002000304514000b000000000000000
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+
+[BLE-EXPLORE] 📦 Servicio: f0030001-0451-4000-b000-000000000000
+[BLE-EXPLORE]    UUID (normalizado): f003000104514000b000000000000000
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • f0030002-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f003000204514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Notify WriteNoResp 
+[BLE-EXPLORE]      • f0030003-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f003000304514000b000000000000000
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+
+[BLE-EXPLORE] 📦 Servicio: f0080001-0451-4000-b000-000000000000
+[BLE-EXPLORE]    UUID (normalizado): f008000104514000b000000000000000
+[SMARTWATCH] → Datos recibidos del reloj [02:34:51.552]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • f0080002-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f008000204514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Notify 
+[BLE-EXPLORE]      • f0080003-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f008000304514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Write WriteNoResp 
+
+[BLE-EXPLORE] 📦 Servicio: 0000fee7-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000fee700001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 5
+[BLE-EXPLORE]      • 0000fec7-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fec700001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Write 
+[BLE-EXPLORE]      • 0000fec8-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fec800001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: 
+[BLE-EXPLORE]      • 0000fec9-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fec900001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 0000fea1-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fea100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Notify Read 
+[BLE-EXPLORE]      • 0000fea2-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fea200001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read Write 
+
+[BLE-EXPLORE] 📦 Servicio: 0000ae00-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000ae0000001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • 0000ae01-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae0100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+[BLE-EXPLORE]      • 0000ae02-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae0200001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Notify 
+
+═══════════════════════════════════════════════════════════════════
+
+═══════════════════════════════════════════════════════════════════
+[SMARTWATCH] ===== Iniciando monitoreo de BPM H Band =====
+[SMARTWATCH] Timestamp: 2026-02-02 02:34:52.182
+═══════════════════════════════════════════════════════════════════
+[SMARTWATCH] ✓ ESTRATEGIA DUAL: Probaremos FEE7 (real) y F003 (esperado)
+[SMARTWATCH] FEE7 Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Write (comandos): 0000fec7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Notify (datos): 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH] F003 Service: f0030001-0451-4000-b000-000000000000 (fallback)
+[SMARTWATCH]   Write: f0030003-0451-4000-b000-000000000000
+[SMARTWATCH]   Notify: f0030002-0451-4000-b000-000000000000
+[SMARTWATCH] Paso 1A: Suscribiendo a FEA1 (FEE7 service - donde llegan datos reales)...
+[BLE] Buscando servicio 0000fee7-0000-1000-8000-00805f9b34fb...
+[BLE] Resultado búsqueda servicio: Success
+[BLE] Servicio encontrado: True
+[BLE] Buscando característica 0000fea1-0000-1000-8000-00805f9b34fb...
+[BLE] Resultado búsqueda característica: Success
+[BLE] Característica encontrada: True
+[BLE] Habilitando notificaciones...
+[SMARTWATCH] → Datos recibidos del reloj [02:34:52.583]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] Resultado habilitar notificaciones: Success
+[BLE] Adjuntando handler ValueChanged...
+[BLE] ✓ Handler adjuntado correctamente!
+[SMARTWATCH] ✓ Suscripción a FEE7/FEA1 exitosa!
+[SMARTWATCH] Paso 1B: Suscribiendo TAMBIÉN a F0030002 (fallback)...
+[BLE] Buscando servicio f0030001-0451-4000-b000-000000000000...
+[BLE] Resultado búsqueda servicio: Success
+[BLE] Servicio encontrado: True
+[BLE] Buscando característica f0030002-0451-4000-b000-000000000000...
+[BLE] Resultado búsqueda característica: Success
+[BLE] Característica encontrada: True
+[BLE] Habilitando notificaciones...
+[BLE] Resultado habilitar notificaciones: Success
+[BLE] Adjuntando handler ValueChanged...
+[BLE] ✓ Handler adjuntado correctamente!
+[SMARTWATCH] ✓ Suscripción a F0030002 exitosa!
+[SMARTWATCH] Esperando 200ms para que se activen las suscripciones...
+[SMARTWATCH] Paso 2A: Enviando comando BPM a FEC7 (FEE7 service) {0xD0, 0x01}...
+[SMARTWATCH] ℹ Hipótesis: El comando debe ir a FEE7/FEC7, NO a F0030003
+[BLE] Preparando escritura a 0000fec7-0000-1000-8000-00805f9b34fb...
+[BLE] Datos a enviar: [0xD0, 0x01]
+[BLE] Buscando servicio 0000fee7-0000-1000-8000-00805f9b34fb...
+[SMARTWATCH] → Datos recibidos del reloj [02:34:53.573]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:34:53.576]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] Buscando característica 0000fec7-0000-1000-8000-00805f9b34fb...
+[BLE] Escribiendo 2 bytes...
+[SMARTWATCH] ✗ Error escribiendo a FEC7: 
+[SMARTWATCH] Intentando fallback a F0030003...
+[SMARTWATCH] Paso 2B: Enviando comando TAMBIÉN a F0030003 (fallback)...
+[BLE] Preparando escritura a f0030003-0451-4000-b000-000000000000...
+[BLE] Datos a enviar: [0xD0, 0x01]
+[BLE] Buscando servicio f0030001-0451-4000-b000-000000000000...
+[BLE] Buscando característica f0030003-0451-4000-b000-000000000000...
+[BLE] Escribiendo 2 bytes...
+[BLE] Resultado escritura: Success
+[BLE] ✓ Escritura exitosa!
+[SMARTWATCH] ✓ Comando enviado a F0030003!
+[SMARTWATCH] ✓ Comandos enviados! Esperando respuesta del reloj...
+[SMARTWATCH] (El reloj ya está midiendo BPM según las fotos - esperando transmisión BLE)
+[SMARTWATCH] Observa si cambian los bytes recibidos por FEA1...
+[SMARTWATCH] → Datos recibidos del reloj [02:34:54.563]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:34:54.565]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:34:55.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:34:55.599]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:34:56.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:34:56.590]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:34:57.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:34:57.579]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:34:58.568]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:34:58.569]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:34:59.558]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:34:59.559]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:00.548]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:00.549]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:01.583]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:01.585]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:02.573]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:02.575]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:03.563]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:03.565]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:04.553]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:04.554]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:05.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:05.591]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:06.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:06.580]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:07.568]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:07.570]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:08.558]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:08.559]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:09.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:09.596]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:10.628]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:10.630]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:11.573]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:11.576]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:12.563]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:12.564]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:13.553]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:13.554]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:14.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:14.589]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:15.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:15.580]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:16.568]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:16.570]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:17.558]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:17.560]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:18.551]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:18.553]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:19.583]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:19.584]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:20.573]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:20.575]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:21.563]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:21.564]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:22.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:22.600]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:23.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:23.590]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:24.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:24.580]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:25.613]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:25.614]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:26.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:26.604]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:27.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:27.595]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:28.583]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:28.585]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:29.618]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:29.620]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:30.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:30.609]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:31.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:31.599]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:32.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:32.589]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:33.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:33.580]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:34.613]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:34.614]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:35.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:35.605]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:36.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:36.595]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:37.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:37.583]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:38.663]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:38.665]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:39.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:39.610]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:40.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:40.599]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:41.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:41.589]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:42.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:42.579]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:43.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:43.614]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:44.602]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:44.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:45.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:45.596]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:46.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:46.584]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:47.617]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:47.619]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:48.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:48.609]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:49.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:49.600]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:50.587]
+[SMARTWATCH]   Service: f0080001-0451-4000-b000-000000000000
+[SMARTWATCH]   Characteristic: f0080002-0451-4000-b000-000000000000
+[SMARTWATCH] → Datos recibidos del reloj [02:35:50.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Bytes recibidos (20): [0xBD, 0x03, 0x01, 0x00, 0x02, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0xBD
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: f008000204514000b000000000000000
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✗ No es ninguno de los UUIDs esperados
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:50.590]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:51.577]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:51.579]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:52.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:52.614]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:53.602]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:53.604]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:54.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:54.595]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:55.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:55.584]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:56.618]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:56.620]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:57.607]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:57.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:58.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:58.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:35:59.587]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:35:59.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:00.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:00.580]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:01.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:01.613]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:02.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:02.604]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:03.592]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:03.594]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:04.627]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:04.629]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:05.753]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:05.755]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:06.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:06.610]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:07.597]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:07.600]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:08.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:08.589]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:09.577]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:09.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:10.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:10.613]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:11.602]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:11.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:12.592]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:12.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:13.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:13.583]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:14.617]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:14.618]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:15.607]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:15.609]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:16.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:16.600]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:17.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:17.590]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:18.622]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:18.623]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:19.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:19.615]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:20.602]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:20.604]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:21.592]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:21.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:22.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:22.584]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:23.617]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:23.618]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:24.607]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:24.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:25.597]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:25.599]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:26.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:26.590]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:27.577]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:27.579]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:28.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:28.613]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:29.602]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:29.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:30.592]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:30.595]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:31.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:31.585]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:32.617]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:32.619]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:33.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:33.610]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:34.597]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:34.600]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:35.587]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:35.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:36.577]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:36.579]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:37.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:37.613]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:38.602]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:38.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:39.592]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:39.594]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:40.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:40.583]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:41.617]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:41.618]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:42.607]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:42.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:43.597]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:43.599]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:44.587]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:44.588]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:45.577]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:45.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:46.612]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:46.614]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:47.602]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:47.603]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:48.592]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:48.594]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:49.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:49.584]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:50.617]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:50.618]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:51.607]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:51.608]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:52.597]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:52.598]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:53.587]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:53.589]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:54.577]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:54.578]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:55.657]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:55.659]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:56.647]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:56.649]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:57.592]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:57.593]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:36:58.582]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] ★ ValueChanged disparado! 4 bytes
+[SMARTWATCH] → Datos recibidos del reloj [02:36:58.584]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ) o 0000fea100001000800000805f9b34fb (FEE7)
+[PARSER] ✓ UUID reconocido: FEA1 (FEE7)
+[PARSER] Head byte: 0x01
+[PARSER] ⚠ Head byte desconocido: 0x01
+[PARSER]   Datos completos: [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+
+═══════════════════════════════════════════════════════════════════
+[SESSION-LOGGER] 🛑 GRABACIÓN DE LOGS FINALIZADA
+[SESSION-LOGGER] Timestamp: 2026-02-01 20:36:59.719
+[SESSION-LOGGER] Archivo guardado: smartwatch-session-2026-02-01_20-34-44.txt
+[SESSION-LOGGER] Ubicación: C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\app\Backend\ControlPanel.API\ControlPanel.API\bin\Debug\net10.0-windows10.0.22621.0\Logs\smartwatch-session-2026-02-01_20-34-44.txt
+═══════════════════════════════════════════════════════════════════

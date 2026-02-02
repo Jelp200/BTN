@@ -1,0 +1,1326 @@
+﻿═══════════════════════════════════════════════════════════════════
+[SESSION-LOGGER] 📝 GRABACIÓN DE LOGS INICIADA
+[SESSION-LOGGER] Archivo: smartwatch-session-2026-02-01_20-20-34.txt
+[SESSION-LOGGER] Timestamp: 2026-02-01 20:20:34.958
+═══════════════════════════════════════════════════════════════════
+
+[SMARTWATCH] → Datos recibidos del reloj [02:20:37.142]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[SMARTWATCH] ⚠ Ignorando datos: reloj no marcado como conectado
+
+═══════════════════════════════════════════════════════════════════
+[BLE-EXPLORE] 🔍 DESCUBRIMIENTO COMPLETO DE SERVICIOS GATT
+═══════════════════════════════════════════════════════════════════
+[BLE-EXPLORE] Total de servicios encontrados: 7
+
+[BLE-EXPLORE] 📦 Servicio: 00001800-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000180000001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 5
+[BLE-EXPLORE]      • 00002a00-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002a0000001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read Write 
+[BLE-EXPLORE]      • 00002a01-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002a0100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 00002a04-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002a0400001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 00002aa6-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002aa600001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 00002ac9-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 00002ac900001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+
+[BLE-EXPLORE] 📦 Servicio: 0000ae40-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000ae4000001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • 0000ae41-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae4100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+[BLE-EXPLORE]      • 0000ae42-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae4200001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Notify 
+
+[BLE-EXPLORE] 📦 Servicio: f0020001-0451-4000-b000-000000000000
+[BLE-EXPLORE]    UUID (normalizado): f002000104514000b000000000000000
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • f0020002-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f002000204514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Notify 
+[BLE-EXPLORE]      • f0020003-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f002000304514000b000000000000000
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+
+[BLE-EXPLORE] 📦 Servicio: f0030001-0451-4000-b000-000000000000
+[BLE-EXPLORE]    UUID (normalizado): f003000104514000b000000000000000
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • f0030002-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f003000204514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Notify WriteNoResp 
+[BLE-EXPLORE]      • f0030003-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f003000304514000b000000000000000
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+
+[BLE-EXPLORE] 📦 Servicio: f0080001-0451-4000-b000-000000000000
+[BLE-EXPLORE]    UUID (normalizado): f008000104514000b000000000000000
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • f0080002-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f008000204514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Notify 
+[BLE-EXPLORE]      • f0080003-0451-4000-b000-000000000000
+[BLE-EXPLORE]        UUID (normalizado): f008000304514000b000000000000000
+[BLE-EXPLORE]        Propiedades: Write WriteNoResp 
+
+[BLE-EXPLORE] 📦 Servicio: 0000fee7-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000fee700001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 5
+[BLE-EXPLORE]      • 0000fec7-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fec700001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Write 
+[BLE-EXPLORE]      • 0000fec8-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fec800001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: 
+[BLE-EXPLORE]      • 0000fec9-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fec900001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read 
+[BLE-EXPLORE]      • 0000fea1-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fea100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Notify Read 
+[BLE-EXPLORE]      • 0000fea2-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000fea200001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Read Write 
+
+[BLE-EXPLORE] 📦 Servicio: 0000ae00-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]    UUID (normalizado): 0000ae0000001000800000805f9b34fb
+[BLE-EXPLORE]    Características: 2
+[BLE-EXPLORE]      • 0000ae01-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae0100001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: WriteNoResp 
+[BLE-EXPLORE]      • 0000ae02-0000-1000-8000-00805f9b34fb
+[BLE-EXPLORE]        UUID (normalizado): 0000ae0200001000800000805f9b34fb
+[BLE-EXPLORE]        Propiedades: Notify 
+
+═══════════════════════════════════════════════════════════════════
+
+═══════════════════════════════════════════════════════════════════
+[SMARTWATCH] ===== Iniciando monitoreo de BPM H Band =====
+[SMARTWATCH] Timestamp: 2026-02-02 02:20:37.724
+═══════════════════════════════════════════════════════════════════
+[SMARTWATCH] ✓ CORRECCIÓN: Usando UI Service (F003), no Battery Service (F008)
+[SMARTWATCH] Service UUID: f0030001-0451-4000-b000-000000000000
+[SMARTWATCH] Notify UUID: f0030002-0451-4000-b000-000000000000 ← BPM llega AQUÍ
+[SMARTWATCH] Write UUID: f0030003-0451-4000-b000-000000000000
+[SMARTWATCH] Paso 1: Suscribiendo a notificaciones en f0030002-0451-4000-b000-000000000000...
+[BLE] Buscando servicio f0030001-0451-4000-b000-000000000000...
+[BLE] Resultado búsqueda servicio: Success
+[BLE] Servicio encontrado: True
+[BLE] Buscando característica f0030002-0451-4000-b000-000000000000...
+[BLE] Resultado búsqueda característica: Success
+[BLE] Característica encontrada: True
+[BLE] Habilitando notificaciones...
+[BLE] Resultado habilitar notificaciones: Success
+[BLE] Adjuntando handler ValueChanged...
+[BLE] ✓ Handler adjuntado correctamente!
+[SMARTWATCH] ✓ Suscripción exitosa!
+[SMARTWATCH] Esperando 100ms para que se active la suscripción...
+[SMARTWATCH] Paso 2: Enviando comando START BPM {0xD0, 0x01} a f0030003-0451-4000-b000-000000000000...
+[BLE] Preparando escritura a f0030003-0451-4000-b000-000000000000...
+[BLE] Datos a enviar: [0xD0, 0x01]
+[BLE] Buscando servicio f0030001-0451-4000-b000-000000000000...
+[SMARTWATCH] → Datos recibidos del reloj [02:20:38.149]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[BLE] Buscando característica f0030003-0451-4000-b000-000000000000...
+[BLE] Escribiendo 2 bytes...
+[BLE] Resultado escritura: Success
+[BLE] ✓ Escritura exitosa!
+[SMARTWATCH] ✓ Comando enviado! Esperando notificaciones del reloj...
+[SMARTWATCH] (Presiona el botón del reloj para iniciar medición si es necesario)
+[SMARTWATCH] → Datos recibidos del reloj [02:20:39.139]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:40.174]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:41.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:42.154]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:43.144]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:44.156]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:45.146]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:46.159]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:47.149]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:48.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:49.151]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:50.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:51.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:52.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:53.156]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:54.146]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:55.159]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:56.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:57.139]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:58.151]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:20:59.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:00.154]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:01.144]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:02.156]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:03.146]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:04.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:05.149]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:06.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:07.151]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:08.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:09.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:10.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:11.156]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:12.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:13.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:14.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:15.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:16.151]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:17.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:18.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:19.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:20.156]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:21.146]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:22.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:23.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:24.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:25.151]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:26.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:27.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:28.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:29.156]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:30.168]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:31.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:32.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:33.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:34.151]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:35.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:36.108]
+[SMARTWATCH]   Service: f0080001-0451-4000-b000-000000000000
+[SMARTWATCH]   Characteristic: f0080002-0451-4000-b000-000000000000
+[SMARTWATCH]   Bytes recibidos (20): [0xBD, 0x03, 0x01, 0x00, 0x02, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0xBD
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: f008000204514000b000000000000000
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:36.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:37.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:38.155]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:39.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:40.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:41.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:42.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:43.150]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:44.140]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:45.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:46.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:47.155]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:48.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:49.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:50.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:51.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:52.150]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:53.140]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:54.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:55.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:56.156]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:57.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:58.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:21:59.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:00.137]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:01.173]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:02.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:03.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:04.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:05.155]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:06.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:07.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:08.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:09.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:10.150]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:11.140]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:12.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:13.165]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:14.155]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:15.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:16.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:17.170]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:18.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:19.150]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:20.141]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:21.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:22.143]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:23.155]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:24.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:25.157]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:26.148]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:27.138]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:28.150]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:29.140]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:30.153]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:31.142]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:32.155]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:33.145]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+[SMARTWATCH] → Datos recibidos del reloj [02:22:34.158]
+[SMARTWATCH]   Service: 0000fee7-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Characteristic: 0000fea1-0000-1000-8000-00805f9b34fb
+[SMARTWATCH]   Bytes recibidos (4): [0x01, 0x00, 0x00, 0x00]
+[SMARTWATCH]   Head byte: 0x01
+[PARSER] Intentando parsear datos...
+[PARSER] Characteristic normalizado: 0000fea100001000800000805f9b34fb
+[PARSER] Esperando: f003000204514000b000000000000000 (UI_READ)
+[PARSER] ✗ No es el UUID esperado (es del Battery service o desconocido)
+[SMARTWATCH] ⚠ El parser no pudo procesar estos datos
+
+═══════════════════════════════════════════════════════════════════
+[SESSION-LOGGER] 🛑 GRABACIÓN DE LOGS FINALIZADA
+[SESSION-LOGGER] Timestamp: 2026-02-01 20:22:35.005
+[SESSION-LOGGER] Archivo guardado: smartwatch-session-2026-02-01_20-20-34.txt
+[SESSION-LOGGER] Ubicación: C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\app\Backend\ControlPanel.API\ControlPanel.API\bin\Debug\net10.0-windows10.0.22621.0\Logs\smartwatch-session-2026-02-01_20-20-34.txt
+═══════════════════════════════════════════════════════════════════
