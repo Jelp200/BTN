@@ -28,8 +28,20 @@ namespace ControlPanel.API.Interfaces
         /// Start Blood Pressure monitoring - will collect 10 measurements over 60 seconds
         /// </summary>
         Task<bool> StartBloodPressureMonitoringAsync(CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// Get current monitoring status for all vital measurements
+        /// </summary>
+        MonitoringStatus GetMonitoringStatus();
     }
 
     public record SmartwatchConnectionResult(bool Success, string Message, WatchDevice? Device = null);
     public record SmartwatchDisconnectResult(bool Success, string Message);
+    public record MonitoringStatus(
+        bool BpmActive,
+        bool Spo2Active,
+        bool TemperatureActive,
+        bool BloodPressureActive,
+        string? ActiveMeasurementType
+    );
 }

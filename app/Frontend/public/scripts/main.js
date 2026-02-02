@@ -28,11 +28,14 @@ let biometricChartData = {
     bloodPressure: [],
 };
 let biometricUpdateInterval = null;
+let biometricMonitoringStatusInterval = null;
 let biometricLastMetric = "pulse";
 let biometricLastBpmRequestAt = 0;
 let biometricLastSpo2RequestAt = 0;
 let biometricLastTemperatureRequestAt = 0;
 let biometricLastBloodPressureRequestAt = 0;
+let biometricCurrentActiveMeasurement = null;
+let biometricPreviousActiveMeasurement = null;
 const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 
 /* *********************************************************************
@@ -194,7 +197,49 @@ function inicializarPaneles() {
     });
 }
 
+// Función para actualizar el estado de los botones de reloj según conexión
+function updateWatchButtonsState() {
+    console.log("[Biometría] Actualizando estado de botones, reloj conectado:", biometricWatchConnected);
+    
+    const connectBtn = document.querySelector("[data-action='connect-watch']");
+    const disconnectBtn = document.querySelector("[data-action='disconnect-watch']");
+    
+    console.log("[Biometría] Botones encontrados:", { conectar: !!connectBtn, desconectar: !!disconnectBtn });
+    
+    if (!connectBtn || !disconnectBtn) {
+        console.warn("[Biometría] ⚠️ No se encontraron los botones de reloj!");
+        return;
+    }
+    
+    if (biometricWatchConnected) {
+        // Reloj conectado: deshabilitar botón conectar, habilitar botón desconectar
+        connectBtn.disabled = true;
+        connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        connectBtn.style.filter = "grayscale(100%)";
+        
+        disconnectBtn.disabled = false;
+        disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        disconnectBtn.style.filter = "none";
+        
+        console.log("[Biometría] ✅ Botones actualizados: Conectar DESHABILITADO ❌, Desconectar HABILITADO ✅");
+    } else {
+        // Reloj desconectado: habilitar botón conectar, deshabilitar botón desconectar
+        connectBtn.disabled = false;
+        connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        connectBtn.style.filter = "none";
+        
+        disconnectBtn.disabled = true;
+        disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        disconnectBtn.style.filter = "grayscale(100%)";
+        
+        console.log("[Biometría] ✅ Botones actualizados: Conectar HABILITADO ✅, Desconectar DESHABILITADO ❌");
+    }
+}
+
 function inicializarBiometria() {
+    // Inicializar estado de botones al cargar
+    updateWatchButtonsState();
+    
     // Usar delegación de eventos en el documento para mayor robustez
     document.addEventListener("click", async (event) => {
         const connectBtn = event.target.closest("[data-action='connect-watch']");
@@ -233,8 +278,9 @@ function inicializarBiometria() {
                 console.log("[Biometría] Reloj conectado:", nombre);
                 window.mostrarNotificacion?.(`Reloj conectado (${nombre})`, { tipo: "success" });
                 
-                // ✅ MARCAR RELOJ COMO CONECTADO
+                // ✅ MARCAR RELOJ COMO CONECTADO (PRIMERO cambiar variable, LUEGO actualizar botones)
                 biometricWatchConnected = true;
+                updateWatchButtonsState();
                 
                 // Inicializar gráficas si el tab de biometría ya está visible
                 const biometriaTab = document.querySelector("[data-tab-content='biometria']");
@@ -281,8 +327,9 @@ function inicializarBiometria() {
                 console.log("[Biometría] Reloj desconectado");
                 window.mostrarNotificacion?.("Reloj desconectado", { tipo: "success" });
                 
-                // ✅ MARCAR RELOJ COMO DESCONECTADO Y DETENER GRÁFICAS
+                // ✅ MARCAR RELOJ COMO DESCONECTADO (PRIMERO cambiar variable, LUEGO actualizar botones)
                 biometricWatchConnected = false;
+                updateWatchButtonsState();
                 stopBiometricCharts();
             } catch (error) {
                 console.error("[Biometría] Error desconectando reloj:", error);
@@ -440,6 +487,23 @@ function initBiometricCharts() {
         const selector = document.getElementById("biometricMetricSelector");
         if (selector) {
             selector.addEventListener("change", (e) => {
+                // Verificar si hay una medición activa antes de permitir el cambio
+                if (biometricCurrentActiveMeasurement) {
+                    e.preventDefault();
+                    selector.value = biometricLastMetric; // Restaurar valor anterior
+                    const measurementNames = {
+                        'bpm': 'Pulso',
+                        'spo2': 'Oxigenación',
+                        'temperature': 'Temperatura',
+                        'bloodPressure': 'Presión Arterial'
+                    };
+                    const activeName = measurementNames[biometricCurrentActiveMeasurement] || biometricCurrentActiveMeasurement;
+                    mostrarNotificacion(
+                        `Medición de ${activeName} en progreso. Espera a que termine para cambiar de métrica.`,
+                        { tipo: "info" }
+                    );
+                    return;
+                }
                 updateBiometricMetric(e.target.value, labels, metricConfigs);
             });
             console.log("[BiometricCharts] ✓ Selector de métrica inicializado");
@@ -454,6 +518,12 @@ function initBiometricCharts() {
         biometricUpdateInterval = setInterval(() => {
             updateBiometricCharts();
         }, 5000);
+        
+        // Monitorear estado de mediciones cada 2 segundos
+        biometricMonitoringStatusInterval = setInterval(() => {
+            checkMonitoringStatus();
+        }, 2000);
+        
         console.log("[BiometricCharts] ✓ Gráfica iniciada. Se actualizará cada 5 segundos.");
     } catch (err) {
         console.error("[BiometricCharts] ❌ Error creando gráfica:", err);
@@ -1778,6 +1848,133 @@ async function updateBiometricCharts() {
     // Actualizar dataset con la métrica seleccionada
     chart.data.datasets[0].data = biometricChartData[selectedMetric];
     chart.update();
+    
+    // Actualizar TopMetricsGrid con los últimos valores
+    updateTopMetricsGrid(newData);
+}
+
+// Función para actualizar los valores mostrados en TopMetricsGrid
+function updateTopMetricsGrid(data) {
+    if (!data) return;
+    
+    // Actualizar BPM (Pulso)
+    if (data.pulse !== null && data.pulse !== undefined) {
+        const pulseElement = document.getElementById("metric-pulse");
+        if (pulseElement) {
+            pulseElement.textContent = Math.round(data.pulse);
+        }
+    }
+    
+    // Actualizar SpO2 (Oxigenación)
+    if (data.oxygen !== null && data.oxygen !== undefined) {
+        const oxygenElement = document.getElementById("metric-oxygen");
+        if (oxygenElement) {
+            oxygenElement.textContent = Math.round(data.oxygen);
+        }
+    }
+    
+    // Actualizar Temperatura
+    if (data.temperature !== null && data.temperature !== undefined) {
+        const temperatureElement = document.getElementById("metric-temperature");
+        if (temperatureElement) {
+            temperatureElement.textContent = parseFloat(data.temperature).toFixed(1);
+        }
+    }
+    
+    // Actualizar Presión Arterial
+    if (data.bloodPressure !== null && data.bloodPressure !== undefined) {
+        const bpElement = document.getElementById("metric-bloodpressure");
+        if (bpElement) {
+            // Si es un objeto con systolic y diastolic, mostrar ambos
+            if (typeof data.bloodPressure === 'object' && data.bloodPressure.systolic) {
+                bpElement.textContent = `${Math.round(data.bloodPressure.systolic)}/${Math.round(data.bloodPressure.diastolic)}`;
+            } else {
+                // Si es solo un número (systolic), mostrar ese valor
+                bpElement.textContent = Math.round(data.bloodPressure);
+            }
+        }
+    }
+}
+
+// Función para verificar el estado de monitoreo y mostrar notificación cuando termine
+async function checkMonitoringStatus() {
+    if (!biometricWatchConnected) return;
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/monitoring-status");
+        if (!response.ok) {
+            console.warn("[BiometricCharts] Error en monitoring-status:", response.status);
+            return;
+        }
+
+        const result = await response.json();
+        if (!result.success || !result.status) {
+            console.warn("[BiometricCharts] Respuesta inválida de monitoring-status");
+            return;
+        }
+
+        const { activeMeasurementType } = result.status;
+        
+        console.log(`[BiometricCharts] Estado: previo=${biometricPreviousActiveMeasurement}, actual=${biometricCurrentActiveMeasurement}, nuevo=${activeMeasurementType}`);
+        
+        // Detectar cuando una medición termina
+        if (biometricPreviousActiveMeasurement && !activeMeasurementType) {
+            // Una medición acaba de terminar
+            const measurementNames = {
+                'bpm': 'Pulso',
+                'spo2': 'Oxigenación',
+                'temperature': 'Temperatura',
+                'bloodPressure': 'Presión Arterial'
+            };
+            const completedName = measurementNames[biometricPreviousActiveMeasurement] || biometricPreviousActiveMeasurement;
+            
+            console.log(`[BiometricCharts] ✅ Medición de ${completedName} completada!`);
+            
+            // Mostrar notificación en el log de tramas
+            mostrarNotificacion(
+                `Medición de ${completedName} completada. Ahora puedes cambiar de métrica.`,
+                { tipo: "info" }
+            );
+            
+            // TAMBIÉN mostrar alert para asegurar que el usuario lo vea
+            alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
+            
+            // Actualizar TopMetricsGrid con los últimos datos medidos
+            try {
+                const latestData = await fetchLatestBiometricData();
+                if (latestData) {
+                    updateTopMetricsGrid(latestData);
+                }
+            } catch (error) {
+                console.warn("[BiometricCharts] Error actualizando TopMetricsGrid después de medición:", error);
+            }
+            
+            // Habilitar el selector
+            const selector = document.getElementById("biometricMetricSelector");
+            if (selector) {
+                selector.disabled = false;
+                selector.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+        }
+        
+        // Actualizar estado actual
+        biometricPreviousActiveMeasurement = biometricCurrentActiveMeasurement;
+        biometricCurrentActiveMeasurement = activeMeasurementType;
+        
+        // Deshabilitar selector si hay una medición activa
+        const selector = document.getElementById("biometricMetricSelector");
+        if (selector) {
+            if (activeMeasurementType) {
+                selector.disabled = true;
+                selector.classList.add("opacity-50", "cursor-not-allowed");
+            } else {
+                selector.disabled = false;
+                selector.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+        }
+    } catch (error) {
+        console.warn("[BiometricCharts] Error al verificar estado de monitoreo:", error);
+    }
 }
 
 async function seedBiometricHistory(labels, metricConfigs) {
@@ -1804,6 +2001,17 @@ async function seedBiometricHistory(labels, metricConfigs) {
     chart.options.scales.y.max = config.yScale.max;
 
     chart.update();
+    
+    // Actualizar TopMetricsGrid con el último valor del historial
+    if (history.length > 0) {
+        const latestItem = history[history.length - 1];
+        updateTopMetricsGrid({
+            pulse: latestItem.pulseBpm,
+            oxygen: latestItem.spO2,
+            temperature: latestItem.temperatureC,
+            bloodPressure: latestItem.systolic
+        });
+    }
 }
 
 // Función para detener y limpiar las gráficas biométricas

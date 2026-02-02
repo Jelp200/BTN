@@ -48,6 +48,27 @@ namespace ControlPanel.API.Services
     private bool _bloodPressureMonitoringActive = false;
     private const int MAX_BLOODPRESSURE_MEASUREMENTS = 10;
     private const int BLOODPRESSURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
+
+        /// <summary>
+        /// Get current monitoring status for all vital measurements
+        /// </summary>
+        public MonitoringStatus GetMonitoringStatus()
+        {
+            string? activeMeasurement = null;
+            if (_bpmMonitoringActive) activeMeasurement = "bpm";
+            else if (_spo2MonitoringActive) activeMeasurement = "spo2";
+            else if (_temperatureMonitoringActive) activeMeasurement = "temperature";
+            else if (_bloodPressureMonitoringActive) activeMeasurement = "bloodPressure";
+            
+            return new MonitoringStatus(
+                BpmActive: _bpmMonitoringActive,
+                Spo2Active: _spo2MonitoringActive,
+                TemperatureActive: _temperatureMonitoringActive,
+                BloodPressureActive: _bloodPressureMonitoringActive,
+                ActiveMeasurementType: activeMeasurement
+            );
+        }
+
         public SmartwatchService(IBleScanner scanner, IBleConnector connector, SessionLogger sessionLogger)
         {
             _scanner = scanner;

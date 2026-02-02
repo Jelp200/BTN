@@ -80,6 +80,16 @@ namespace ControlPanel.API.Controllers
         }
 
         /// <summary>
+        /// Get current monitoring status - returns which measurements are currently active
+        /// </summary>
+        [HttpGet("vitals/monitoring-status")]
+        public IActionResult GetMonitoringStatus()
+        {
+            var status = _smartwatchService.GetMonitoringStatus();
+            return Ok(new { success = true, status });
+        }
+
+        /// <summary>
         /// Start SpO2 (blood oxygen) monitoring
         /// Will collect 10 measurements over 60 seconds and then automatically stop
         /// </summary>
