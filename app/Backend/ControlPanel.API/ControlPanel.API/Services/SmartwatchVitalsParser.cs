@@ -355,26 +355,65 @@ namespace ControlPanel.API.Services
 
         /// <summary>
         /// Parse H Band blood pressure (0x90 head byte)
-        /// Protocol TBD - placeholder
+        /// Based on BPDetectActivity.java from H Band APK:
+        /// - byte[0] = 0x90 (HEAD_BP)
+        /// - byte[1] = Systolic pressure (mmHg)
+        /// - byte[2] = Diastolic pressure (mmHg)
+        /// - byte[3] = State
+        /// - byte[4] = Test status (0 or 3 = valid, other = device busy/invalid)
+        /// - byte[5] = Progress (0-100%)
+        /// Commands: START {0x90, 0x01, 0x00} STOP {0x90, 0x00, 0x00}
         /// </summary>
         private static (double? Systolic, double? Diastolic) ParseBloodPressure(byte[] value)
         {
-            if (value.Length < 3)
+            Console.WriteLine($"[PARSER-BP] Parseando presión arterial de {value.Length} bytes");
+            Console.WriteLine($"[PARSER-BP] Datos completos: [{string.Join(", ", value.Select(b => $"0x{b:X2}"))}]");
+            
+            if (value.Length < 5)
+            {
+                Console.WriteLine($"[PARSER-BP] ✗ Datos insuficientes (mínimo 5 bytes)");
                 return (null, null);
+            }
 
+            // Convert to unsigned int array
             int[] intArray = new int[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
                 intArray[i] = value[i] & 0xFF;
             }
 
-            double systolic = intArray[1];
-            double diastolic = intArray[2];
-
-            // Validate range (typical: 80-200 systolic, 50-120 diastolic)
-            if (systolic < 80 || systolic > 200 || diastolic < 50 || diastolic > 120)
+            int systolic = intArray[1];    // Byte 1 = presión sistólica
+            int diastolic = intArray[2];   // Byte 2 = presión diastólica
+            int state = intArray[3];       // Byte 3 = estado
+            int testStatus = intArray[4];  // Byte 4 = test status
+            
+            Console.WriteLine($"[PARSER-BP]   Sistólica: {systolic} mmHg");
+            Console.WriteLine($"[PARSER-BP]   Diastólica: {diastolic} mmHg");
+            Console.WriteLine($"[PARSER-BP]   Estado: 0x{state:X2}");
+            Console.WriteLine($"[PARSER-BP]   Test Status: 0x{testStatus:X2} ({(testStatus == 0 || testStatus == 3 ? "VÁLIDO" : "INVÁLIDO")}");
+            
+            // Si testStatus no es 0 o 3, medición inválida o dispositivo ocupado
+            if (testStatus != 0 && testStatus != 3)
+            {
+                Console.WriteLine($"[PARSER-BP] ⚠ Medición inválida o dispositivo ocupado");
                 return (null, null);
+            }
+            
+            // Si ambos son 0, aún no hay datos
+            if (systolic == 0 && diastolic == 0)
+            {
+                Console.WriteLine($"[PARSER-BP] ℹ Aún no hay datos de medición");
+                return (null, null);
+            }
+            
+            // Validar rango (80-200 sistólica, 50-120 diastólica)
+            if (systolic < 80 || systolic > 200 || diastolic < 50 || diastolic > 120)
+            {
+                Console.WriteLine($"[PARSER-BP] ✗ Valores fuera de rango válido (Sys: 80-200, Dia: 50-120)");
+                return (null, null);
+            }
 
+            Console.WriteLine($"[PARSER-BP] ✓ Presión arterial válida: {systolic}/{diastolic} mmHg");
             return (systolic, diastolic);
         }
 

@@ -23,6 +23,11 @@ namespace ControlPanel.API.Interfaces
         /// Start Temperature monitoring - will collect 10 measurements over 60 seconds
         /// </summary>
         Task<bool> StartTemperatureMonitoringAsync(CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// Start Blood Pressure monitoring - will collect 10 measurements over 60 seconds
+        /// </summary>
+        Task<bool> StartBloodPressureMonitoringAsync(CancellationToken cancellationToken);
     }
 
     public record SmartwatchConnectionResult(bool Success, string Message, WatchDevice? Device = null);

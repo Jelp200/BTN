@@ -177,5 +177,38 @@ namespace ControlPanel.API.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Start Blood Pressure monitoring
+        /// Will collect 10 measurements over 60 seconds and then automatically stop
+        /// </summary>
+        [HttpPost("vitals/start-bloodpressure")]
+        public async Task<IActionResult> StartBloodPressureMonitoring()
+        {
+            try
+            {
+                var success = await _smartwatchService.StartBloodPressureMonitoringAsync(HttpContext.RequestAborted);
+                
+                if (success)
+                {
+                    return Ok(new { 
+                        success = true, 
+                        message = "Medición de Presión Arterial iniciada. Se tomarán 10 mediciones durante 60 segundos." 
+                    });
+                }
+                
+                return BadRequest(new { 
+                    success = false, 
+                    message = "No se pudo iniciar la medición de Presión Arterial. Verifica que el reloj esté conectado." 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = $"Error al iniciar medición de Presión Arterial: {ex.Message}" 
+                });
+            }
+        }
     }
 }

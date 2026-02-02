@@ -25,13 +25,14 @@ let biometricChartData = {
     pulse: [],
     oxygen: [],
     temperature: [],
-    glucose: [],
+    bloodPressure: [],
 };
 let biometricUpdateInterval = null;
 let biometricLastMetric = "pulse";
 let biometricLastBpmRequestAt = 0;
 let biometricLastSpo2RequestAt = 0;
 let biometricLastTemperatureRequestAt = 0;
+let biometricLastBloodPressureRequestAt = 0;
 const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 
 /* *********************************************************************
@@ -309,7 +310,7 @@ function initBiometricCharts() {
         pulse: [],
         oxygen: [],
         temperature: [],
-        glucose: [],
+        bloodPressure: [],
     };
 
     // Validar que Chart esté disponible
@@ -331,7 +332,7 @@ function initBiometricCharts() {
         biometricChartData.pulse.push(null);
         biometricChartData.oxygen.push(null);
         biometricChartData.temperature.push(null);
-        biometricChartData.glucose.push(null);
+        biometricChartData.bloodPressure.push(null);
     }
 
     // Configuración de escalas y colores
@@ -354,8 +355,8 @@ function initBiometricCharts() {
             borderColor: "#f39c12", 
             bgColor: "rgba(243, 156, 18, 0.2)" 
         },
-        glucose: { 
-            label: "Glucosa (mg/dL)", 
+        bloodPressure: { 
+            label: "Presión Arterial (mmHg)", 
             yScale: { min: 80, max: 160 }, 
             borderColor: "#9b59b6", 
             bgColor: "rgba(155, 89, 182, 0.2)" 
@@ -1521,11 +1522,14 @@ async function fetchLatestBiometricData() {
         const payload = await response.json();
         if (!payload?.success || !payload?.data) return null;
 
+        // Para BP, usamos la sistólica (más importante para la gráfica)
+        const bloodPressure = payload.data.systolic ?? null;
+
         return {
             pulse: payload.data.pulseBpm ?? null,
             oxygen: payload.data.spO2 ?? null,
             temperature: payload.data.temperatureC ?? null,
-            glucose: null,
+            bloodPressure: bloodPressure,
             timestampUtc: payload.data.timestampUtc ?? null,
         };
     } catch (error) {
@@ -1663,6 +1667,44 @@ async function requestTemperatureMeasurement(source = "ui") {
     }
 }
 
+async function requestBloodPressureMeasurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Presión Arterial");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastBloodPressureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud Presión Arterial por cooldown");
+        return;
+    }
+
+    biometricLastBloodPressureRequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición Presión Arterial (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bloodpressure`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bloodpressure", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de Presión Arterial");
+        }
+
+        window.mostrarNotificacion?.("Medición de Presión Arterial iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de Presión Arterial";
+        console.warn("[BiometricCharts] Error iniciando Presión Arterial:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
 // Función para cambiar la métrica mostrada en la gráfica biométrica
 function updateBiometricMetric(metric, labels, metricConfigs) {
     if (!biometricChartInstances.pulse) return;
@@ -1694,6 +1736,8 @@ function updateBiometricMetric(metric, labels, metricConfigs) {
             requestBpmMeasurement("selector");
         } else if (metric === "temperature") {
             requestTemperatureMeasurement("selector");
+        } else if (metric === "bloodPressure") {
+            requestBloodPressureMeasurement("selector");
         }
     }
 }
@@ -1708,12 +1752,12 @@ async function updateBiometricCharts() {
     if (newData.pulse !== null) biometricChartData.pulse.push(newData.pulse);
     if (newData.oxygen !== null) biometricChartData.oxygen.push(newData.oxygen);
     if (newData.temperature !== null) biometricChartData.temperature.push(parseFloat(newData.temperature));
-    if (newData.glucose !== null) biometricChartData.glucose.push(newData.glucose);
+    if (newData.bloodPressure !== null) biometricChartData.bloodPressure.push(newData.bloodPressure);
 
     if (biometricChartData.pulse.length > 10) biometricChartData.pulse.shift();
     if (biometricChartData.oxygen.length > 10) biometricChartData.oxygen.shift();
     if (biometricChartData.temperature.length > 10) biometricChartData.temperature.shift();
-    if (biometricChartData.glucose.length > 10) biometricChartData.glucose.shift();
+    if (biometricChartData.bloodPressure.length > 10) biometricChartData.bloodPressure.shift();
 
     // Actualizar labels (timestamp) - últimos 10 registros
     const now = new Date();
@@ -1743,7 +1787,7 @@ async function seedBiometricHistory(labels, metricConfigs) {
     biometricChartData.pulse = history.map((item) => item.pulseBpm ?? null);
     biometricChartData.oxygen = history.map((item) => item.spO2 ?? null);
     biometricChartData.temperature = history.map((item) => item.temperatureC ?? null);
-    biometricChartData.glucose = history.map(() => null);
+    biometricChartData.bloodPressure = history.map((item) => item.systolic ?? null);
 
     const chart = biometricChartInstances.pulse;
     const selector = document.getElementById("biometricMetricSelector");

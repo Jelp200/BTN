@@ -42,7 +42,12 @@ namespace ControlPanel.API.Services
         private bool _temperatureMonitoringActive = false;
         private const int MAX_TEMPERATURE_MEASUREMENTS = 10;
         private const int TEMPERATURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
-
+    // Blood Pressure measurement control - 10 measurements over 1 minute
+    private int _bloodPressureMeasurementCount = 0;
+    private DateTime _lastBloodPressureMeasurementTime = DateTime.MinValue;
+    private bool _bloodPressureMonitoringActive = false;
+    private const int MAX_BLOODPRESSURE_MEASUREMENTS = 10;
+    private const int BLOODPRESSURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
         public SmartwatchService(IBleScanner scanner, IBleConnector connector, SessionLogger sessionLogger)
         {
             _scanner = scanner;
@@ -140,6 +145,18 @@ namespace ControlPanel.API.Services
                     {
                         Console.WriteLine($"\n💾 Log de sesión guardado en: {logFile}\n");
                     }
+                    
+                    // Reset all monitoring states
+                    _bpmMonitoringActive = false;
+                    _spo2MonitoringActive = false;
+                    _temperatureMonitoringActive = false;
+                    _bloodPressureMonitoringActive = false;
+                    _bpmMeasurementCount = 0;
+                    _spo2MeasurementCount = 0;
+                    _temperatureMeasurementCount = 0;
+                    _bloodPressureMeasurementCount = 0;
+                    
+                    Console.WriteLine("[SMARTWATCH] 🔄 Estados de monitoreo reseteados");
                     
                     // Esperar 2 segundos para que el dispositivo reinicie el modo advertising
                     await Task.Delay(2000, cancellationToken);
@@ -343,6 +360,55 @@ namespace ControlPanel.API.Services
                     else
                     {
                         Console.WriteLine($"[SMARTWATCH] ⏳ Temperatura recibida pero esperando intervalo (faltan {TEMPERATURE_MEASUREMENT_INTERVAL_MS - timeSinceLastMeasurement:F0}ms)");
+                    }
+                }
+            }
+            
+            // Control de medición Presión Arterial
+            if (update.Systolic.HasValue && update.Diastolic.HasValue)
+            {
+                Console.WriteLine($"[SMARTWATCH]   BP: {update.Systolic.Value}/{update.Diastolic.Value} mmHg");
+                
+                if (_bloodPressureMonitoringActive && update.Systolic.Value > 0 && update.Diastolic.Value > 0)
+                {
+                    var timeSinceLastMeasurement = (DateTime.UtcNow - _lastBloodPressureMeasurementTime).TotalMilliseconds;
+                    
+                    if (timeSinceLastMeasurement >= BLOODPRESSURE_MEASUREMENT_INTERVAL_MS || _bloodPressureMeasurementCount == 0)
+                    {
+                        _bloodPressureMeasurementCount++;
+                        _lastBloodPressureMeasurementTime = DateTime.UtcNow;
+                        
+                        Console.WriteLine($"[SMARTWATCH] 🩺 Medición Presión Arterial {_bloodPressureMeasurementCount}/{MAX_BLOODPRESSURE_MEASUREMENTS} registrada");
+                        Console.WriteLine($"[SMARTWATCH]    Valor: {update.Systolic.Value}/{update.Diastolic.Value} mmHg");
+                        Console.WriteLine($"[SMARTWATCH]    Tiempo desde última: {timeSinceLastMeasurement:F0}ms");
+                        
+                        if (_bloodPressureMeasurementCount >= MAX_BLOODPRESSURE_MEASUREMENTS)
+                        {
+                            Console.WriteLine($"[SMARTWATCH] ✓✓✓ Completadas {MAX_BLOODPRESSURE_MEASUREMENTS} mediciones Presión Arterial en ~60s");
+                            Console.WriteLine($"[SMARTWATCH] Deteniendo monitoreo Presión Arterial para permitir otras mediciones...");
+                            
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await StopBloodPressureMonitoringAsync(CancellationToken.None);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"[SMARTWATCH] ⚠ Error deteniendo Presión Arterial: {ex.Message}");
+                                }
+                            });
+                        }
+                        else
+                        {
+                            var remaining = MAX_BLOODPRESSURE_MEASUREMENTS - _bloodPressureMeasurementCount;
+                            var estimatedTimeRemaining = remaining * (BLOODPRESSURE_MEASUREMENT_INTERVAL_MS / 1000);
+                            Console.WriteLine($"[SMARTWATCH]    Faltan {remaining} mediciones (~{estimatedTimeRemaining}s)");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[SMARTWATCH] ⏳ Presión Arterial recibida pero esperando intervalo (faltan {BLOODPRESSURE_MEASUREMENT_INTERVAL_MS - timeSinceLastMeasurement:F0}ms)");
                     }
                 }
             }
@@ -787,6 +853,125 @@ namespace ControlPanel.API.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"[SMARTWATCH] ✗ Error al detener monitoreo Temperatura: {ex.Message}");
+                Console.WriteLine($"[SMARTWATCH]   {ex.GetType().Name}");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Start Blood Pressure monitoring by sending {0x90, 0x01, 0x00} to F0080003
+        /// Based on BPHandler from H Band APK (Normal mode)
+        /// </summary>
+        public async Task<bool> StartBloodPressureMonitoringAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            Console.WriteLine("[SMARTWATCH] 🩺 Iniciando monitoreo Presión Arterial...");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            
+            if (!_isConnected)
+            {
+                Console.WriteLine("[SMARTWATCH] ✗ No hay reloj conectado");
+                return false;
+            }
+
+            if (_bloodPressureMonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ⚠ Presión Arterial ya está activa. Ignorando solicitud");
+                return false;
+            }
+
+            if (_bpmMonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ℹ BPM activo. Deteniendo BPM antes de iniciar Presión Arterial...");
+                await StopBpmMonitoringAsync(cancellationToken);
+            }
+
+            if (_spo2MonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ℹ SpO2 activo. Deteniendo SpO2 antes de iniciar Presión Arterial...");
+                await StopSpo2MonitoringAsync(cancellationToken);
+            }
+            
+            if (_temperatureMonitoringActive)
+            {
+                Console.WriteLine("[SMARTWATCH] ℹ Temperatura activa. Deteniendo Temperatura antes de iniciar Presión Arterial...");
+                await StopTemperatureMonitoringAsync(cancellationToken);
+            }
+            
+            var batteryServiceUuid = new Guid("F0080001-0451-4000-B000-000000000000");
+            var batteryConfigUuid = new Guid("F0080003-0451-4000-B000-000000000000");
+            
+            try
+            {
+                // Send START Blood Pressure command: {0x90, 0x01, 0x00} (Normal mode)
+                // 0x90 = HEAD_BP, 0x01 = start, 0x00 = normal mode (0x01 = private mode)
+                byte[] bpStartCommand = { 0x90, 0x01, 0x00 };
+                
+                Console.WriteLine($"[SMARTWATCH] Enviando comando START Presión Arterial: [0x90, 0x01, 0x00]");
+                Console.WriteLine($"[SMARTWATCH]   Service: {batteryServiceUuid}");
+                Console.WriteLine($"[SMARTWATCH]   Characteristic: {batteryConfigUuid}");
+                
+                await _connector.WriteAsync(batteryServiceUuid, batteryConfigUuid, bpStartCommand, cancellationToken);
+                
+                // Initialize Blood Pressure measurement state
+                _bloodPressureMonitoringActive = true;
+                _bloodPressureMeasurementCount = 0;
+                _lastBloodPressureMeasurementTime = DateTime.UtcNow;
+                
+                Console.WriteLine($"[SMARTWATCH] ✓ Comando START Presión Arterial enviado correctamente");
+                Console.WriteLine($"[SMARTWATCH] 📊 Control de medición Presión Arterial activado: {MAX_BLOODPRESSURE_MEASUREMENTS} mediciones en ~60s");
+                Console.WriteLine($"[SMARTWATCH] Esperando datos de presión arterial del reloj...");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SMARTWATCH] ✗ Error al iniciar monitoreo Presión Arterial: {ex.Message}");
+                Console.WriteLine($"[SMARTWATCH]   {ex.GetType().Name}");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Stop Blood Pressure monitoring by sending {0x90, 0x00, 0x00} to F0080003
+        /// </summary>
+        private async Task StopBloodPressureMonitoringAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            Console.WriteLine("[SMARTWATCH] 🛑 Deteniendo monitoreo Presión Arterial...");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            
+            var batteryServiceUuid = new Guid("F0080001-0451-4000-B000-000000000000");
+            var batteryConfigUuid = new Guid("F0080003-0451-4000-B000-000000000000");
+            
+            try
+            {
+                // Send STOP Blood Pressure command: {0x90, 0x00, 0x00}
+                byte[] bpStopCommand = { 0x90, 0x00, 0x00 };
+                
+                Console.WriteLine($"[SMARTWATCH] Enviando comando STOP Presión Arterial: [0x90, 0x00, 0x00]");
+                Console.WriteLine($"[SMARTWATCH]   Service: {batteryServiceUuid}");
+                Console.WriteLine($"[SMARTWATCH]   Characteristic: {batteryConfigUuid}");
+                
+                await _connector.WriteAsync(batteryServiceUuid, batteryConfigUuid, bpStopCommand, cancellationToken);
+                
+                Console.WriteLine($"[SMARTWATCH] ✓ Comando STOP Presión Arterial enviado correctamente");
+                Console.WriteLine($"[SMARTWATCH] El reloj ahora está disponible para medir otros signos vitales");
+                
+                // Reset measurement state
+                _bloodPressureMonitoringActive = false;
+                _bloodPressureMeasurementCount = 0;
+                _lastBloodPressureMeasurementTime = DateTime.MinValue;
+                
+                Console.WriteLine($"[SMARTWATCH] ✓ Estado de medición Presión Arterial reseteado");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════════");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SMARTWATCH] ✗ Error al detener monitoreo Presión Arterial: {ex.Message}");
                 Console.WriteLine($"[SMARTWATCH]   {ex.GetType().Name}");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
                 throw;
