@@ -510,10 +510,10 @@ namespace ControlPanel.API.Services
             
             try
             {
-                // Send START SpO2 command: {0xD2, 0x01}
-                byte[] spo2StartCommand = { 0xD2, 0x01 };
+                // Send START SpO2 command: {0x80, 0x01}
+                byte[] spo2StartCommand = { 0x80, 0x01 };
                 
-                Console.WriteLine($"[SMARTWATCH] Enviando comando START SpO2: [0xD2, 0x01]");
+                Console.WriteLine($"[SMARTWATCH] Enviando comando START SpO2: [0x80, 0x01]");
                 Console.WriteLine($"[SMARTWATCH]   Service: {batteryServiceUuid}");
                 Console.WriteLine($"[SMARTWATCH]   Characteristic: {batteryConfigUuid}");
                 
@@ -555,9 +555,9 @@ namespace ControlPanel.API.Services
             try
             {
                 // Send STOP SpO2 command: {0xD2, 0x00}
-                byte[] stopSpo2Command = { 0xD2, 0x00 };
+                byte[] stopSpo2Command = { 0x80, 0x02 };
                 
-                Console.WriteLine($"[SMARTWATCH] Enviando comando STOP SpO2: [0xD2, 0x00]");
+                Console.WriteLine($"[SMARTWATCH] Enviando comando STOP SpO2: [0x80, 0x02]");
                 Console.WriteLine($"[SMARTWATCH]   Service: {batteryServiceUuid}");
                 Console.WriteLine($"[SMARTWATCH]   Characteristic: {batteryConfigUuid}");
                 
@@ -602,19 +602,19 @@ namespace ControlPanel.API.Services
             
             // Timestamp (7 bytes: YY, MM, DD, HH, mm, ss)
             var now = DateTime.Now;
-            cmd[4] = (byte)(now.Year % 100);     // Year (2-digit)
-            cmd[5] = (byte)(now.Month);
-            cmd[6] = (byte)(now.Day);
-            cmd[7] = (byte)(now.Hour);
-            cmd[8] = (byte)(now.Minute);
-            cmd[9] = (byte)(now.Second);
-            cmd[10] = 0x00;  // Padding
+            cmd[4] = (byte)((now.Year >> 8) & 0xFF); // Año MSB
+            cmd[5] = (byte)(now.Year & 0xFF);        // Año LSB     // Year (2-digit)
+            cmd[6] = (byte)(now.Month);
+            cmd[7] = (byte)(now.Day);
+            cmd[8] = (byte)(now.Hour);
+            cmd[9] = (byte)(now.Minute);
+            cmd[10] = (byte)(now.Second);
+            cmd[11] = 0x00;  // Bandera con este valor en primer ingreso de pswd (24-hour format?)
             
             // Flags
-            cmd[11] = 0x01;  // 24-hour format
-            cmd[12] = 0x01;  // Fixed flag
-            cmd[13] = 0x00;  // Timezone offset (0 = UTC)
-            cmd[14] = 0x00;  // Manual connect flag
+            cmd[12] = 0x01;  // Fixed flag 
+            cmd[13] = 0xE8;  // Timezone offset (CDMX CONST)
+            cmd[14] = 0x00;  // Bandera con este valor en primer ingreso de pswd (Manual connect flag?) 
             
             // Padding
             cmd[15] = 0x00;
