@@ -36,6 +36,7 @@ let biometricLastTemperatureRequestAt = 0;
 let biometricLastBloodPressureRequestAt = 0;
 let biometricCurrentActiveMeasurement = null;
 let biometricPreviousActiveMeasurement = null;
+let biometricMeasurementStartTime = null; // Track when current measurement started
 const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 
 //* Datos personales guardados
@@ -135,6 +136,15 @@ window.sonidosAmbientales = sonidosAmbientales;
 window.tinitus = tinitus;
 window.TRAMA_STOP = TRAMA_STOP;
 window.sensorConfig = sensorConfig;
+
+/* *********************************************************************
+************************** CARGAR SCRIPTS GLOBALES **********************
+********************************************************************* */
+// Cargar excelExport.js dinámicamente para evitar incluirlo en el layout
+const scriptExcelExport = document.createElement('script');
+scriptExcelExport.src = '/scripts/excelExport.js';
+scriptExcelExport.type = 'text/javascript';
+document.head.appendChild(scriptExcelExport);
 
 /* *********************************************************************
 ********************** INICIALIZACIÓN DE EVENTOS ***********************
@@ -2064,8 +2074,8 @@ async function updateBiometricCharts() {
     chart.data.labels = newLabels;
     
     // Obtener métrica seleccionada actualmente
-    const selector = document.getElementById("biometricMetricSelector");
-    const selectedMetric = selector ? selector.value : "pulse";
+    const selectors = document.querySelectorAll(".biometric-metric-selector");
+    const selectedMetric = selectors.length > 0 ? selectors[0].value : "pulse";
     
     // Actualizar dataset con la métrica seleccionada
     chart.data.datasets[0].data = biometricChartData[selectedMetric];
@@ -2139,16 +2149,32 @@ async function checkMonitoringStatus() {
         
         console.log(`[BiometricCharts] Estado: previo=${biometricPreviousActiveMeasurement}, actual=${biometricCurrentActiveMeasurement}, nuevo=${activeMeasurementType}`);
         
-        // Detectar cuando una medición termina
-        if (biometricPreviousActiveMeasurement && !activeMeasurementType) {
-            // Una medición acaba de terminar
+        // Detectar cuando una nueva medición empieza
+        if (!biometricCurrentActiveMeasurement && activeMeasurementType) {
+            console.log(`[BiometricCharts] Nueva medición iniciada: ${activeMeasurementType}`);
+            biometricMeasurementStartTime = Date.now(); // Registrar tiempo de inicio
+        }
+        
+        // Detectar cuando una medición termina (normal o por timeout)
+        const shouldShowCompletion = biometricPreviousActiveMeasurement && !activeMeasurementType;
+        
+        // TAMBIÉN detectar timeout del lado del frontend (más de 95 segundos)
+        const elapsedTime = biometricMeasurementStartTime ? Date.now() - biometricMeasurementStartTime : 0;
+        const frontendTimeout = biometricCurrentActiveMeasurement && elapsedTime > 95000; // 95 segundos
+        
+        if (shouldShowCompletion || frontendTimeout) {
+            const measurementToComplete = biometricPreviousActiveMeasurement || biometricCurrentActiveMeasurement;
             const measurementNames = {
                 'bpm': 'Pulso',
                 'spo2': 'Oxigenación',
                 'temperature': 'Temperatura',
                 'bloodPressure': 'Presión Arterial'
             };
-            const completedName = measurementNames[biometricPreviousActiveMeasurement] || biometricPreviousActiveMeasurement;
+            const completedName = measurementNames[measurementToComplete] || measurementToComplete;
+            
+            if (frontendTimeout) {
+                console.log(`[BiometricCharts] ⏰ TIMEOUT FRONTEND: ${completedName} (${(elapsedTime/1000).toFixed(0)}s)`);
+            }
             
             console.log(`[BiometricCharts] ✅ Medición de ${completedName} completada!`);
             
@@ -2160,6 +2186,9 @@ async function checkMonitoringStatus() {
             
             // TAMBIÉN mostrar alert para asegurar que el usuario lo vea
             alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
+            
+            // Reset timer
+            biometricMeasurementStartTime = null;
             
             // Actualizar TopMetricsGrid con los últimos datos medidos
             try {
@@ -2178,11 +2207,11 @@ async function checkMonitoringStatus() {
         
         // SIEMPRE mantener el selector habilitado, incluso durante medición activa
         // Esto permite al usuario cambiar de métrica y detener la medición actual
-        const selector = document.getElementById("biometricMetricSelector");
-        if (selector) {
+        const selectors = document.querySelectorAll(".biometric-metric-selector");
+        selectors.forEach(selector => {
             selector.disabled = false;
             selector.classList.remove("opacity-50", "cursor-not-allowed");
-        }
+        });
     } catch (error) {
         console.warn("[BiometricCharts] Error al verificar estado de monitoreo:", error);
     }
@@ -2198,8 +2227,8 @@ async function seedBiometricHistory(labels, metricConfigs) {
     biometricChartData.bloodPressure = history.map((item) => item.systolic ?? null);
 
     const chart = biometricChartInstances.pulse;
-    const selector = document.getElementById("biometricMetricSelector");
-    const selectedMetric = selector ? selector.value : "pulse";
+    const selectors = document.querySelectorAll(".biometric-metric-selector");
+    const selectedMetric = selectors.length > 0 ? selectors[0].value : "pulse";
 
     chart.data.labels = labels;
     chart.data.datasets[0].data = biometricChartData[selectedMetric];

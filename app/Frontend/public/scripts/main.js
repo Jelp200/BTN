@@ -138,6 +138,15 @@ window.TRAMA_STOP = TRAMA_STOP;
 window.sensorConfig = sensorConfig;
 
 /* *********************************************************************
+************************** CARGAR SCRIPTS GLOBALES **********************
+********************************************************************* */
+// Cargar excelExport.js dinámicamente para evitar incluirlo en el layout
+const scriptExcelExport = document.createElement('script');
+scriptExcelExport.src = '/scripts/excelExport.js';
+scriptExcelExport.type = 'text/javascript';
+document.head.appendChild(scriptExcelExport);
+
+/* *********************************************************************
 ********************** INICIALIZACIÓN DE EVENTOS ***********************
 ********************************************************************* */
 window.addEventListener("DOMContentLoaded", () => {

@@ -20,6 +20,10 @@ namespace ControlPanel.API.Services
         private SmartwatchVitals? _latestVitals;
         private readonly List<SmartwatchVitals> _history = new();
         
+        // Timeout watchdog timer
+        private System.Timers.Timer? _timeoutWatchdog;
+        private const int WATCHDOG_INTERVAL_MS = 5000; // Check every 5 seconds
+        
         // BPM measurement control - 10 measurements over 1 minute
         private int _bpmMeasurementCount = 0;
         private DateTime _lastBpmMeasurementTime = DateTime.MinValue;
@@ -29,7 +33,8 @@ namespace ControlPanel.API.Services
         private static readonly TimeSpan BpmSessionCooldown = TimeSpan.FromMinutes(5);
         private const int MAX_BPM_MEASUREMENTS = 10;
         private const int BPM_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
-        private const int BPM_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
+        private const int MEASUREMENT_EXPECTED_DURATION_MS = 60000; // 60 seconds: 10 measurements × 6s intervals
+        private const int BPM_MEASUREMENT_TIMEOUT_MS = 90000; // 90s absolute timeout to prevent hanging (60s normal + 30s grace period)
     
         // SpO2 measurement control - 10 measurements over 1 minute
         private int _spo2MeasurementCount = 0;
@@ -38,7 +43,7 @@ namespace ControlPanel.API.Services
         private bool _spo2MonitoringActive = false;
         private const int MAX_SPO2_MEASUREMENTS = 10;
         private const int SPO2_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
-        private const int SPO2_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
+        private const int SPO2_MEASUREMENT_TIMEOUT_MS = 90000; // 90s absolute timeout to prevent hanging (reduced from 120s)
 
         // Temperature measurement control - 10 measurements over 1 minute
         private int _temperatureMeasurementCount = 0;
@@ -47,7 +52,7 @@ namespace ControlPanel.API.Services
         private bool _temperatureMonitoringActive = false;
         private const int MAX_TEMPERATURE_MEASUREMENTS = 10;
         private const int TEMPERATURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
-        private const int TEMPERATURE_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
+        private const int TEMPERATURE_MEASUREMENT_TIMEOUT_MS = 90000; // 90s absolute timeout to prevent hanging (reduced from 120s)
     // Blood Pressure measurement control - 10 measurements over 1 minute
     private int _bloodPressureMeasurementCount = 0;
     private DateTime _lastBloodPressureMeasurementTime = DateTime.MinValue;
@@ -55,7 +60,7 @@ namespace ControlPanel.API.Services
     private bool _bloodPressureMonitoringActive = false;
     private const int MAX_BLOODPRESSURE_MEASUREMENTS = 10;
     private const int BLOODPRESSURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
-    private const int BLOODPRESSURE_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
+    private const int BLOODPRESSURE_MEASUREMENT_TIMEOUT_MS = 90000; // 90s absolute timeout to prevent hanging (reduced from 120s)
 
         /// <summary>
         /// Get current monitoring status for all vital measurements
@@ -83,6 +88,95 @@ namespace ControlPanel.API.Services
             _connector = connector;
             _sessionLogger = sessionLogger;
             _connector.OnDataReceived += HandleGattData;
+            InitializeTimeoutWatchdog();
+        }
+        
+        /// <summary>
+        /// Initialize the timeout watchdog timer that periodically checks for stuck measurements
+        /// </summary>
+        private void InitializeTimeoutWatchdog()
+        {
+            _timeoutWatchdog = new System.Timers.Timer(WATCHDOG_INTERVAL_MS);
+            _timeoutWatchdog.Elapsed += async (sender, e) =>
+            {
+                try
+                {
+                    await CheckMeasurementTimeouts();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[SMARTWATCH] ⚠ Error en watchdog de timeouts: {ex.Message}");
+                }
+            };
+            _timeoutWatchdog.AutoReset = true;
+        }
+        
+        /// <summary>
+        /// Check all active measurements for timeouts and force stop if needed
+        /// </summary>
+        private async Task CheckMeasurementTimeouts()
+        {
+            var now = DateTime.UtcNow;
+            
+            // Check BPM timeout - Only trigger if beyond expected duration (60s) AND didn't complete
+            if (_bpmMonitoringActive && _bpmMeasurementCount > 0 && _bpmMeasurementStartTime != DateTime.MinValue)
+            {
+                var elapsed = (now - _bpmMeasurementStartTime).TotalMilliseconds;
+                
+                // Phase 1 (0-60s): Allow normal collection, don't force stop
+                // Phase 2 (60-90s): Only force stop if not completed AND beyond absolute timeout
+                if (elapsed >= MEASUREMENT_EXPECTED_DURATION_MS && _bpmMeasurementCount < MAX_BPM_MEASUREMENTS && elapsed >= BPM_MEASUREMENT_TIMEOUT_MS)
+                {
+                    Console.WriteLine($"[WATCHDOG] ⏰ BPM timeout alcanzado: {elapsed:F0}ms (esperado: {MEASUREMENT_EXPECTED_DURATION_MS}ms, límite: {BPM_MEASUREMENT_TIMEOUT_MS}ms)");
+                    Console.WriteLine($"[WATCHDOG] 🛑 Forzando detención de BPM ({_bpmMeasurementCount}/{MAX_BPM_MEASUREMENTS} mediciones)");
+                    await StopBpmMonitoringAsync(CancellationToken.None);
+                }
+            }
+            
+            // Check SpO2 timeout - Only trigger if beyond expected duration (60s) AND didn't complete
+            if (_spo2MonitoringActive && _spo2MeasurementCount > 0 && _spo2MeasurementStartTime != DateTime.MinValue)
+            {
+                var elapsed = (now - _spo2MeasurementStartTime).TotalMilliseconds;
+                
+                // Phase 1 (0-60s): Allow normal collection, don't force stop
+                // Phase 2 (60-90s): Only force stop if not completed AND beyond absolute timeout
+                if (elapsed >= MEASUREMENT_EXPECTED_DURATION_MS && _spo2MeasurementCount < MAX_SPO2_MEASUREMENTS && elapsed >= SPO2_MEASUREMENT_TIMEOUT_MS)
+                {
+                    Console.WriteLine($"[WATCHDOG] ⏰ SpO2 timeout alcanzado: {elapsed:F0}ms (esperado: {MEASUREMENT_EXPECTED_DURATION_MS}ms, límite: {SPO2_MEASUREMENT_TIMEOUT_MS}ms)");
+                    Console.WriteLine($"[WATCHDOG] 🛑 Forzando detención de SpO2 ({_spo2MeasurementCount}/{MAX_SPO2_MEASUREMENTS} mediciones)");
+                    await StopSpo2MonitoringAsync(CancellationToken.None);
+                }
+            }
+            
+            // Check Temperature timeout - Only trigger if beyond expected duration (60s) AND didn't complete
+            if (_temperatureMonitoringActive && _temperatureMeasurementCount > 0 && _temperatureMeasurementStartTime != DateTime.MinValue)
+            {
+                var elapsed = (now - _temperatureMeasurementStartTime).TotalMilliseconds;
+                
+                // Phase 1 (0-60s): Allow normal collection, don't force stop
+                // Phase 2 (60-90s): Only force stop if not completed AND beyond absolute timeout
+                if (elapsed >= MEASUREMENT_EXPECTED_DURATION_MS && _temperatureMeasurementCount < MAX_TEMPERATURE_MEASUREMENTS && elapsed >= TEMPERATURE_MEASUREMENT_TIMEOUT_MS)
+                {
+                    Console.WriteLine($"[WATCHDOG] ⏰ Temperatura timeout alcanzado: {elapsed:F0}ms (esperado: {MEASUREMENT_EXPECTED_DURATION_MS}ms, límite: {TEMPERATURE_MEASUREMENT_TIMEOUT_MS}ms)");
+                    Console.WriteLine($"[WATCHDOG] 🛑 Forzando detención de Temperatura ({_temperatureMeasurementCount}/{MAX_TEMPERATURE_MEASUREMENTS} mediciones)");
+                    await StopTemperatureMonitoringAsync(CancellationToken.None);
+                }
+            }
+            
+            // Check BloodPressure timeout - Only trigger if beyond expected duration (60s) AND didn't complete
+            if (_bloodPressureMonitoringActive && _bloodPressureMeasurementCount > 0 && _bloodPressureMeasurementStartTime != DateTime.MinValue)
+            {
+                var elapsed = (now - _bloodPressureMeasurementStartTime).TotalMilliseconds;
+                
+                // Phase 1 (0-60s): Allow normal collection, don't force stop
+                // Phase 2 (60-90s): Only force stop if not completed AND beyond absolute timeout
+                if (elapsed >= MEASUREMENT_EXPECTED_DURATION_MS && _bloodPressureMeasurementCount < MAX_BLOODPRESSURE_MEASUREMENTS && elapsed >= BLOODPRESSURE_MEASUREMENT_TIMEOUT_MS)
+                {
+                    Console.WriteLine($"[WATCHDOG] ⏰ Presión Arterial timeout alcanzado: {elapsed:F0}ms (esperado: {MEASUREMENT_EXPECTED_DURATION_MS}ms, límite: {BLOODPRESSURE_MEASUREMENT_TIMEOUT_MS}ms)");
+                    Console.WriteLine($"[WATCHDOG] 🛑 Forzando detención de Presión Arterial ({_bloodPressureMeasurementCount}/{MAX_BLOODPRESSURE_MEASUREMENTS} mediciones)");
+                    await StopBloodPressureMonitoringAsync(CancellationToken.None);
+                }
+            }
         }
 
         public async Task<SmartwatchConnectionResult> ConnectAsync(string targetName, int scanTimeoutMs, CancellationToken cancellationToken)
@@ -131,6 +225,10 @@ namespace ControlPanel.API.Services
                     await _connector.ConnectAsync(found.Address, cancellationToken);
                     _isConnected = true;
                     
+                    // Start timeout watchdog
+                    _timeoutWatchdog?.Start();
+                    Console.WriteLine("[SMARTWATCH] ⏱️ Watchdog de timeouts iniciado");
+                    
                     // First, explore and log all available services to debug protocol issues
                     await _connector.ExploreAndLogAllServices(cancellationToken);
                     
@@ -165,6 +263,9 @@ namespace ControlPanel.API.Services
 
                 try
                 {
+                    // Stop timeout watchdog
+                    _timeoutWatchdog?.Stop();
+                    
                     // Desconectar del dispositivo BLE
                     await _connector.DisconnectAsync(cancellationToken);
                     
@@ -743,6 +844,7 @@ namespace ControlPanel.API.Services
                 _bpmMonitoringActive = false;
                 _bpmMeasurementCount = 0;
                 _lastBpmMeasurementTime = DateTime.MinValue;
+                _bpmMeasurementStartTime = DateTime.MinValue;
                 _lastBpmSessionEndedUtc = DateTime.UtcNow;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Estado de medición BPM reseteado");
@@ -851,6 +953,7 @@ namespace ControlPanel.API.Services
                 _spo2MonitoringActive = false;
                 _spo2MeasurementCount = 0;
                 _lastSpo2MeasurementTime = DateTime.MinValue;
+                _spo2MeasurementStartTime = DateTime.MinValue;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Estado de medición SpO2 reseteado");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
@@ -972,6 +1075,7 @@ namespace ControlPanel.API.Services
                 _temperatureMonitoringActive = false;
                 _temperatureMeasurementCount = 0;
                 _lastTemperatureMeasurementTime = DateTime.MinValue;
+                _temperatureMeasurementStartTime = DateTime.MinValue;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Estado de medición Temperatura reseteado");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
@@ -1092,6 +1196,7 @@ namespace ControlPanel.API.Services
                 _bloodPressureMonitoringActive = false;
                 _bloodPressureMeasurementCount = 0;
                 _lastBloodPressureMeasurementTime = DateTime.MinValue;
+                _bloodPressureMeasurementStartTime = DateTime.MinValue;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Estado de medición Presión Arterial reseteado");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
