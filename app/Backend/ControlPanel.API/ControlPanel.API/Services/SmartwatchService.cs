@@ -23,31 +23,39 @@ namespace ControlPanel.API.Services
         // BPM measurement control - 10 measurements over 1 minute
         private int _bpmMeasurementCount = 0;
         private DateTime _lastBpmMeasurementTime = DateTime.MinValue;
+        private DateTime _bpmMeasurementStartTime = DateTime.MinValue;  // Track when measurement started
         private bool _bpmMonitoringActive = false;
         private DateTime _lastBpmSessionEndedUtc = DateTime.MinValue;
         private static readonly TimeSpan BpmSessionCooldown = TimeSpan.FromMinutes(5);
         private const int MAX_BPM_MEASUREMENTS = 10;
         private const int BPM_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
+        private const int BPM_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
     
         // SpO2 measurement control - 10 measurements over 1 minute
         private int _spo2MeasurementCount = 0;
         private DateTime _lastSpo2MeasurementTime = DateTime.MinValue;
+        private DateTime _spo2MeasurementStartTime = DateTime.MinValue;  // Track when measurement started
         private bool _spo2MonitoringActive = false;
         private const int MAX_SPO2_MEASUREMENTS = 10;
         private const int SPO2_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
+        private const int SPO2_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
 
         // Temperature measurement control - 10 measurements over 1 minute
         private int _temperatureMeasurementCount = 0;
         private DateTime _lastTemperatureMeasurementTime = DateTime.MinValue;
+        private DateTime _temperatureMeasurementStartTime = DateTime.MinValue;  // Track when measurement started
         private bool _temperatureMonitoringActive = false;
         private const int MAX_TEMPERATURE_MEASUREMENTS = 10;
         private const int TEMPERATURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
+        private const int TEMPERATURE_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
     // Blood Pressure measurement control - 10 measurements over 1 minute
     private int _bloodPressureMeasurementCount = 0;
     private DateTime _lastBloodPressureMeasurementTime = DateTime.MinValue;
+    private DateTime _bloodPressureMeasurementStartTime = DateTime.MinValue;  // Track when measurement started
     private bool _bloodPressureMonitoringActive = false;
     private const int MAX_BLOODPRESSURE_MEASUREMENTS = 10;
     private const int BLOODPRESSURE_MEASUREMENT_INTERVAL_MS = 6000; // 60s / 10 = 6s between measurements
+    private const int BLOODPRESSURE_MEASUREMENT_TIMEOUT_MS = 120000; // 120s absolute timeout to prevent hanging
 
         /// <summary>
         /// Get current monitoring status for all vital measurements
@@ -177,6 +185,12 @@ namespace ControlPanel.API.Services
                     _temperatureMeasurementCount = 0;
                     _bloodPressureMeasurementCount = 0;
                     
+                    // Reset measurement start timestamps
+                    _bpmMeasurementStartTime = DateTime.MinValue;
+                    _spo2MeasurementStartTime = DateTime.MinValue;
+                    _temperatureMeasurementStartTime = DateTime.MinValue;
+                    _bloodPressureMeasurementStartTime = DateTime.MinValue;
+                    
                     Console.WriteLine("[SMARTWATCH] 🔄 Estados de monitoreo reseteados");
                     
                     // Esperar 2 segundos para que el dispositivo reinicie el modo advertising
@@ -245,6 +259,28 @@ namespace ControlPanel.API.Services
                 
                 if (_bpmMonitoringActive && update.PulseBpm.Value > 0)
                 {
+                    // NEW: Check for absolute timeout to prevent getting stuck
+                    var timeSinceMeasurementStart = (DateTime.UtcNow - _bpmMeasurementStartTime).TotalMilliseconds;
+                    if (timeSinceMeasurementStart >= BPM_MEASUREMENT_TIMEOUT_MS && _bpmMeasurementCount > 0)
+                    {
+                        Console.WriteLine($"[SMARTWATCH] ⏰ TIMEOUT: Medición BPM llevaba {timeSinceMeasurementStart:F0}ms (límite: {BPM_MEASUREMENT_TIMEOUT_MS}ms)");
+                        Console.WriteLine($"[SMARTWATCH] ⏰ Se completaron {_bpmMeasurementCount} mediciones en {timeSinceMeasurementStart:F0}ms");
+                        Console.WriteLine($"[SMARTWATCH] 🛑 Forzando detención de monitoreo BPM...");
+                        
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await StopBpmMonitoringAsync(CancellationToken.None);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"[SMARTWATCH] ⚠ Error deteniendo BPM: {ex.Message}");
+                            }
+                        });
+                        return;
+                    }
+                    
                     var timeSinceLastMeasurement = (DateTime.UtcNow - _lastBpmMeasurementTime).TotalMilliseconds;
                     
                     if (timeSinceLastMeasurement >= BPM_MEASUREMENT_INTERVAL_MS || _bpmMeasurementCount == 0)
@@ -294,6 +330,28 @@ namespace ControlPanel.API.Services
                 
                 if (_spo2MonitoringActive && update.SpO2.Value > 0)
                 {
+                    // NEW: Check for absolute timeout to prevent getting stuck
+                    var timeSinceMeasurementStart = (DateTime.UtcNow - _spo2MeasurementStartTime).TotalMilliseconds;
+                    if (timeSinceMeasurementStart >= SPO2_MEASUREMENT_TIMEOUT_MS && _spo2MeasurementCount > 0)
+                    {
+                        Console.WriteLine($"[SMARTWATCH] ⏰ TIMEOUT: Medición SpO2 llevaba {timeSinceMeasurementStart:F0}ms (límite: {SPO2_MEASUREMENT_TIMEOUT_MS}ms)");
+                        Console.WriteLine($"[SMARTWATCH] ⏰ Se completaron {_spo2MeasurementCount} mediciones en {timeSinceMeasurementStart:F0}ms");
+                        Console.WriteLine($"[SMARTWATCH] 🛑 Forzando detención de monitoreo SpO2...");
+                        
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await StopSpo2MonitoringAsync(CancellationToken.None);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"[SMARTWATCH] ⚠ Error deteniendo SpO2: {ex.Message}");
+                            }
+                        });
+                        return;
+                    }
+                    
                     var timeSinceLastMeasurement = (DateTime.UtcNow - _lastSpo2MeasurementTime).TotalMilliseconds;
                     
                     if (timeSinceLastMeasurement >= SPO2_MEASUREMENT_INTERVAL_MS || _spo2MeasurementCount == 0)
@@ -343,6 +401,28 @@ namespace ControlPanel.API.Services
                 
                 if (_temperatureMonitoringActive && update.TemperatureC.Value > 0)
                 {
+                    // NEW: Check for absolute timeout to prevent getting stuck
+                    var timeSinceMeasurementStart = (DateTime.UtcNow - _temperatureMeasurementStartTime).TotalMilliseconds;
+                    if (timeSinceMeasurementStart >= TEMPERATURE_MEASUREMENT_TIMEOUT_MS && _temperatureMeasurementCount > 0)
+                    {
+                        Console.WriteLine($"[SMARTWATCH] ⏰ TIMEOUT: Medición Temperatura llevaba {timeSinceMeasurementStart:F0}ms (límite: {TEMPERATURE_MEASUREMENT_TIMEOUT_MS}ms)");
+                        Console.WriteLine($"[SMARTWATCH] ⏰ Se completaron {_temperatureMeasurementCount} mediciones en {timeSinceMeasurementStart:F0}ms");
+                        Console.WriteLine($"[SMARTWATCH] 🛑 Forzando detención de monitoreo Temperatura...");
+                        
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await StopTemperatureMonitoringAsync(CancellationToken.None);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"[SMARTWATCH] ⚠ Error deteniendo Temperatura: {ex.Message}");
+                            }
+                        });
+                        return;
+                    }
+                    
                     var timeSinceLastMeasurement = (DateTime.UtcNow - _lastTemperatureMeasurementTime).TotalMilliseconds;
                     
                     if (timeSinceLastMeasurement >= TEMPERATURE_MEASUREMENT_INTERVAL_MS || _temperatureMeasurementCount == 0)
@@ -392,6 +472,28 @@ namespace ControlPanel.API.Services
                 
                 if (_bloodPressureMonitoringActive && update.Systolic.Value > 0 && update.Diastolic.Value > 0)
                 {
+                    // NEW: Check for absolute timeout to prevent getting stuck
+                    var timeSinceMeasurementStart = (DateTime.UtcNow - _bloodPressureMeasurementStartTime).TotalMilliseconds;
+                    if (timeSinceMeasurementStart >= BLOODPRESSURE_MEASUREMENT_TIMEOUT_MS && _bloodPressureMeasurementCount > 0)
+                    {
+                        Console.WriteLine($"[SMARTWATCH] ⏰ TIMEOUT: Medición Presión Arterial llevaba {timeSinceMeasurementStart:F0}ms (límite: {BLOODPRESSURE_MEASUREMENT_TIMEOUT_MS}ms)");
+                        Console.WriteLine($"[SMARTWATCH] ⏰ Se completaron {_bloodPressureMeasurementCount} mediciones en {timeSinceMeasurementStart:F0}ms");
+                        Console.WriteLine($"[SMARTWATCH] 🛑 Forzando detención de monitoreo Presión Arterial...");
+                        
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await StopBloodPressureMonitoringAsync(CancellationToken.None);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"[SMARTWATCH] ⚠ Error deteniendo Presión Arterial: {ex.Message}");
+                            }
+                        });
+                        return;
+                    }
+                    
                     var timeSinceLastMeasurement = (DateTime.UtcNow - _lastBloodPressureMeasurementTime).TotalMilliseconds;
                     
                     if (timeSinceLastMeasurement >= BLOODPRESSURE_MEASUREMENT_INTERVAL_MS || _bloodPressureMeasurementCount == 0)
@@ -593,9 +695,10 @@ namespace ControlPanel.API.Services
                 _bpmMonitoringActive = true;
                 _bpmMeasurementCount = 0;
                 _lastBpmMeasurementTime = DateTime.UtcNow;
+                _bpmMeasurementStartTime = DateTime.UtcNow;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Comando START BPM enviado correctamente");
-                Console.WriteLine($"[SMARTWATCH] 📊 Control de medición BPM activado: {MAX_BPM_MEASUREMENTS} mediciones en ~60s");
+                Console.WriteLine($"[SMARTWATCH] 📊 Control de medición BPM activado: {MAX_BPM_MEASUREMENTS} mediciones en ~60s, timeout: {BPM_MEASUREMENT_TIMEOUT_MS / 1000}s");
                 Console.WriteLine($"[SMARTWATCH] Esperando datos de pulso cardiaco del reloj...");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
                 
@@ -700,6 +803,7 @@ namespace ControlPanel.API.Services
                 _spo2MonitoringActive = true;
                 _spo2MeasurementCount = 0;
                 _lastSpo2MeasurementTime = DateTime.UtcNow;
+                _spo2MeasurementStartTime = DateTime.UtcNow;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Comando START SpO2 enviado correctamente");
                 Console.WriteLine($"[SMARTWATCH] 📊 Control de medición SpO2 activado: {MAX_SPO2_MEASUREMENTS} mediciones en ~60s");
@@ -816,9 +920,10 @@ namespace ControlPanel.API.Services
                 _temperatureMonitoringActive = true;
                 _temperatureMeasurementCount = 0;
                 _lastTemperatureMeasurementTime = DateTime.UtcNow;
+                _temperatureMeasurementStartTime = DateTime.UtcNow;  // NEW: Track when measurement started for timeout detection
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Comando START Temperatura enviado correctamente");
-                Console.WriteLine($"[SMARTWATCH] 📊 Control de medición Temperatura activado: {MAX_TEMPERATURE_MEASUREMENTS} mediciones en ~60s");
+                Console.WriteLine($"[SMARTWATCH] 📊 Control de medición Temperatura activado: {MAX_TEMPERATURE_MEASUREMENTS} mediciones en ~60s (timeout: {TEMPERATURE_MEASUREMENT_TIMEOUT_MS / 1000}s)");
                 Console.WriteLine($"[SMARTWATCH] Esperando datos de temperatura del reloj...");
                 Console.WriteLine("═══════════════════════════════════════════════════════════════════");
                 
@@ -939,6 +1044,7 @@ namespace ControlPanel.API.Services
                 _bloodPressureMonitoringActive = true;
                 _bloodPressureMeasurementCount = 0;
                 _lastBloodPressureMeasurementTime = DateTime.UtcNow;
+                _bloodPressureMeasurementStartTime = DateTime.UtcNow;
                 
                 Console.WriteLine($"[SMARTWATCH] ✓ Comando START Presión Arterial enviado correctamente");
                 Console.WriteLine($"[SMARTWATCH] 📊 Control de medición Presión Arterial activado: {MAX_BLOODPRESSURE_MEASUREMENTS} mediciones en ~60s");

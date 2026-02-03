@@ -21,6 +21,8 @@ const { title } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/logos/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<!-- XLSX library for Excel export -->
+		<script src="https://cdn.jsdelivr.net/npm/xlsx@latest/dist/xlsx.full.min.js"></script>
 	</head>
 	<body>
 		<!-- Loader/Splash Screen -->
