@@ -1,146 +1,18 @@
 /* *********************************************************************
-*************** VARIABLES, ESTADOS Y CONSTANTES GLOBALES ***************
+*************** IMPORTAR VARIABLES Y CONSTANTES GLOBALES ***************
 ********************************************************************* */
-//* Edos. globales
-let puertoSerial;
-let cabinaActiva = false;
-let puertoSerialConectado = false;
-let puertoPreviamenteConectado = false;
-let volumenPorCabina = { "Cabina 1": 0, "Cabina 2": 0 };
-let reproduciendoPorCabina = { "Cabina 1": false, "Cabina 2": false };
-let botonPlayActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
-let sonidoActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
-let estadoCalor = "off";
-
-//* Estados para gráficas biométricas
-let biometricChartsEnabled = false;
-let biometricWatchConnected = false;
-let biometricChartInstances = {
-    pulse: null,
-    oxygen: null,
-    temperature: null,
-    glucose: null,
-};
-let biometricChartData = {
-    pulse: [],
-    oxygen: [],
-    temperature: [],
-    bloodPressure: [],
-};
-let biometricUpdateInterval = null;
-let biometricMonitoringStatusInterval = null;
-let biometricLastMetric = "pulse";
-let biometricLastBpmRequestAt = 0;
-let biometricLastSpo2RequestAt = 0;
-let biometricLastTemperatureRequestAt = 0;
-let biometricLastBloodPressureRequestAt = 0;
-let biometricCurrentActiveMeasurement = null;
-let biometricPreviousActiveMeasurement = null;
-let biometricMeasurementCompletionNotified = false; // Flag para evitar múltiples notificaciones
-const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
-
-//* Datos personales guardados
-let personalDataStored = {
-    edad: "",
-    altura: "",
-    peso: "",
-    genero: "",
-};
-
-/* *********************************************************************
-*************************** MAPEO DE CODIGOS ***************************
-********************************************************************* */
-const codigoBoton = {
-    FRIO: { off: "000", on: "001" },
-    CALOR: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
-    HUMEDAD: { off: "007", on: "008" },
-    VIBRACION: { off: "009", on: "010" },
-    VENTILADOR: { off: "011", on: "012" },
-    EXTRACTOR: { off: "013", on: "014" },
-    DESHUMIDIFICADOR: { off: "015", on: "016" },
-    HUMO: { off: "017", on: "018" },
-    DISPARO: { off: "019", on: "020" },
-};
-
-const codigoSonidoControl = {
-    PLAY: "035",
-    VMAS: "036",
-    VMEN: "037",
-    STOP: "038",
-};
-
-const sonidosAmbientales = [
-    { nombre: "Aire acondicionado", codigo: "039" },
-    { nombre: "Aspiradora", codigo: "040" },
-    { nombre: "Centro comercial", codigo: "041" },
-    { nombre: "Maquina de coser", codigo: "042" },
-    { nombre: "Construccion", codigo: "043" },
-    { nombre: "Lavadora de ropa", codigo: "044" },
-    { nombre: "Martillo hidraulico", codigo: "045" },
-    { nombre: "Motosierra", codigo: "046" },
-    { nombre: "Secadora de cabello", codigo: "047" },
-    { nombre: "Taladro", codigo: "048" },
-    { nombre: "Ventilador", codigo: "049" },
-    { nombre: "Ventilador industrial", codigo: "050" },
-];
-
-const tinitus = [
-    { nombre: "Tinitus 1", codigo: "070" },
-    { nombre: "Tinitus 2", codigo: "071" },
-    { nombre: "Tinitus 3", codigo: "072" },
-    { nombre: "Tinitus 4", codigo: "073" },
-    { nombre: "Tinitus 5", codigo: "074" },
-    { nombre: "Tinitus 6", codigo: "075" },
-    { nombre: "Tinitus 7", codigo: "076" },
-    { nombre: "Tinitus 8", codigo: "077" },
-    { nombre: "Tinitus 9", codigo: "078" },
-    { nombre: "Tinitus 10", codigo: "079" },
-    { nombre: "Tinitus 11", codigo: "080" },
-    { nombre: "Tinitus 12", codigo: "081" },
-    { nombre: "Tono 125Hz", codigo: "082" },
-    { nombre: "Tono 250Hz", codigo: "083" },
-    { nombre: "Tono 500Hz", codigo: "084" },
-    { nombre: "Tono 1kHz", codigo: "085" },
-    { nombre: "Tono 2kHz", codigo: "086" },
-    { nombre: "Tono 4kHz", codigo: "087" },
-    { nombre: "Tono 6kHz", codigo: "088" },
-    { nombre: "Tono 8kHz", codigo: "089" },
-];
-
-const TRAMA_STOP = "038";
-
-const sensorConfig = {
-    TEMP: { frecuencia: 60, label: "Temperatura (°C)" },
-    HUM: { frecuencia: 60, label: "Humedad (%)" },
-    CO2: { frecuencia: 60, label: "CO₂ (ppm)" },
-    O3: { frecuencia: 60, label: "Ozono (ppb)" },
-    UV: { frecuencia: 60, label: "UV (W/m²)" },
-    DB: { frecuencia: 60, label: "Ruido (dB)" },
-    X: { frecuencia: 1, label: "Aceleración X (m/s²)" },
-    Y: { frecuencia: 1, label: "Aceleración Y (m/s²)" },
-    Z: { frecuencia: 1, label: "Aceleración Z (m/s²)" },
-};
-
-const calorCycle = [
-    "on",
-    "low",
-    "medium",
-    "high",
-    "off",
-];
-
-// Exponer constantes en window para acceso global
-window.codigoBoton = codigoBoton;
-window.codigoSonidoControl = codigoSonidoControl;
-window.sonidosAmbientales = sonidosAmbientales;
-window.tinitus = tinitus;
-window.TRAMA_STOP = TRAMA_STOP;
-window.sensorConfig = sensorConfig;
+if (!window.codigoBoton) {
+    console.warn("[main.js] globals.js no se ha cargado. Cargando dinámicamente...");
+    const script = document.createElement("script");
+    script.src = "/scripts/globals.js";
+    script.onload = () => console.log("[main.js] globals.js cargado correctamente");
+    document.head.insertBefore(script, document.head.firstChild);
+}
 
 /* *********************************************************************
 ************************** CARGAR SCRIPTS GLOBALES **********************
 ********************************************************************* */
-// Cargar excelExport.js dinámicamente para evitar incluirlo en el layout
+// Cargar excelExport.js dinámicamente
 const scriptExcelExport = document.createElement('script');
 scriptExcelExport.src = '/scripts/excelExport.js';
 scriptExcelExport.type = 'text/javascript';
@@ -150,629 +22,13 @@ document.head.appendChild(scriptExcelExport);
 ********************** INICIALIZACIÓN DE EVENTOS ***********************
 ********************************************************************* */
 window.addEventListener("DOMContentLoaded", () => {
-    inicializarBotonesHeader();
-    iniciarIntervalos();
-    inicializarPaneles();
-    inicializarBiometria();
-});
-
-function inicializarBotonesHeader() {
-    const btnScanCom = document.getElementById("btn-scan-com");
-    const btnConnectCom = document.getElementById("btn-connect-com");
-    const btnDisconnectCom = document.getElementById("btn-disconnect-com");
-    
-    if (btnScanCom)
-        btnScanCom.addEventListener("click", escanearPuertosCOM);
-    if (btnConnectCom)
-        btnConnectCom.addEventListener("click", conectarPuertoSerial);
-    if (btnDisconnectCom)
-        btnDisconnectCom.addEventListener("click", desconectarPuertoSerial);
-    
-    // Buscar TODOS los botones de exportar (hay uno en cada panel)
-    const btnExports = document.querySelectorAll("#btn-export-csv");
-    btnExports.forEach(btn => {
-        btn.addEventListener("click", exportToExcel);
-    });
-
-    escanearPuertosCOM();
-}
-
-function iniciarIntervalos() {
-    const intervalo = 10000; // 10 segundos
-
-    // Actualizar datos de ambas cabinas cada 10 segundos
-    setInterval(() => {
-        fetchDatosPorCabina("C1");
-        fetchDatosPorCabina("C2");
-    }, intervalo);
-
-    // Actualizar logs cada 2 segundos
-    setInterval(() => {
-        //fetchTramas();
-    }, intervalo * 2);
-    // Procesar tramas cada segundo
-    setInterval(async () => {
-        try {
-            const res = await fetch(
-                "http://localhost:5000/api/serial/procesar-trama-real",
-            );
-            const data = await res.json();
-
-            if (data.tramaC1) {
-                procesarTrama(data.tramaC1);
-                mostrarNotificacion(data.tramaC1, "real");
-            }
-
-            if (data.tramaC2) {
-                procesarTrama(data.tramaC2);
-                mostrarNotificacion(data.tramaC2, "real");
-            }
-        } catch (error) {
-            console.error("Error al procesar trama:", error);
-        }
-    }, intervalo);
-}
-
-function inicializarPaneles() {
-    const panels = document.querySelectorAll(".panel-container");
-    panels.forEach((panel) => {
-        initTwoColumnsSection(panel);
-        initTabs(panel);
-    });
-}
-
-// Función para actualizar el estado de los botones de reloj según conexión
-function updateWatchButtonsState() {
-    console.log("[Biometría] Actualizando estado de botones, reloj conectado:", biometricWatchConnected);
-    
-    const connectBtn = document.querySelector("[data-action='connect-watch']");
-    const disconnectBtn = document.querySelector("[data-action='disconnect-watch']");
-    
-    console.log("[Biometría] Botones encontrados:", { conectar: !!connectBtn, desconectar: !!disconnectBtn });
-    
-    if (!connectBtn || !disconnectBtn) {
-        console.warn("[Biometría] ⚠️ No se encontraron los botones de reloj!");
-        return;
-    }
-    
-    if (biometricWatchConnected) {
-        // Reloj conectado: deshabilitar botón conectar, habilitar botón desconectar
-        connectBtn.disabled = true;
-        connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        connectBtn.style.filter = "grayscale(100%)";
-        
-        disconnectBtn.disabled = false;
-        disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        disconnectBtn.style.filter = "none";
-        
-        console.log("[Biometría] ✅ Botones actualizados: Conectar DESHABILITADO ❌, Desconectar HABILITADO ✅");
+    console.log("[main.js] DOM cargado, inicializando aplicación...");
+    if (typeof window.inicializarApp === "function") {
+        window.inicializarApp();
     } else {
-        // Reloj desconectado: habilitar botón conectar, deshabilitar botón desconectar
-        connectBtn.disabled = false;
-        connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        connectBtn.style.filter = "none";
-        
-        disconnectBtn.disabled = true;
-        disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        disconnectBtn.style.filter = "grayscale(100%)";
-        
-        console.log("[Biometría] ✅ Botones actualizados: Conectar HABILITADO ✅, Desconectar DESHABILITADO ❌");
+        console.error("[main.js] window.inicializarApp no está definida");
     }
-}
-
-function inicializarBiometria() {
-    // Inicializar estado de botones al cargar
-    updateWatchButtonsState();
-    
-    // Usar delegación de eventos en el documento para mayor robustez
-    document.addEventListener("click", async (event) => {
-        const connectBtn = event.target.closest("[data-action='connect-watch']");
-        const disconnectBtn = event.target.closest("[data-action='disconnect-watch']");
-        
-        if (connectBtn) {
-            console.log("[Biometría] Click en botón CONECTAR");
-            
-            const originalText = connectBtn.innerHTML;
-            connectBtn.disabled = true;
-            connectBtn.innerHTML = "Conectando...";
-
-            const requestPayload = { deviceName: "ET570", scanTimeoutMs: 15000 };
-            
-            // Log enviado
-            console.log("[Biometría] Enviando solicitud:", requestPayload);
-            window.addSentLog?.(`[SMARTWATCH] \nPOST /api/smartwatch/connect\nPayload: ${JSON.stringify(requestPayload, null, 2)}`);
-
-            try {
-                const response = await fetch("http://localhost:5000/api/smartwatch/connect", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(requestPayload),
-                });
-
-                const data = await response.json().catch(() => ({}));
-                
-                console.log("[Biometría] Respuesta recibida:", { status: response.status, data });
-                window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
-                
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || "No se pudo conectar al reloj");
-                }
-
-                const nombre = data.device?.name || "reloj";
-                console.log("[Biometría] Reloj conectado:", nombre);
-                window.mostrarNotificacion?.(`Reloj conectado (${nombre})`, { tipo: "success" });
-                
-                // ✅ MARCAR RELOJ COMO CONECTADO (PRIMERO cambiar variable, LUEGO actualizar botones)
-                biometricWatchConnected = true;
-                updateWatchButtonsState();
-                
-                // Inicializar gráficas si el tab de biometría ya está visible EN ESTE PANEL
-                const panelContainer = connectBtn.closest(".panel-container");
-                const biometriaTab = panelContainer?.querySelector("[data-tab-content='biometria']");
-                const panelCanvas = panelContainer?.querySelector(".biometric-chart");
-                
-                if (biometriaTab && !biometriaTab.classList.contains("hidden") && panelCanvas) {
-                    // Encontrar el índice de este canvas entre todos los canvas del documento
-                    const allCanvases = Array.from(document.querySelectorAll(".biometric-chart"));
-                    const canvasIndex = allCanvases.indexOf(panelCanvas);
-                    
-                    if (canvasIndex >= 0 && !biometricChartInstances[`pulse_${canvasIndex}`]) {
-                        console.log(`[BiometricCharts] Tab de biometría visible en panel ${canvasIndex}. Inicializando gráfica...`);
-                        initBiometricCharts(canvasIndex);
-                    }
-                }
-            } catch (error) {
-                console.error("[Biometría] Error conectando reloj:", error);
-                const mensaje = error?.message || "No se pudo conectar al reloj";
-                window.addReceivedLog?.(`[SMARTWATCH] ❌ Error: ${mensaje}`);
-                window.mostrarNotificacion?.(mensaje, { tipo: "error" });
-                alert(mensaje);
-            } finally {
-                connectBtn.disabled = false;
-                connectBtn.innerHTML = originalText;
-            }
-        } 
-        else if (disconnectBtn) {
-            console.log("[Biometría] Click en botón DESCONECTAR");
-            
-            const originalHTML = disconnectBtn.innerHTML;
-            disconnectBtn.disabled = true;
-
-            // Log enviado
-            console.log("[Biometría] Enviando solicitud de desconexión");
-            window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/disconnect`);
-
-            try {
-                const response = await fetch("http://localhost:5000/api/smartwatch/disconnect", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                });
-
-                const data = await response.json().catch(() => ({}));
-                
-                console.log("[Biometría] Respuesta recibida:", { status: response.status, data });
-                window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data)}`);
-                
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || "No se pudo desconectar del reloj");
-                }
-
-                console.log("[Biometría] Reloj desconectado");
-                window.mostrarNotificacion?.("Reloj desconectado", { tipo: "success" });
-                
-                // MARCAR RELOJ COMO DESCONECTADO (PRIMERO cambiar variable, LUEGO actualizar botones)
-                biometricWatchConnected = false;
-                biometricMeasurementCompletionNotified = false; // Reset flag
-                biometricCurrentActiveMeasurement = null; // Limpiar estado de medición
-                biometricPreviousActiveMeasurement = null;
-                updateWatchButtonsState();
-                stopBiometricCharts();
-            } catch (error) {
-                console.error("[Biometria] Error desconectando reloj:", error);
-                const mensaje = error?.message || "No se pudo desconectar del reloj";
-                window.addReceivedLog?.(`[SMARTWATCH] Error: ${mensaje}`);
-                window.mostrarNotificacion?.(mensaje, { tipo: "error" });
-                alert(mensaje);
-            } finally {
-                disconnectBtn.disabled = false;
-                disconnectBtn.innerHTML = originalHTML;
-            }
-        }
-
-        // ============================================
-        // Manejar botones de Datos Personales
-        // ============================================
-        const acceptPersonalBtn = event.target.closest("[data-action='accept-personal-data']");
-        const cancelPersonalBtn = event.target.closest("[data-action='cancel-personal-data']");
-
-        if (acceptPersonalBtn) {
-            // Buscar los inputs dentro del formulario contenedor (mismo panel)
-            const formContainer = acceptPersonalBtn.closest(".personal-data-form-container");
-            const ageInput = formContainer?.querySelector(".personal-age");
-            const heightInput = formContainer?.querySelector(".personal-height");
-            const weightInput = formContainer?.querySelector(".personal-weight");
-            const genderSelect = formContainer?.querySelector(".personal-gender");
-
-            // Validar que todos los campos tengan datos
-            if (!ageInput?.value || !heightInput?.value || !weightInput?.value) {
-                alert("❌ Por favor completa todos los campos de datos personales");
-                return;
-            }
-
-            // Guardar datos personales
-            personalDataStored = {
-                edad: ageInput.value,
-                altura: heightInput.value,
-                peso: weightInput.value,
-                genero: genderSelect?.value || "",
-            };
-
-            console.log("[Personal Data] ✅ Datos guardados:", personalDataStored);
-            alert("✅ Datos personales guardados correctamente");
-        }
-
-        if (cancelPersonalBtn) {
-            // Limpiar campos - buscar dentro del mismo formulario contenedor
-            const formContainer = cancelPersonalBtn.closest(".personal-data-form-container");
-            const ageInput = formContainer?.querySelector(".personal-age");
-            const heightInput = formContainer?.querySelector(".personal-height");
-            const weightInput = formContainer?.querySelector(".personal-weight");
-            
-            if (ageInput) ageInput.value = "";
-            if (heightInput) heightInput.value = "";
-            if (weightInput) weightInput.value = "";
-
-            console.log("[Personal Data] ✓ Campos limpiados");
-        }
-    });
-
-    console.log("[Biometría] Delegación de eventos inicializada para [data-action='connect-watch'] y [data-action='disconnect-watch']");
-}
-
-function initBiometricCharts(specificCanvasIndex = null) {
-    console.log(`[BiometricCharts] Inicializando gráficas biométricas${specificCanvasIndex !== null ? ` para panel ${specificCanvasIndex}` : ' para todos los paneles'}`);
-    
-    // Limpiar datos previos
-    biometricChartData = {
-        pulse: [],
-        oxygen: [],
-        temperature: [],
-        bloodPressure: [],
-    };
-
-    // Validar que Chart esté disponible
-    if (typeof Chart === "undefined") {
-        console.error("[BiometricCharts] ❌ Chart.js no está cargado");
-        return;
-    }
-
-    // Generar timestamps para las primeras 10 muestras
-    const now = new Date();
-    const labels = [];
-    for (let i = 9; i >= 0; i--) {
-        const time = new Date(now - i * 60000);
-        labels.push(time.toLocaleTimeString());
-    }
-
-    // Inicializar con datos vacíos (se llena desde backend)
-    for (let i = 0; i < 10; i++) {
-        biometricChartData.pulse.push(null);
-        biometricChartData.oxygen.push(null);
-        biometricChartData.temperature.push(null);
-        biometricChartData.bloodPressure.push(null);
-    }
-
-    // Configuración de escalas y colores
-    const metricConfigs = {
-        pulse: { 
-            label: "Pulso (bpm)", 
-            yScale: { min: 50, max: 120 }, 
-            borderColor: "#e74c3c", 
-            bgColor: "rgba(231, 76, 60, 0.2)" 
-        },
-        oxygen: { 
-            label: "Oxigenación (%)", 
-            yScale: { min: 90, max: 100 }, 
-            borderColor: "#3498db", 
-            bgColor: "rgba(52, 152, 219, 0.2)" 
-        },
-        temperature: { 
-            label: "Temperatura (°C)", 
-            yScale: { min: 35, max: 40 }, 
-            borderColor: "#f39c12", 
-            bgColor: "rgba(243, 156, 18, 0.2)" 
-        },
-        bloodPressure: { 
-            label: "Presión Arterial (mmHg)", 
-            yScale: { min: 80, max: 160 }, 
-            borderColor: "#9b59b6", 
-            bgColor: "rgba(155, 89, 182, 0.2)" 
-        },
-    };
-
-    // Buscar canvas de biometría
-    const allCanvases = document.querySelectorAll(".biometric-chart");
-    console.log("[BiometricCharts] Canvas encontrados:", allCanvases.length);
-    
-    if (allCanvases.length === 0) {
-        console.error("[BiometricCharts] ❌ No se encontraron elementos .biometric-chart");
-        return;
-    }
-
-    // Filtrar canvas a inicializar
-    const canvasesToInit = specificCanvasIndex !== null 
-        ? [allCanvases[specificCanvasIndex]].filter(Boolean)
-        : Array.from(allCanvases);
-    
-    if (canvasesToInit.length === 0) {
-        console.error(`[BiometricCharts] ❌ Canvas índice ${specificCanvasIndex} no encontrado`);
-        return;
-    }
-
-    // Inicializar gráfica para cada canvas seleccionado
-    canvasesToInit.forEach((canvas) => {
-        const idx = Array.from(allCanvases).indexOf(canvas);
-        try {
-            console.log(`[BiometricCharts] Inicializando canvas ${idx}...`);
-            
-            // Validar dimensiones del canvas
-            const container = canvas.parentElement;
-            console.log(`[BiometricCharts] Canvas ${idx} - Dimensiones:`, {
-                display: window.getComputedStyle(container).display,
-                hidden: container.classList.contains("hidden")
-            });
-
-            const ctx = canvas.getContext("2d");
-            if (!ctx) {
-                console.error(`[BiometricCharts] ❌ No se pudo obtener contexto 2D para canvas ${idx}`);
-                return;
-            }
-
-            const defaultMetric = "pulse";
-            const config = metricConfigs[defaultMetric];
-
-            // Guardar la instancia del chart (usar índice para múltiples paneles)
-            biometricChartInstances[`pulse_${idx}`] = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels,
-                    datasets: [{
-                        label: config.label,
-                        data: [...biometricChartData[defaultMetric]],
-                        borderColor: config.borderColor,
-                        backgroundColor: config.bgColor,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: config.borderColor,
-                        fill: true,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: false,
-                    scales: {
-                        y: { 
-                            ...config.yScale, 
-                            grid: { color: "#eee" },
-                            title: { display: true, text: config.label }
-                        },
-                        x: { grid: { color: "#eee" } },
-                    },
-                    plugins: { 
-                        legend: { display: true, labels: { color: "#333" } },
-                        title: { display: true, text: config.label }
-                    },
-                },
-            });
-
-            console.log(`[BiometricCharts] ✓ Gráfica ${idx} creada`);
-
-            // Encontrar el selector de métrica más cercano a este canvas
-            const chartContainer = canvas.closest(".biometric-charts-container");
-            const selector = chartContainer?.querySelector(".biometric-metric-selector");
-            
-            if (selector) {
-                // Remover listeners anteriores (si los hay)
-                selector.replaceWith(selector.cloneNode(true));
-                const newSelector = chartContainer.querySelector(".biometric-metric-selector");
-                
-                // Generar labels y configs aquí para que estén disponibles en el closure
-                const now = new Date();
-                const selectorLabels = [];
-                for (let i = 9; i >= 0; i--) {
-                    const time = new Date(now - i * 60000);
-                    selectorLabels.push(time.toLocaleTimeString());
-                }
-                
-                const selectorMetricConfigs = {
-                    pulse: { 
-                        label: "Pulso (bpm)", 
-                        yScale: { min: 50, max: 120 }, 
-                        borderColor: "#e74c3c", 
-                        bgColor: "rgba(231, 76, 60, 0.2)" 
-                    },
-                    oxygen: { 
-                        label: "Oxigenación (%)", 
-                        yScale: { min: 90, max: 100 }, 
-                        borderColor: "#3498db", 
-                        bgColor: "rgba(52, 152, 219, 0.2)" 
-                    },
-                    temperature: { 
-                        label: "Temperatura (°C)", 
-                        yScale: { min: 35, max: 40 }, 
-                        borderColor: "#f39c12", 
-                        bgColor: "rgba(243, 156, 18, 0.2)" 
-                    },
-                    bloodPressure: { 
-                        label: "Presión Arterial (mmHg)", 
-                        yScale: { min: 80, max: 160 }, 
-                        borderColor: "#9b59b6", 
-                        bgColor: "rgba(155, 89, 182, 0.2)" 
-                    },
-                };
-                
-                newSelector.addEventListener("change", async (e) => {
-                    const newMetric = e.target.value;
-                    const previousMetric = biometricLastMetric;
-                    
-                    console.log(`[BiometricCharts] Cambiando métrica a: ${newMetric} (canvas ${idx})`);
-                    
-                    // Actualizar visualización de la gráfica
-                    updateBiometricChart(idx, newMetric, selectorLabels, selectorMetricConfigs, biometricChartData);
-                    
-                    // Actualizar métrica actual
-                    biometricLastMetric = newMetric;
-                    
-                    // Si cambió de métrica, iniciar medición correspondiente
-                    if (newMetric !== previousMetric && biometricWatchConnected) {
-                        console.log(`[BiometricCharts] Iniciando medición de ${newMetric}`);
-                        
-                        if (newMetric === "oxygen") {
-                            await requestSpo2Measurement("selector");
-                        } else if (newMetric === "pulse") {
-                            await requestBpmMeasurement("selector");
-                        } else if (newMetric === "temperature") {
-                            await requestTemperatureMeasurement("selector");
-                        } else if (newMetric === "bloodPressure") {
-                            await requestBloodPressureMeasurement("selector");
-                        }
-                    }
-                });
-            }
-        } catch (error) {
-            console.error(`[BiometricCharts] ❌ Error inicializando canvas ${idx}:`, error);
-        }
-    });
-
-    biometricChartsEnabled = true;
-    console.log("[BiometricCharts] ✓ Gráficas biométricas inicializadas");
-    
-    // Cargar historial inicial desde backend (solo si no se ha hecho antes)
-    if (!biometricUpdateInterval) {
-        const now = new Date();
-        const labels = [];
-        for (let i = 9; i >= 0; i--) {
-            const time = new Date(now - i * 60000);
-            labels.push(time.toLocaleTimeString());
-        }
-        
-        const metricConfigs = {
-            pulse: { 
-                label: "Pulso (bpm)", 
-                yScale: { min: 50, max: 120 }, 
-                borderColor: "#e74c3c", 
-                bgColor: "rgba(231, 76, 60, 0.2)" 
-            },
-            oxygen: { 
-                label: "Oxigenación (%)", 
-                yScale: { min: 90, max: 100 }, 
-                borderColor: "#3498db", 
-                bgColor: "rgba(52, 152, 219, 0.2)" 
-            },
-            temperature: { 
-                label: "Temperatura (°C)", 
-                yScale: { min: 35, max: 40 }, 
-                borderColor: "#f39c12", 
-                bgColor: "rgba(243, 156, 18, 0.2)" 
-            },
-            bloodPressure: { 
-                label: "Presión Arterial (mmHg)", 
-                yScale: { min: 80, max: 160 }, 
-                borderColor: "#9b59b6", 
-                bgColor: "rgba(155, 89, 182, 0.2)" 
-            },
-        };
-        
-        seedBiometricHistory(labels, metricConfigs);
-
-        // Actualizar gráficas cada 5 segundos
-        biometricUpdateInterval = setInterval(() => {
-            updateBiometricCharts();
-        }, 5000);
-        
-        // Monitorear estado de mediciones cada 2 segundos
-        biometricMonitoringStatusInterval = setInterval(() => {
-            checkMonitoringStatus();
-        }, 2000);
-        
-        console.log("[BiometricCharts] ✓ Intervalos de actualización iniciados.");
-    }
-}
-
-/**
- * Actualiza la gráfica biométrica con una nueva métrica
- * Reutiliza el mismo canvas destruyendo la instancia anterior
- */
-function updateBiometricChart(canvasIndex, metric, labels, metricConfigs, data) {
-    const config = metricConfigs[metric];
-    if (!config) {
-        console.warn(`[BiometricCharts] Config not found for metric ${metric}`);
-        return;
-    }
-
-    // Buscar el canvas
-    const canvases = document.querySelectorAll(".biometric-chart");
-    const canvas = canvases[canvasIndex];
-    if (!canvas) {
-        console.warn(`[BiometricCharts] Canvas ${canvasIndex} not found`);
-        return;
-    }
-
-    // Buscar cualquier instancia existente para este canvas (puede tener cualquier métrica)
-    // Las keys son: pulse_0, oxygen_0, temperature_0, etc.
-    const existingKey = Object.keys(biometricChartInstances).find(key => key.endsWith(`_${canvasIndex}`));
-    
-    if (existingKey) {
-        const existingChart = biometricChartInstances[existingKey];
-        
-        // DESTRUIR la instancia anterior para liberar el canvas
-        console.log(`[BiometricCharts] Destruyendo gráfica anterior: ${existingKey}`);
-        existingChart.destroy();
-        delete biometricChartInstances[existingKey];
-    }
-
-    // Crear NUEVA instancia con la métrica seleccionada
-    const newKey = `${metric}_${canvasIndex}`;
-    console.log(`[BiometricCharts] Creando nueva gráfica: ${newKey}`);
-    
-    const ctx = canvas.getContext("2d");
-    biometricChartInstances[newKey] = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels,
-            datasets: [{
-                label: config.label,
-                data: [...data[metric]],
-                borderColor: config.borderColor,
-                backgroundColor: config.bgColor,
-                tension: 0.3,
-                pointRadius: 4,
-                pointBackgroundColor: config.borderColor,
-                fill: true,
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            scales: {
-                y: { 
-                    ...config.yScale, 
-                    grid: { color: "#eee" },
-                    title: { display: true, text: config.label }
-                },
-                x: { grid: { color: "#eee" } },
-            },
-            plugins: { 
-                legend: { display: true, labels: { color: "#333" } },
-                title: { display: true, text: config.label }
-            },
-        },
-    });
-    
-    console.log(`[BiometricCharts] ✓ Gráfica ${newKey} creada exitosamente`);
-}
+});
 
 /* *********************************************************************
 ****************************** FUNCIONES *******************************
@@ -873,6 +129,7 @@ function initTabs(panel) {
     panel.dataset.tabsInitialized = "true";
     console.log(dbg, "initialized for panel");
 }
+
 // Escanear puertos COM del sistema
 async function escanearPuertosCOM() {
     const selector = document.getElementById("com-port-selector");
@@ -1248,6 +505,650 @@ async function initGrafica(panel, sensor = "X") {
         console.error("Error al cargar datos de sensor:", error);
         alert("No se pudieron cargar datos desde el backend.");
     }
+}
+
+// Obtiene datos de sensores de una cabina específica
+async function getSensorData(cabina) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/serial/datos/${cabina}`);
+        if (!response.ok) return {};
+        
+        const data = await response.json();
+        // Normalizar claves a mayúsculas
+        const normalized = {};
+        if (data.datos) {
+            Object.entries(data.datos).forEach(([key, value]) => {
+                normalized[key.toUpperCase()] = value;
+            });
+        }
+        return normalized;
+    } catch (error) {
+        console.warn("[Excel Export] Error obteniendo datos de sensores:", error);
+        return {};
+    }
+}
+
+// Obtiene historial biométrico
+async function getBiometricHistory() {
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/history");
+        if (!response.ok) return [];
+        
+        const result = await response.json();
+        return result.success && result.history ? result.history : [];
+    } catch (error) {
+        console.warn("[Excel Export] Error obteniendo historial biométrico:", error);
+        return [];
+    }
+}
+
+// Funciones para interactuar con el backend del smartwatch
+async function fetchLatestBiometricData() {
+    try {
+        const response = await fetch("http://localhost:5000/api/Smartwatch/vitals/latest");
+        if (!response.ok) return null;
+
+        const payload = await response.json();
+        if (!payload?.success || !payload?.data) return null;
+
+        // Para BP, usamos la sistólica (más importante para la gráfica)
+        const bloodPressure = payload.data.systolic ?? null;
+
+        return {
+            pulse: payload.data.pulseBpm ?? null,
+            oxygen: payload.data.spO2 ?? null,
+            temperature: payload.data.temperatureC ?? null,
+            bloodPressure: bloodPressure,
+            timestampUtc: payload.data.timestampUtc ?? null,
+        };
+    } catch (error) {
+        console.warn("[BiometricCharts] No se pudo obtener datos del backend:", error);
+        return null;
+    }
+}
+
+async function fetchBiometricHistory(limit = 10) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/Smartwatch/vitals/history?limit=${limit}`);
+        if (!response.ok) return [];
+
+        const payload = await response.json();
+        if (!payload?.success || !Array.isArray(payload?.data)) return [];
+
+        return payload.data;
+    } catch (error) {
+        console.warn("[BiometricCharts] No se pudo obtener historial del backend:", error);
+        return [];
+    }
+}
+
+async function requestBpmMeasurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar BPM");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastBpmRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud BPM por cooldown");
+        return;
+    }
+
+    biometricLastBpmRequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición BPM (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bpm`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bpm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de BPM");
+        }
+
+        window.mostrarNotificacion?.("Medición de BPM iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de BPM";
+        console.warn("[BiometricCharts] Error iniciando BPM:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
+async function requestSpo2Measurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar SpO2");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastSpo2RequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud SpO2 por cooldown");
+        return;
+    }
+
+    biometricLastSpo2RequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición SpO2 (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-spo2`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-spo2", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de SpO2");
+        }
+
+        window.mostrarNotificacion?.("Medición de SpO2 iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de SpO2";
+        console.warn("[BiometricCharts] Error iniciando SpO2:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
+async function requestTemperatureMeasurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Temperatura");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastTemperatureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud Temperatura por cooldown");
+        return;
+    }
+
+    biometricLastTemperatureRequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición Temperatura (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-temperature`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-temperature", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de Temperatura");
+        }
+
+        window.mostrarNotificacion?.("Medición de Temperatura iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de Temperatura";
+        console.warn("[BiometricCharts] Error iniciando Temperatura:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
+async function requestBloodPressureMeasurement(source = "ui") {
+    if (!biometricWatchConnected) {
+        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Presión Arterial");
+        return;
+    }
+
+    const now = Date.now();
+    if (now - biometricLastBloodPressureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+        console.log("[BiometricCharts] ⏳ Ignorando solicitud Presión Arterial por cooldown");
+        return;
+    }
+
+    biometricLastBloodPressureRequestAt = now;
+
+    console.log(`[BiometricCharts] Solicitando medición Presión Arterial (source=${source})`);
+    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bloodpressure`);
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bloodpressure", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json().catch(() => ({}));
+        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "No se pudo iniciar medición de Presión Arterial");
+        }
+
+        window.mostrarNotificacion?.("Medición de Presión Arterial iniciada", { tipo: "success" });
+    } catch (error) {
+        const mensaje = error?.message || "No se pudo iniciar medición de Presión Arterial";
+        console.warn("[BiometricCharts] Error iniciando Presión Arterial:", error);
+        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
+    }
+}
+
+// Función para verificar el estado de monitoreo y mostrar notificación cuando termine
+async function checkMonitoringStatus() {
+    if (!biometricWatchConnected) return;
+
+    try {
+        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/monitoring-status");
+        if (!response.ok) {
+            console.warn("[BiometricCharts] Error en monitoring-status:", response.status);
+            return;
+        }
+
+        const result = await response.json();
+        if (!result.success || !result.status) {
+            console.warn("[BiometricCharts] Respuesta inválida de monitoring-status");
+            return;
+        }
+
+        const { activeMeasurementType } = result.status;
+        
+        console.log(`[BiometricCharts] Estado: previo=${biometricPreviousActiveMeasurement}, actual=${biometricCurrentActiveMeasurement}, nuevo=${activeMeasurementType}`);
+        
+        // Detectar cuando una medición INICIA (cambio de null a una métrica)
+        if (!biometricCurrentActiveMeasurement && activeMeasurementType) {
+            biometricMeasurementCompletionNotified = false; // Reset la flag cuando inicia nueva medición
+            console.log(`[BiometricCharts] Nueva medición iniciada: ${activeMeasurementType}`);
+        }
+        
+        // Detectar cuando una medición TERMINA (cambio de una métrica a null)
+        // Y evitar múltiples notificaciones con la flag
+        if (biometricCurrentActiveMeasurement && !activeMeasurementType && !biometricMeasurementCompletionNotified) {
+            // Una medición acaba de terminar
+            const measurementNames = {
+                'bpm': 'Pulso',
+                'spo2': 'Oxigenación',
+                'temperature': 'Temperatura',
+                'bloodPressure': 'Presión Arterial'
+            };
+            const completedName = measurementNames[biometricCurrentActiveMeasurement] || biometricCurrentActiveMeasurement;
+            
+            console.log(`[BiometricCharts] ✅ Medición de ${completedName} completada!`);
+            biometricMeasurementCompletionNotified = true; // Marcar que ya notificamos
+            
+            // Mostrar notificación en el log de tramas
+            mostrarNotificacion(
+                `Medición de ${completedName} completada. Ahora puedes cambiar de métrica.`,
+                { tipo: "info" }
+            );
+            
+            // TAMBIÉN mostrar alert para asegurar que el usuario lo vea
+            alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
+            
+            // Actualizar TopMetricsGrid con los últimos datos medidos
+            try {
+                const latestData = await fetchLatestBiometricData();
+                if (latestData) {
+                    updateTopMetricsGrid(latestData);
+                }
+            } catch (error) {
+                console.warn("[BiometricCharts] Error actualizando TopMetricsGrid después de medición:", error);
+            }
+            
+            // Habilitar TODOS los selectores (ambos paneles)
+            const allSelectors = document.querySelectorAll(".biometric-metric-selector");
+            allSelectors.forEach(selector => {
+                selector.disabled = false;
+                selector.classList.remove("opacity-50", "cursor-not-allowed");
+            });
+        }
+        
+        // Actualizar estado actual (SIEMPRE)
+        biometricPreviousActiveMeasurement = biometricCurrentActiveMeasurement;
+        biometricCurrentActiveMeasurement = activeMeasurementType;
+        
+        // Deshabilitar/habilitar TODOS los selectores según haya medición activa
+        const allSelectors = document.querySelectorAll(".biometric-metric-selector");
+        allSelectors.forEach(selector => {
+            if (activeMeasurementType) {
+                selector.disabled = true;
+                selector.classList.add("opacity-50", "cursor-not-allowed");
+            } else {
+                selector.disabled = false;
+                selector.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+        });
+    } catch (error) {
+        console.warn("[BiometricCharts] Error al verificar estado de monitoreo:", error);
+    }
+}
+
+async function seedBiometricHistory(labels, metricConfigs) {
+    const history = await fetchBiometricHistory(10);
+    if (!history.length) return;
+
+    biometricChartData.pulse = history.map((item) => item.pulseBpm ?? null);
+    biometricChartData.oxygen = history.map((item) => item.spO2 ?? null);
+    biometricChartData.temperature = history.map((item) => item.temperatureC ?? null);
+    biometricChartData.bloodPressure = history.map((item) => item.systolic ?? null);
+
+    // Actualizar TODAS las gráficas activas (una por canvas)
+    // Las keys son: pulse_0, oxygen_1, temperature_0, etc.
+    Object.keys(biometricChartInstances).forEach(key => {
+        const chart = biometricChartInstances[key];
+        if (!chart) return;
+        
+        // Extraer métrica del key (formato: "pulse_0", "oxygen_1", etc.)
+        const parts = key.split('_');
+        const metric = parts[0];
+        
+        if (!biometricChartData[metric] || !metricConfigs[metric]) return;
+        
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = [...biometricChartData[metric]];
+
+        const config = metricConfigs[metric];
+        chart.data.datasets[0].label = config.label;
+        chart.data.datasets[0].borderColor = config.borderColor;
+        chart.data.datasets[0].backgroundColor = config.bgColor;
+        chart.options.scales.y.min = config.yScale.min;
+        chart.options.scales.y.max = config.yScale.max;
+
+        chart.update();
+        console.log(`[BiometricCharts] Historial cargado para ${key}`);
+    });
+    
+    // Actualizar TopMetricsGrid con el último valor del historial
+    if (history.length > 0) {
+        const latestItem = history[history.length - 1];
+        updateTopMetricsGrid({
+            pulse: latestItem.pulseBpm,
+            oxygen: latestItem.spO2,
+            temperature: latestItem.temperatureC,
+            bloodPressure: latestItem.systolic
+        });
+    }
+}
+
+// Función principal para exportar datos a Excel
+async function exportToExcel(event) {
+    if (typeof XLSX === 'undefined') {
+        alert("❌ Error: Librería XLSX no está disponible");
+        return;
+    }
+
+    try {
+        // Obtener el botón que fue clickeado y su panel contenedor
+        const btnExport = event.currentTarget;
+        const panelContainer = btnExport.closest(".panel-container");
+        
+        // Buscar el selector de cabina dentro del MISMO panel
+        const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
+        const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
+        const cabinaCode = cabinaSeleccionada.includes("2") ? "C2" : "C1";
+        
+        console.log("[Excel Export] ✅ Iniciando exportación...");
+        console.log("[Excel Export] Cabina seleccionada: " + cabinaSeleccionada + " (" + cabinaCode + ")");
+        
+        const workbook = XLSX.utils.book_new();
+
+        // Sheet 1: Información personal
+        console.log("[Excel Export] 📄 Creando Sheet 1: Información Personal");
+        const sheet1Data = await createSheet1Data();
+        const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
+        XLSX.utils.book_append_sheet(workbook, ws1, "Información Personal");
+        console.log("[Excel Export] ✅ Sheet 1 creado (" + sheet1Data.length + " filas)");
+
+        // Sheet 2: Controles + Logs
+        console.log("[Excel Export] 📄 Creando Sheet 2: Controles y Logs");
+        const sheet2Data = await createSheet2Data();
+        const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
+        ws2['!cols'] = [
+            { wch: 25 },  // Columna A: Hora 
+            { wch: 20 },  // Columna B: Estado
+            { wch: 20 },  // Columna C: Trama
+            { wch: 20 },   // Columna D: Tipo
+            { wch: 40 }   // Columna E: Descripción
+        ];
+        XLSX.utils.book_append_sheet(workbook, ws2, "Controles y Logs");
+        console.log("[Excel Export] ✅ Sheet 2 creado (" + sheet2Data.length + " filas)");
+
+        // Sheet 3: Sensores (solo de la cabina seleccionada)
+        console.log("[Excel Export] 📄 Creando Sheet 3: Sensores de " + cabinaSeleccionada + " (" + cabinaCode + ")");
+        const sheet3Data = await createSheet3Data(cabinaCode);
+        const ws3 = XLSX.utils.aoa_to_sheet(sheet3Data);
+        XLSX.utils.book_append_sheet(workbook, ws3, "Sensores");
+        console.log("[Excel Export] ✅ Sheet 3 creado (" + sheet3Data.length + " filas)");
+
+        // Sheet 4: Biometría (solo de la cabina seleccionada)
+        console.log("[Excel Export] 📄 Creando Sheet 4: Biometría de " + cabinaSeleccionada + " (" + cabinaCode + ")");
+        const sheet4Data = await createSheet4Data(cabinaCode);
+        const ws4 = XLSX.utils.aoa_to_sheet(sheet4Data);
+        XLSX.utils.book_append_sheet(workbook, ws4, "Biometría");
+        console.log("[Excel Export] ✅ Sheet 4 creado (" + sheet4Data.length + " filas)");
+
+        // Escribir el archivo con nombre que incluya la cabina
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+        const filename = `ControlPanel_${cabinaSeleccionada.replace(" ", "")}_${timestamp}.xlsx`;
+        
+        console.log("[Excel Export] 💾 Escribiendo archivo: " + filename);
+        XLSX.writeFile(workbook, filename);
+
+        console.log("[Excel Export] ✅ ¡Archivo exportado exitosamente!");
+        alert(`✅ Archivo exportado: ${filename}\n\nCabina: ${cabinaSeleccionada}\nFecha: ${timestamp}`);
+    } catch (error) {
+        console.error("[Excel Export] ❌ Error detallado:", error);
+        console.error("[Excel Export] Stack:", error.stack);
+        alert("❌ Error al exportar:\n\n" + error.message + "\n\nRevisa la consola (F12) para más detalles");
+    }
+}
+
+// Sheet 1: Información Personal
+async function createSheet1Data() {
+    const data = [];
+
+    // Encabezado
+    data.push(["INFORMACION PERSONAL"]);
+    data.push([]);
+
+    // Usar datos guardados de Personal Data Form
+    data.push(["Edad:", personalDataStored.edad || "-"]);
+    data.push(["Altura (cm):", personalDataStored.altura || "-"]);
+    data.push(["Peso (kg):", personalDataStored.peso || "-"]);
+    data.push(["Genero:", personalDataStored.genero || "-"]);
+    data.push([]);
+
+    return data;
+}
+
+// Sheet 2: Controles y Logs del sistema
+async function createSheet2Data() {
+    const data = [];
+
+    // Encabezado
+    data.push(["CONTROLES Y LOGS DEL SISTEMA"]);
+    data.push([]);
+
+    // Sección de Controles
+    data.push(["TRAMAS DE CONTROL ENVIADAS"]);
+    data.push(["Hora", "Estado", "Trama", "Tipo", "Descripción"]);
+
+    // Obtener los logs enviados y filtrar por controles
+    const sentLogs = getLogsSent();
+    
+    // Procesar cada log para extraer informacion de control
+    sentLogs.forEach(log => {
+        // Buscar patrones de control en el mensaje
+        const message = log.message;
+        
+        // Detectar estado: PENDIENTE o ENVIADA
+        let estado = "PENDIENTE";
+        if (message.includes("[PENDIENTE]")) {
+            estado = "PENDIENTE";
+        } else if (message.includes("[ENVIADA]")) {
+            estado = "ENVIADA";
+        }
+        
+        // Extraer el codigo (numeros de 4 digitos)
+        const match = message.match(/\d{4}/);
+        const codigo = match ? match[0] : "";
+        
+        // Buscar descripcion del control basado en el codigo
+        let descripcion = "Control";
+        if (codigo) {
+            for (const [key, value] of Object.entries(codigoBoton)) {
+                for (const [subKey, subValue] of Object.entries(value)) {
+                    if (subValue === codigo) {
+                        descripcion = `${key}: ${subKey}`;
+                        break;
+                    }
+                }
+            }
+            const codigoFormateado = `C${codigo}F`;
+            data.push([log.time, estado, codigoFormateado, descripcion]);
+        }
+    });
+
+    if (data.length === 3) {
+        data.push(["Sin registros de control", "", "", "", ""]);
+    }
+
+    data.push([]);
+    data.push([]);
+
+    // Seccion de Logs del Sistema
+    data.push(["LOGS DEL SISTEMA"]);
+    data.push(["Tipo", "Hora", "Mensaje"]);
+
+    // Obtener logs enviados
+    sentLogs.forEach(log => {
+        // Filtrar solo logs de sistema, no de controles (que no tengan codigo)
+        if (!log.message.match(/\d{3}/)) {
+            data.push(["ENVIADO", log.time, log.message]);
+        }
+    });
+
+    // Obtener logs recibidos
+    const receivedLogs = getLogsReceived();
+    receivedLogs.forEach(log => {
+        data.push(["RECIBIDO", log.time, log.message]);
+    });
+
+    return data;
+}
+
+// Sheet 3: Sensores de cabina seleccionada
+async function createSheet3Data(cabinaCode) {
+    const data = [];
+
+    data.push(["DATOS DE SENSORES"]);
+    data.push([]);
+
+    // Map cabinaCode to display name
+    const cabinaName = cabinaCode === "C2" ? "CABINA 2" : "CABINA 1";
+    
+    data.push([cabinaName]);
+    data.push(["Sensor", "Última Lectura", "Unidad"]);
+    
+    const sensorData = await getSensorData(cabinaCode);
+    Object.entries(sensorData).forEach(([sensor, value]) => {
+        const config = window.sensorConfig?.[sensor];
+        const label = config?.label || sensor;
+        const unit = extractUnit(label);
+        data.push([label, value || "-", unit]);
+    });
+
+    return data;
+}
+
+// Sheet 4: Datos biométricos históricos
+async function createSheet4Data(cabinaCode) {
+    const data = [];
+
+    data.push(["DATOS BIOMÉTRICOS"]);
+    data.push([]);
+
+    // Obtener historial biométrico
+    const biometricHistory = await getBiometricHistory();
+
+    if (biometricHistory && biometricHistory.length > 0) {
+        data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Presión Arterial", "Fecha y Hora"]);
+        
+        // Filter records by cabina if cabina data is available in records
+        // Currently biometricHistory contains all data; filter if 'cabina' field exists in records
+        const filteredHistory = biometricHistory.filter(record => {
+            // If record has cabina field, filter by it; otherwise include all
+            if (record.cabina) {
+                return record.cabina === cabinaCode;
+            }
+            return true; // Include if no cabina field
+        });
+        
+        filteredHistory.forEach(record => {
+            const bp = record.systolic && record.diastolic ? `${record.systolic}/${record.diastolic}` : "-";
+            const timestamp = new Date(record.timestamp).toLocaleString('es-ES') || "-";
+            data.push([
+                record.pulseBpm || "-",
+                record.spO2 || "-",
+                record.temperatureC || "-",
+                bp,
+                timestamp
+            ]);
+        });
+        
+        if (filteredHistory.length === 0) {
+            data.push([`Sin datos biométricos disponibles para ${cabinaCode}`]);
+        }
+    } else {
+        data.push(["Sin datos biométricos disponibles"]);
+    }
+
+    return data;
+}
+
+// Función para actualizar los datos de las gráficas biométricas
+async function updateBiometricCharts() {
+    if (!biometricChartsEnabled || Object.keys(biometricChartInstances).length === 0) return;
+
+    const newData = await fetchLatestBiometricData();
+    if (!newData) return;
+    
+    if (newData.pulse !== null) biometricChartData.pulse.push(newData.pulse);
+    if (newData.oxygen !== null) biometricChartData.oxygen.push(newData.oxygen);
+    if (newData.temperature !== null) biometricChartData.temperature.push(parseFloat(newData.temperature));
+    if (newData.bloodPressure !== null) biometricChartData.bloodPressure.push(newData.bloodPressure);
+
+    if (biometricChartData.pulse.length > 10) biometricChartData.pulse.shift();
+    if (biometricChartData.oxygen.length > 10) biometricChartData.oxygen.shift();
+    if (biometricChartData.temperature.length > 10) biometricChartData.temperature.shift();
+    if (biometricChartData.bloodPressure.length > 10) biometricChartData.bloodPressure.shift();
+
+    // Actualizar labels (timestamp) - últimos 10 registros
+    const now = new Date();
+    const newLabels = [];
+    for (let i = Math.min(9, biometricChartData.pulse.length - 1); i >= 0; i--) {
+        const time = new Date(now - i * 5000);
+        newLabels.push(time.toLocaleTimeString());
+    }
+
+    // Actualizar TODAS las gráficas activas (una por canvas)
+    Object.keys(biometricChartInstances).forEach(key => {
+        const chart = biometricChartInstances[key];
+        if (!chart) return;
+        
+        // Extraer métrica del key (formato: "pulse_0", "oxygen_1", etc.)
+        const parts = key.split('_');
+        const metric = parts[0];
+        
+        if (!biometricChartData[metric]) return;
+        
+        chart.data.labels = newLabels;
+        chart.data.datasets[0].data = [...biometricChartData[metric]];
+        chart.update('none'); // Update sin animación para mejor performance
+    });
+    
+    // Actualizar TopMetricsGrid con los últimos valores
+    updateTopMetricsGrid(newData);
 }
 
 // Función para verificar conexión con el backend
@@ -1828,197 +1729,6 @@ function actualizarLedCalor(panel, estado) {
     }
 }
 
-async function fetchLatestBiometricData() {
-    try {
-        const response = await fetch("http://localhost:5000/api/Smartwatch/vitals/latest");
-        if (!response.ok) return null;
-
-        const payload = await response.json();
-        if (!payload?.success || !payload?.data) return null;
-
-        // Para BP, usamos la sistólica (más importante para la gráfica)
-        const bloodPressure = payload.data.systolic ?? null;
-
-        return {
-            pulse: payload.data.pulseBpm ?? null,
-            oxygen: payload.data.spO2 ?? null,
-            temperature: payload.data.temperatureC ?? null,
-            bloodPressure: bloodPressure,
-            timestampUtc: payload.data.timestampUtc ?? null,
-        };
-    } catch (error) {
-        console.warn("[BiometricCharts] No se pudo obtener datos del backend:", error);
-        return null;
-    }
-}
-
-async function fetchBiometricHistory(limit = 10) {
-    try {
-        const response = await fetch(`http://localhost:5000/api/Smartwatch/vitals/history?limit=${limit}`);
-        if (!response.ok) return [];
-
-        const payload = await response.json();
-        if (!payload?.success || !Array.isArray(payload?.data)) return [];
-
-        return payload.data;
-    } catch (error) {
-        console.warn("[BiometricCharts] No se pudo obtener historial del backend:", error);
-        return [];
-    }
-}
-
-async function requestBpmMeasurement(source = "ui") {
-    if (!biometricWatchConnected) {
-        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar BPM");
-        return;
-    }
-
-    const now = Date.now();
-    if (now - biometricLastBpmRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
-        console.log("[BiometricCharts] ⏳ Ignorando solicitud BPM por cooldown");
-        return;
-    }
-
-    biometricLastBpmRequestAt = now;
-
-    console.log(`[BiometricCharts] Solicitando medición BPM (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bpm`);
-
-    try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bpm", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-
-        const data = await response.json().catch(() => ({}));
-        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
-
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "No se pudo iniciar medición de BPM");
-        }
-
-        window.mostrarNotificacion?.("Medición de BPM iniciada", { tipo: "success" });
-    } catch (error) {
-        const mensaje = error?.message || "No se pudo iniciar medición de BPM";
-        console.warn("[BiometricCharts] Error iniciando BPM:", error);
-        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
-    }
-}
-
-async function requestSpo2Measurement(source = "ui") {
-    if (!biometricWatchConnected) {
-        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar SpO2");
-        return;
-    }
-
-    const now = Date.now();
-    if (now - biometricLastSpo2RequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
-        console.log("[BiometricCharts] ⏳ Ignorando solicitud SpO2 por cooldown");
-        return;
-    }
-
-    biometricLastSpo2RequestAt = now;
-
-    console.log(`[BiometricCharts] Solicitando medición SpO2 (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-spo2`);
-
-    try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-spo2", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-
-        const data = await response.json().catch(() => ({}));
-        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
-
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "No se pudo iniciar medición de SpO2");
-        }
-
-        window.mostrarNotificacion?.("Medición de SpO2 iniciada", { tipo: "success" });
-    } catch (error) {
-        const mensaje = error?.message || "No se pudo iniciar medición de SpO2";
-        console.warn("[BiometricCharts] Error iniciando SpO2:", error);
-        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
-    }
-}
-
-async function requestTemperatureMeasurement(source = "ui") {
-    if (!biometricWatchConnected) {
-        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Temperatura");
-        return;
-    }
-
-    const now = Date.now();
-    if (now - biometricLastTemperatureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
-        console.log("[BiometricCharts] ⏳ Ignorando solicitud Temperatura por cooldown");
-        return;
-    }
-
-    biometricLastTemperatureRequestAt = now;
-
-    console.log(`[BiometricCharts] Solicitando medición Temperatura (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-temperature`);
-
-    try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-temperature", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-
-        const data = await response.json().catch(() => ({}));
-        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
-
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "No se pudo iniciar medición de Temperatura");
-        }
-
-        window.mostrarNotificacion?.("Medición de Temperatura iniciada", { tipo: "success" });
-    } catch (error) {
-        const mensaje = error?.message || "No se pudo iniciar medición de Temperatura";
-        console.warn("[BiometricCharts] Error iniciando Temperatura:", error);
-        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
-    }
-}
-
-async function requestBloodPressureMeasurement(source = "ui") {
-    if (!biometricWatchConnected) {
-        console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Presión Arterial");
-        return;
-    }
-
-    const now = Date.now();
-    if (now - biometricLastBloodPressureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
-        console.log("[BiometricCharts] ⏳ Ignorando solicitud Presión Arterial por cooldown");
-        return;
-    }
-
-    biometricLastBloodPressureRequestAt = now;
-
-    console.log(`[BiometricCharts] Solicitando medición Presión Arterial (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bloodpressure`);
-
-    try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bloodpressure", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-
-        const data = await response.json().catch(() => ({}));
-        window.addReceivedLog?.(`[SMARTWATCH] Response Status: ${response.status}\nPayload: ${JSON.stringify(data, null, 2)}`);
-
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || "No se pudo iniciar medición de Presión Arterial");
-        }
-
-        window.mostrarNotificacion?.("Medición de Presión Arterial iniciada", { tipo: "success" });
-    } catch (error) {
-        const mensaje = error?.message || "No se pudo iniciar medición de Presión Arterial";
-        console.warn("[BiometricCharts] Error iniciando Presión Arterial:", error);
-        window.mostrarNotificacion?.(mensaje, { tipo: "error" });
-    }
-}
-
 // Función para cambiar la métrica mostrada en la gráfica biométrica
 function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
     if (Object.keys(biometricChartInstances).length === 0) return;
@@ -2066,51 +1776,6 @@ function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
     }
 }
 
-// Función para actualizar los datos de las gráficas biométricas
-async function updateBiometricCharts() {
-    if (!biometricChartsEnabled || Object.keys(biometricChartInstances).length === 0) return;
-
-    const newData = await fetchLatestBiometricData();
-    if (!newData) return;
-    
-    if (newData.pulse !== null) biometricChartData.pulse.push(newData.pulse);
-    if (newData.oxygen !== null) biometricChartData.oxygen.push(newData.oxygen);
-    if (newData.temperature !== null) biometricChartData.temperature.push(parseFloat(newData.temperature));
-    if (newData.bloodPressure !== null) biometricChartData.bloodPressure.push(newData.bloodPressure);
-
-    if (biometricChartData.pulse.length > 10) biometricChartData.pulse.shift();
-    if (biometricChartData.oxygen.length > 10) biometricChartData.oxygen.shift();
-    if (biometricChartData.temperature.length > 10) biometricChartData.temperature.shift();
-    if (biometricChartData.bloodPressure.length > 10) biometricChartData.bloodPressure.shift();
-
-    // Actualizar labels (timestamp) - últimos 10 registros
-    const now = new Date();
-    const newLabels = [];
-    for (let i = Math.min(9, biometricChartData.pulse.length - 1); i >= 0; i--) {
-        const time = new Date(now - i * 5000);
-        newLabels.push(time.toLocaleTimeString());
-    }
-
-    // Actualizar TODAS las gráficas activas (una por canvas)
-    Object.keys(biometricChartInstances).forEach(key => {
-        const chart = biometricChartInstances[key];
-        if (!chart) return;
-        
-        // Extraer métrica del key (formato: "pulse_0", "oxygen_1", etc.)
-        const parts = key.split('_');
-        const metric = parts[0];
-        
-        if (!biometricChartData[metric]) return;
-        
-        chart.data.labels = newLabels;
-        chart.data.datasets[0].data = [...biometricChartData[metric]];
-        chart.update('none'); // Update sin animación para mejor performance
-    });
-    
-    // Actualizar TopMetricsGrid con los últimos valores
-    updateTopMetricsGrid(newData);
-}
-
 // Función para actualizar los valores mostrados en TopMetricsGrid
 function updateTopMetricsGrid(data) {
     if (!data) return;
@@ -2154,142 +1819,6 @@ function updateTopMetricsGrid(data) {
     }
 }
 
-// Función para verificar el estado de monitoreo y mostrar notificación cuando termine
-async function checkMonitoringStatus() {
-    if (!biometricWatchConnected) return;
-
-    try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/monitoring-status");
-        if (!response.ok) {
-            console.warn("[BiometricCharts] Error en monitoring-status:", response.status);
-            return;
-        }
-
-        const result = await response.json();
-        if (!result.success || !result.status) {
-            console.warn("[BiometricCharts] Respuesta inválida de monitoring-status");
-            return;
-        }
-
-        const { activeMeasurementType } = result.status;
-        
-        console.log(`[BiometricCharts] Estado: previo=${biometricPreviousActiveMeasurement}, actual=${biometricCurrentActiveMeasurement}, nuevo=${activeMeasurementType}`);
-        
-        // Detectar cuando una medición INICIA (cambio de null a una métrica)
-        if (!biometricCurrentActiveMeasurement && activeMeasurementType) {
-            biometricMeasurementCompletionNotified = false; // Reset la flag cuando inicia nueva medición
-            console.log(`[BiometricCharts] Nueva medición iniciada: ${activeMeasurementType}`);
-        }
-        
-        // Detectar cuando una medición TERMINA (cambio de una métrica a null)
-        // Y evitar múltiples notificaciones con la flag
-        if (biometricCurrentActiveMeasurement && !activeMeasurementType && !biometricMeasurementCompletionNotified) {
-            // Una medición acaba de terminar
-            const measurementNames = {
-                'bpm': 'Pulso',
-                'spo2': 'Oxigenación',
-                'temperature': 'Temperatura',
-                'bloodPressure': 'Presión Arterial'
-            };
-            const completedName = measurementNames[biometricCurrentActiveMeasurement] || biometricCurrentActiveMeasurement;
-            
-            console.log(`[BiometricCharts] ✅ Medición de ${completedName} completada!`);
-            biometricMeasurementCompletionNotified = true; // Marcar que ya notificamos
-            
-            // Mostrar notificación en el log de tramas
-            mostrarNotificacion(
-                `Medición de ${completedName} completada. Ahora puedes cambiar de métrica.`,
-                { tipo: "info" }
-            );
-            
-            // TAMBIÉN mostrar alert para asegurar que el usuario lo vea
-            alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
-            
-            // Actualizar TopMetricsGrid con los últimos datos medidos
-            try {
-                const latestData = await fetchLatestBiometricData();
-                if (latestData) {
-                    updateTopMetricsGrid(latestData);
-                }
-            } catch (error) {
-                console.warn("[BiometricCharts] Error actualizando TopMetricsGrid después de medición:", error);
-            }
-            
-            // Habilitar TODOS los selectores (ambos paneles)
-            const allSelectors = document.querySelectorAll(".biometric-metric-selector");
-            allSelectors.forEach(selector => {
-                selector.disabled = false;
-                selector.classList.remove("opacity-50", "cursor-not-allowed");
-            });
-        }
-        
-        // Actualizar estado actual (SIEMPRE)
-        biometricPreviousActiveMeasurement = biometricCurrentActiveMeasurement;
-        biometricCurrentActiveMeasurement = activeMeasurementType;
-        
-        // Deshabilitar/habilitar TODOS los selectores según haya medición activa
-        const allSelectors = document.querySelectorAll(".biometric-metric-selector");
-        allSelectors.forEach(selector => {
-            if (activeMeasurementType) {
-                selector.disabled = true;
-                selector.classList.add("opacity-50", "cursor-not-allowed");
-            } else {
-                selector.disabled = false;
-                selector.classList.remove("opacity-50", "cursor-not-allowed");
-            }
-        });
-    } catch (error) {
-        console.warn("[BiometricCharts] Error al verificar estado de monitoreo:", error);
-    }
-}
-
-async function seedBiometricHistory(labels, metricConfigs) {
-    const history = await fetchBiometricHistory(10);
-    if (!history.length) return;
-
-    biometricChartData.pulse = history.map((item) => item.pulseBpm ?? null);
-    biometricChartData.oxygen = history.map((item) => item.spO2 ?? null);
-    biometricChartData.temperature = history.map((item) => item.temperatureC ?? null);
-    biometricChartData.bloodPressure = history.map((item) => item.systolic ?? null);
-
-    // Actualizar TODAS las gráficas activas (una por canvas)
-    // Las keys son: pulse_0, oxygen_1, temperature_0, etc.
-    Object.keys(biometricChartInstances).forEach(key => {
-        const chart = biometricChartInstances[key];
-        if (!chart) return;
-        
-        // Extraer métrica del key (formato: "pulse_0", "oxygen_1", etc.)
-        const parts = key.split('_');
-        const metric = parts[0];
-        
-        if (!biometricChartData[metric] || !metricConfigs[metric]) return;
-        
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = [...biometricChartData[metric]];
-
-        const config = metricConfigs[metric];
-        chart.data.datasets[0].label = config.label;
-        chart.data.datasets[0].borderColor = config.borderColor;
-        chart.data.datasets[0].backgroundColor = config.bgColor;
-        chart.options.scales.y.min = config.yScale.min;
-        chart.options.scales.y.max = config.yScale.max;
-
-        chart.update();
-        console.log(`[BiometricCharts] Historial cargado para ${key}`);
-    });
-    
-    // Actualizar TopMetricsGrid con el último valor del historial
-    if (history.length > 0) {
-        const latestItem = history[history.length - 1];
-        updateTopMetricsGrid({
-            pulse: latestItem.pulseBpm,
-            oxygen: latestItem.spO2,
-            temperature: latestItem.temperatureC,
-            bloodPressure: latestItem.systolic
-        });
-    }
-}
-
 // Función para detener y limpiar las gráficas biométricas
 function stopBiometricCharts() {
     console.log("[BiometricCharts] Deteniendo gráficas");
@@ -2314,6 +1843,175 @@ function stopBiometricCharts() {
 
     biometricChartsEnabled = false;
     console.log("[BiometricCharts] Gráficas detenidas");
+}
+
+// Función para actualizar el estado de los botones de reloj según conexión
+function updateWatchButtonsState() {
+    console.log("[Biometría] Actualizando estado de botones, reloj conectado:", biometricWatchConnected);
+    
+    const connectBtn = document.querySelector("[data-action='connect-watch']");
+    const disconnectBtn = document.querySelector("[data-action='disconnect-watch']");
+    
+    console.log("[Biometría] Botones encontrados:", { conectar: !!connectBtn, desconectar: !!disconnectBtn });
+    
+    if (!connectBtn || !disconnectBtn) {
+        console.warn("[Biometría] ⚠️ No se encontraron los botones de reloj!");
+        return;
+    }
+    
+    if (biometricWatchConnected) {
+        // Reloj conectado: deshabilitar botón conectar, habilitar botón desconectar
+        connectBtn.disabled = true;
+        connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        connectBtn.style.filter = "grayscale(100%)";
+        
+        disconnectBtn.disabled = false;
+        disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        disconnectBtn.style.filter = "none";
+        
+        console.log("[Biometría] ✅ Botones actualizados: Conectar DESHABILITADO ❌, Desconectar HABILITADO ✅");
+    } else {
+        // Reloj desconectado: habilitar botón conectar, deshabilitar botón desconectar
+        connectBtn.disabled = false;
+        connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        connectBtn.style.filter = "none";
+        
+        disconnectBtn.disabled = true;
+        disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        disconnectBtn.style.filter = "grayscale(100%)";
+        
+        console.log("[Biometría] ✅ Botones actualizados: Conectar HABILITADO ✅, Desconectar DESHABILITADO ❌");
+    }
+}
+
+//Actualiza la gráfica biométrica con una nueva métrica. Reutiliza el mismo canvas destruyendo la instancia anterior
+function updateBiometricChart(canvasIndex, metric, labels, metricConfigs, data) {
+    const config = metricConfigs[metric];
+    if (!config) {
+        console.warn(`[BiometricCharts] Config not found for metric ${metric}`);
+        return;
+    }
+
+    // Buscar el canvas
+    const canvases = document.querySelectorAll(".biometric-chart");
+    const canvas = canvases[canvasIndex];
+    if (!canvas) {
+        console.warn(`[BiometricCharts] Canvas ${canvasIndex} not found`);
+        return;
+    }
+
+    // Buscar cualquier instancia existente para este canvas (puede tener cualquier métrica)
+    // Las keys son: pulse_0, oxygen_0, temperature_0, etc.
+    const existingKey = Object.keys(biometricChartInstances).find(key => key.endsWith(`_${canvasIndex}`));
+    
+    if (existingKey) {
+        const existingChart = biometricChartInstances[existingKey];
+        
+        // DESTRUIR la instancia anterior para liberar el canvas
+        console.log(`[BiometricCharts] Destruyendo gráfica anterior: ${existingKey}`);
+        existingChart.destroy();
+        delete biometricChartInstances[existingKey];
+    }
+
+    // Crear NUEVA instancia con la métrica seleccionada
+    const newKey = `${metric}_${canvasIndex}`;
+    console.log(`[BiometricCharts] Creando nueva gráfica: ${newKey}`);
+    
+    const ctx = canvas.getContext("2d");
+    biometricChartInstances[newKey] = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels,
+            datasets: [{
+                label: config.label,
+                data: [...data[metric]],
+                borderColor: config.borderColor,
+                backgroundColor: config.bgColor,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: config.borderColor,
+                fill: true,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+                y: { 
+                    ...config.yScale, 
+                    grid: { color: "#eee" },
+                    title: { display: true, text: config.label }
+                },
+                x: { grid: { color: "#eee" } },
+            },
+            plugins: { 
+                legend: { display: true, labels: { color: "#333" } },
+                title: { display: true, text: config.label }
+            },
+        },
+    });
+    
+    console.log(`[BiometricCharts] ✓ Gráfica ${newKey} creada exitosamente`);
+}
+
+// Obtiene los datos personales desde el formulario del DOM
+function getPersonalData() {
+    return {
+        nombre: document.querySelector('input[name="nombre"]')?.value || "",
+        apellido: document.querySelector('input[name="apellido"]')?.value || "",
+        edad: document.querySelector('input[name="edad"]')?.value || "",
+        email: document.querySelector('input[name="email"]')?.value || "",
+        telefono: document.querySelector('input[name="telefono"]')?.value || "",
+        empresa: document.querySelector('input[name="empresa"]')?.value || "",
+        puesto: document.querySelector('input[name="puesto"]')?.value || "",
+    };
+}
+
+// Obtiene los logs enviados desde el DOM
+function getLogsSent() {
+    const logs = [];
+    const container = document.getElementById("log-sent-messages");
+    if (!container) return logs;
+
+    container.querySelectorAll("div").forEach(logElement => {
+        const text = logElement.textContent || "";
+        const timeMatch = text.match(/\[(.*?)\]/);
+        const time = timeMatch ? timeMatch[1] : "";
+        const message = text.replace(/🔵|\[.*?\]/g, "").trim();
+        
+        if (message) {
+            logs.push({ time, message });
+        }
+    });
+
+    return logs;
+}
+
+// Obtiene los logs recibidos desde el DOM
+function getLogsReceived() {
+    const logs = [];
+    const container = document.getElementById("log-received-messages");
+    if (!container) return logs;
+
+    container.querySelectorAll("div").forEach(logElement => {
+        const text = logElement.textContent || "";
+        const timeMatch = text.match(/\[(.*?)\]/);
+        const time = timeMatch ? timeMatch[1] : "";
+        const message = text.replace(/🟢|\[.*?\]/g, "").trim();
+        
+        if (message) {
+            logs.push({ time, message });
+        }
+    });
+
+    return logs;
+}
+
+// Extrae la unidad de una etiqueta de sensor
+function extractUnit(label) {
+    const match = label.match(/\((.*?)\)/);
+    return match ? match[1] : "";
 }
 
 /* *********************************************************************
@@ -3051,360 +2749,25 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* *********************************************************************
-************************ EXPORTACIÓN EXCEL ****************************
+************** EXPONER FUNCIONES AL SCOPE GLOBAL **********************
+*** Necesarias para que initialization.js pueda acceder a ellas *******
 ********************************************************************* */
-
-/**
- * Exporta toda la información del panel a un archivo Excel con 4 sheets
- */
-/**
- * Exporta información de la cabina seleccionada a un archivo Excel con 4 sheets
- */
-async function exportToExcel(event) {
-    if (typeof XLSX === 'undefined') {
-        alert("❌ Error: Librería XLSX no está disponible");
-        return;
-    }
-
-    try {
-        // Obtener el botón que fue clickeado y su panel contenedor
-        const btnExport = event.currentTarget;
-        const panelContainer = btnExport.closest(".panel-container");
-        
-        // Buscar el selector de cabina dentro del MISMO panel
-        const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
-        const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
-        const cabinaCode = cabinaSeleccionada.includes("2") ? "C2" : "C1";
-        
-        console.log("[Excel Export] ✅ Iniciando exportación...");
-        console.log("[Excel Export] Cabina seleccionada: " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        
-        const workbook = XLSX.utils.book_new();
-
-        // Sheet 1: Información personal
-        console.log("[Excel Export] 📄 Creando Sheet 1: Información Personal");
-        const sheet1Data = await createSheet1Data();
-        const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
-        XLSX.utils.book_append_sheet(workbook, ws1, "Información Personal");
-        console.log("[Excel Export] ✅ Sheet 1 creado (" + sheet1Data.length + " filas)");
-
-        // Sheet 2: Controles + Logs
-        console.log("[Excel Export] 📄 Creando Sheet 2: Controles y Logs");
-        const sheet2Data = await createSheet2Data();
-        const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
-        ws2['!cols'] = [
-            { wch: 25 },  // Columna A: Hora 
-            { wch: 20 },  // Columna B: Estado
-            { wch: 20 },  // Columna C: Trama
-            { wch: 20 },   // Columna D: Tipo
-            { wch: 40 }   // Columna E: Descripción
-        ];
-        XLSX.utils.book_append_sheet(workbook, ws2, "Controles y Logs");
-        console.log("[Excel Export] ✅ Sheet 2 creado (" + sheet2Data.length + " filas)");
-
-        // Sheet 3: Sensores (solo de la cabina seleccionada)
-        console.log("[Excel Export] 📄 Creando Sheet 3: Sensores de " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        const sheet3Data = await createSheet3Data(cabinaCode);
-        const ws3 = XLSX.utils.aoa_to_sheet(sheet3Data);
-        XLSX.utils.book_append_sheet(workbook, ws3, "Sensores");
-        console.log("[Excel Export] ✅ Sheet 3 creado (" + sheet3Data.length + " filas)");
-
-        // Sheet 4: Biometría (solo de la cabina seleccionada)
-        console.log("[Excel Export] 📄 Creando Sheet 4: Biometría de " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        const sheet4Data = await createSheet4Data(cabinaCode);
-        const ws4 = XLSX.utils.aoa_to_sheet(sheet4Data);
-        XLSX.utils.book_append_sheet(workbook, ws4, "Biometría");
-        console.log("[Excel Export] ✅ Sheet 4 creado (" + sheet4Data.length + " filas)");
-
-        // Escribir el archivo con nombre que incluya la cabina
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
-        const filename = `ControlPanel_${cabinaSeleccionada.replace(" ", "")}_${timestamp}.xlsx`;
-        
-        console.log("[Excel Export] 💾 Escribiendo archivo: " + filename);
-        XLSX.writeFile(workbook, filename);
-
-        console.log("[Excel Export] ✅ ¡Archivo exportado exitosamente!");
-        alert(`✅ Archivo exportado: ${filename}\n\nCabina: ${cabinaSeleccionada}\nFecha: ${timestamp}`);
-    } catch (error) {
-        console.error("[Excel Export] ❌ Error detallado:", error);
-        console.error("[Excel Export] Stack:", error.stack);
-        alert("❌ Error al exportar:\n\n" + error.message + "\n\nRevisa la consola (F12) para más detalles");
-    }
-}
-
-/**
- * Sheet 1: Informacion personal
- */
-async function createSheet1Data() {
-    const data = [];
-
-    // Encabezado
-    data.push(["INFORMACION PERSONAL"]);
-    data.push([]);
-
-    // Usar datos guardados de Personal Data Form
-    data.push(["Edad:", personalDataStored.edad || "-"]);
-    data.push(["Altura (cm):", personalDataStored.altura || "-"]);
-    data.push(["Peso (kg):", personalDataStored.peso || "-"]);
-    data.push(["Genero:", personalDataStored.genero || "-"]);
-    data.push([]);
-
-    return data;
-}
-
-/**
- * Sheet 2: Controles + Logs del Sistema
- */
-async function createSheet2Data() {
-    const data = [];
-
-    // Encabezado
-    data.push(["CONTROLES Y LOGS DEL SISTEMA"]);
-    data.push([]);
-
-    // Sección de Controles
-    data.push(["TRAMAS DE CONTROL ENVIADAS"]);
-    data.push(["Hora", "Estado", "Trama", "Tipo", "Descripción"]);
-
-    // Obtener los logs enviados y filtrar por controles
-    const sentLogs = getLogsSent();
-    
-    // Procesar cada log para extraer informacion de control
-    sentLogs.forEach(log => {
-        // Buscar patrones de control en el mensaje
-        const message = log.message;
-        
-        // Detectar estado: PENDIENTE o ENVIADA
-        let estado = "PENDIENTE";
-        if (message.includes("[PENDIENTE]")) {
-            estado = "PENDIENTE";
-        } else if (message.includes("[ENVIADA]")) {
-            estado = "ENVIADA";
-        }
-        
-        // Extraer el codigo (numeros de 4 digitos)
-        const match = message.match(/\d{4}/);
-        const codigo = match ? match[0] : "";
-        
-        // Buscar descripcion del control basado en el codigo
-        let descripcion = "Control";
-        if (codigo) {
-            for (const [key, value] of Object.entries(codigoBoton)) {
-                for (const [subKey, subValue] of Object.entries(value)) {
-                    if (subValue === codigo) {
-                        descripcion = `${key}: ${subKey}`;
-                        break;
-                    }
-                }
-            }
-            const codigoFormateado = `C${codigo}F`;
-            data.push([log.time, estado, codigoFormateado, descripcion]);
-        }
-    });
-
-    if (data.length === 3) {
-        data.push(["Sin registros de control", "", "", "", ""]);
-    }
-
-    data.push([]);
-    data.push([]);
-
-    // Seccion de Logs del Sistema
-    data.push(["LOGS DEL SISTEMA"]);
-    data.push(["Tipo", "Hora", "Mensaje"]);
-
-    // Obtener logs enviados
-    sentLogs.forEach(log => {
-        // Filtrar solo logs de sistema, no de controles (que no tengan codigo)
-        if (!log.message.match(/\d{3}/)) {
-            data.push(["ENVIADO", log.time, log.message]);
-        }
-    });
-
-    // Obtener logs recibidos
-    const receivedLogs = getLogsReceived();
-    receivedLogs.forEach(log => {
-        data.push(["RECIBIDO", log.time, log.message]);
-    });
-
-    return data;
-}
-
-/**
- * Sheet 3: Sensores de cabina seleccionada
- */
-async function createSheet3Data(cabinaCode) {
-    const data = [];
-
-    data.push(["DATOS DE SENSORES"]);
-    data.push([]);
-
-    // Map cabinaCode to display name
-    const cabinaName = cabinaCode === "C2" ? "CABINA 2" : "CABINA 1";
-    
-    data.push([cabinaName]);
-    data.push(["Sensor", "Última Lectura", "Unidad"]);
-    
-    const sensorData = await getSensorData(cabinaCode);
-    Object.entries(sensorData).forEach(([sensor, value]) => {
-        const config = window.sensorConfig?.[sensor];
-        const label = config?.label || sensor;
-        const unit = extractUnit(label);
-        data.push([label, value || "-", unit]);
-    });
-
-    return data;
-}
-
-/**
- * Sheet 4: Biometría de cabina seleccionada
- */
-async function createSheet4Data(cabinaCode) {
-    const data = [];
-
-    data.push(["DATOS BIOMÉTRICOS"]);
-    data.push([]);
-
-    // Obtener historial biométrico
-    const biometricHistory = await getBiometricHistory();
-
-    if (biometricHistory && biometricHistory.length > 0) {
-        data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Presión Arterial", "Fecha y Hora"]);
-        
-        // Filter records by cabina if cabina data is available in records
-        // Currently biometricHistory contains all data; filter if 'cabina' field exists in records
-        const filteredHistory = biometricHistory.filter(record => {
-            // If record has cabina field, filter by it; otherwise include all
-            if (record.cabina) {
-                return record.cabina === cabinaCode;
-            }
-            return true; // Include if no cabina field
-        });
-        
-        filteredHistory.forEach(record => {
-            const bp = record.systolic && record.diastolic ? `${record.systolic}/${record.diastolic}` : "-";
-            const timestamp = new Date(record.timestamp).toLocaleString('es-ES') || "-";
-            data.push([
-                record.pulseBpm || "-",
-                record.spO2 || "-",
-                record.temperatureC || "-",
-                bp,
-                timestamp
-            ]);
-        });
-        
-        if (filteredHistory.length === 0) {
-            data.push([`Sin datos biométricos disponibles para ${cabinaCode}`]);
-        }
-    } else {
-        data.push(["Sin datos biométricos disponibles"]);
-    }
-
-    return data;
-}
-
-/**
- * Obtiene información personal del formulario
- */
-function getPersonalData() {
-    return {
-        nombre: document.querySelector('input[name="nombre"]')?.value || "",
-        apellido: document.querySelector('input[name="apellido"]')?.value || "",
-        edad: document.querySelector('input[name="edad"]')?.value || "",
-        email: document.querySelector('input[name="email"]')?.value || "",
-        telefono: document.querySelector('input[name="telefono"]')?.value || "",
-        empresa: document.querySelector('input[name="empresa"]')?.value || "",
-        puesto: document.querySelector('input[name="puesto"]')?.value || "",
-    };
-}
-
-/**
- * Obtiene los logs enviados desde el DOM
- */
-function getLogsSent() {
-    const logs = [];
-    const container = document.getElementById("log-sent-messages");
-    if (!container) return logs;
-
-    container.querySelectorAll("div").forEach(logElement => {
-        const text = logElement.textContent || "";
-        const timeMatch = text.match(/\[(.*?)\]/);
-        const time = timeMatch ? timeMatch[1] : "";
-        const message = text.replace(/🔵|\[.*?\]/g, "").trim();
-        
-        if (message) {
-            logs.push({ time, message });
-        }
-    });
-
-    return logs;
-}
-
-/**
- * Obtiene los logs recibidos desde el DOM
- */
-function getLogsReceived() {
-    const logs = [];
-    const container = document.getElementById("log-received-messages");
-    if (!container) return logs;
-
-    container.querySelectorAll("div").forEach(logElement => {
-        const text = logElement.textContent || "";
-        const timeMatch = text.match(/\[(.*?)\]/);
-        const time = timeMatch ? timeMatch[1] : "";
-        const message = text.replace(/🟢|\[.*?\]/g, "").trim();
-        
-        if (message) {
-            logs.push({ time, message });
-        }
-    });
-
-    return logs;
-}
-
-/**
- * Obtiene datos de sensores de una cabina específica
- */
-async function getSensorData(cabina) {
-    try {
-        const response = await fetch(`http://localhost:5000/api/serial/datos/${cabina}`);
-        if (!response.ok) return {};
-        
-        const data = await response.json();
-        // Normalizar claves a mayúsculas
-        const normalized = {};
-        if (data.datos) {
-            Object.entries(data.datos).forEach(([key, value]) => {
-                normalized[key.toUpperCase()] = value;
-            });
-        }
-        return normalized;
-    } catch (error) {
-        console.warn("[Excel Export] Error obteniendo datos de sensores:", error);
-        return {};
-    }
-}
-
-/**
- * Obtiene historial biométrico
- */
-async function getBiometricHistory() {
-    try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/history");
-        if (!response.ok) return [];
-        
-        const result = await response.json();
-        return result.success && result.history ? result.history : [];
-    } catch (error) {
-        console.warn("[Excel Export] Error obteniendo historial biométrico:", error);
-        return [];
-    }
-}
-
-/**
- * Extrae la unidad de una etiqueta de sensor
- */
-function extractUnit(label) {
-    const match = label.match(/\((.*?)\)/);
-    return match ? match[1] : "";
-}
+window.escanearPuertosCOM = escanearPuertosCOM;
+window.conectarPuertoSerial = conectarPuertoSerial;
+window.desconectarPuertoSerial = desconectarPuertoSerial;
+window.exportToExcel = exportToExcel;
+window.fetchDatosPorCabina = fetchDatosPorCabina;
+window.procesarTrama = procesarTrama;
+window.mostrarNotificacion = mostrarNotificacion;
+window.initTabs = initTabs;
+window.initTwoColumnsSection = initTwoColumnsSection;
+window.updateWatchButtonsState = updateWatchButtonsState;
+window.stopBiometricCharts = stopBiometricCharts;
+window.updateBiometricChart = updateBiometricChart;
+window.requestSpo2Measurement = requestSpo2Measurement;
+window.requestBpmMeasurement = requestBpmMeasurement;
+window.requestTemperatureMeasurement = requestTemperatureMeasurement;
+window.requestBloodPressureMeasurement = requestBloodPressureMeasurement;
+window.seedBiometricHistory = seedBiometricHistory;
+window.updateBiometricCharts = updateBiometricCharts;
+window.checkMonitoringStatus = checkMonitoringStatus;
