@@ -3182,23 +3182,10 @@ async function createSheet2Data() {
             estado = "ENVIADA";
         }
         
-        // Extraer el codigo (numeros de 4 digitos)
-        const match = message.match(/\d{4}/);
-        const codigo = match ? match[0] : "";
+        console.log(message); //Borrar
         
-        // Buscar descripcion del control basado en el codigo
-        let descripcion = "Control";
-        if (codigo) {
-            for (const [key, value] of Object.entries(codigoBoton)) {
-                for (const [subKey, subValue] of Object.entries(value)) {
-                    if (subValue === codigo) {
-                        descripcion = `${key}: ${subKey}`;
-                        break;
-                    }
-                }
-            }
-            const codigoFormateado = `C${codigo}F`;
-            data.push([log.time, estado, codigoFormateado, descripcion]);
+        if (message) {
+            data.push([log.time, estado, message, "Control"]);
         }
     });
 
