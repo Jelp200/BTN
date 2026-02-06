@@ -980,7 +980,7 @@ async function createSheet2Data() {
     sentLogs.forEach(log => {
         // Buscar patrones de control en el mensaje
         const message = log.message;
-        
+
         // Detectar estado: PENDIENTE o ENVIADA
         let estado = "PENDIENTE";
         if (message.includes("[PENDIENTE]")) {
@@ -988,24 +988,11 @@ async function createSheet2Data() {
         } else if (message.includes("[ENVIADA]")) {
             estado = "ENVIADA";
         }
-        
-        // Extraer el codigo (numeros de 4 digitos)
-        const match = message.match(/\d{4}/);
-        const codigo = match ? match[0] : "";
-        
-        // Buscar descripcion del control basado en el codigo
-        let descripcion = "Control";
-        if (codigo) {
-            for (const [key, value] of Object.entries(codigoBoton)) {
-                for (const [subKey, subValue] of Object.entries(value)) {
-                    if (subValue === codigo) {
-                        descripcion = `${key}: ${subKey}`;
-                        break;
-                    }
-                }
-            }
-            const codigoFormateado = `C${codigo}F`;
-            data.push([log.time, estado, codigoFormateado, descripcion]);
+
+        console.log(message); //Borrar
+
+        if (message) {
+            data.push([log.time, estado, message, "Control"]);
         }
     });
 
