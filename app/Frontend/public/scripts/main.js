@@ -987,13 +987,11 @@ async function createSheet2Data() {
             estado = "PENDIENTE";
         } else if (message.includes("[ENVIADA]")) {
             estado = "ENVIADA";
-        }
-
-        console.log(message); //Borrar
+        };
 
         if (message) {
-            data.push([log.time, estado, message, "Control"]);
-        }
+            data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
+        };
     });
 
     if (data.length === 3) {
