@@ -36,9 +36,9 @@ VersionInfoCopyright=© 2025 GRADUS TECHNOLOGIES
 ; ============================================================================
 ; Apariencia del Instalador
 ; ============================================================================
-SetupIconFile=app.ico
-WizardImageFile=installer-logo.bmp
-WizardSmallImageFile=installer-small.bmp
+;SetupIconFile=app.ico
+;WizardImageFile=installer-logo.bmp
+;WizardSmallImageFile=installer-small.bmp
 DisableWelcomePage=no
 DisableProgramGroupPage=no
 UninstallDisplayIcon={app}\HostApp.exe
@@ -54,16 +54,12 @@ LanguageDetectionMethod=uilanguage
 ; ============================================================================
 [Files]
 ; Copiar TODO el contenido publicado (exe + dlls + runtimes + assets)
-Source: "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\dist\*"; \
+Source: "dist\*"; \
 DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; Archivos estáticos (wwwroot) - asegurar copia completa
-Source: "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\dist\wwwroot\*"; \
+Source: "dist\wwwroot\*"; \
 DestDir: "{app}\wwwroot"; Flags: ignoreversion recursesubdirs createallsubdirs
-
-; Archivo README
-Source: "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\README.md"; \
-DestDir: "{app}"; Flags: ignoreversion
 
 ; ============================================================================
 ; Accesos Directos y Menú de Inicio

@@ -134,8 +134,8 @@ Write-Status "✅ HostApp compilado correctamente" "success"
 Write-Section "📦 COPIANDO BINARIOS A CARPETA DIST"
 
 # Rutas de los publicados
-$controlPanelPublish = Join-Path $controlPanelPath "bin\Release\net8.0\win-x64\publish"
-$hostAppPublish = Join-Path $hostAppPath "bin\Release\net8.0-windows\win-x64\publish"
+$controlPanelPublish = Join-Path $controlPanelPath "bin\Release\net10.0-windows10.0.22621.0\win-x64\publish"
+$hostAppPublish = Join-Path $hostAppPath "bin\Release\net10.0-windows\win-x64"
 
 Write-Status "Copiando ControlPanel.API (todo el publish)..." "info"
 if (Test-Path (Join-Path $controlPanelPublish "ControlPanel.API.exe")) {
