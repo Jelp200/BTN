@@ -3092,6 +3092,13 @@ async function exportToExcel(event) {
         console.log("[Excel Export] 📄 Creando Sheet 2: Controles y Logs");
         const sheet2Data = await createSheet2Data();
         const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
+        ws2['!cols'] = [
+            { wch: 25 },  // Columna A: Hora 
+            { wch: 20 },  // Columna B: Estado
+            { wch: 20 },  // Columna C: Trama
+            { wch: 20 },   // Columna D: Tipo
+            { wch: 40 }   // Columna E: Descripción
+        ];
         XLSX.utils.book_append_sheet(workbook, ws2, "Controles y Logs");
         console.log("[Excel Export] ✅ Sheet 2 creado (" + sheet2Data.length + " filas)");
 
@@ -3157,7 +3164,7 @@ async function createSheet2Data() {
 
     // Sección de Controles
     data.push(["TRAMAS DE CONTROL ENVIADAS"]);
-    data.push(["Hora", "Estado", "Tipo de Control", "Descripción"]);
+    data.push(["Hora", "Estado", "Trama", "Tipo", "Descripción"]);
 
     // Obtener los logs enviados y filtrar por controles
     const sentLogs = getLogsSent();
@@ -3168,15 +3175,15 @@ async function createSheet2Data() {
         const message = log.message;
         
         // Detectar estado: PENDIENTE o ENVIADA
-        let estado = "DESCONOCIDO";
+        let estado = "PENDIENTE";
         if (message.includes("[PENDIENTE]")) {
             estado = "PENDIENTE";
         } else if (message.includes("[ENVIADA]")) {
             estado = "ENVIADA";
         }
         
-        // Extraer el codigo (numeros de 3 digitos)
-        const match = message.match(/\d{3}/);
+        // Extraer el codigo (numeros de 4 digitos)
+        const match = message.match(/\d{4}/);
         const codigo = match ? match[0] : "";
         
         // Buscar descripcion del control basado en el codigo
@@ -3190,12 +3197,13 @@ async function createSheet2Data() {
                     }
                 }
             }
-            data.push([log.time, estado, codigo, descripcion]);
+            const codigoFormateado = `C${codigo}F`;
+            data.push([log.time, estado, codigoFormateado, descripcion]);
         }
     });
 
     if (data.length === 3) {
-        data.push(["Sin registros de control", "", "", ""]);
+        data.push(["Sin registros de control", "", "", "", ""]);
     }
 
     data.push([]);
