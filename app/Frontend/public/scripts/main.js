@@ -1698,34 +1698,37 @@ function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
 
 // Función para actualizar el LED de calor según el estado
 function actualizarLedCalor(panel, estado) {
-    const btnCalor = panel.querySelector(
-        'button[data-codigo="CALOR"]'
-    );
+    const btnCalor = panel.querySelector('button[data-codigo="CALOR"]');
     if (!btnCalor) return;
 
-    const led = btnCalor.querySelector(".led-indicator");
-    if (!led) return;
+    // Seleccionar LEDs por su posición (si tienen clases distintas)
+    const ledSuperior = btnCalor.querySelector(".led-superior");    // Top-2
+    const ledMedio = btnCalor.querySelector(".led-medio");         // Top-7  
+    const ledInferior = btnCalor.querySelector(".led-inferior");   // Top-12
 
-    led.classList.remove(
-        "bg-[#b4b4b4]",
-        "bg-[#ffbd59]",
-        "bg-[#ff914d]",
-        "bg-[#ff3131]"
-    );
+    // Limpiar colores
+    [ledSuperior, ledMedio, ledInferior].forEach(led => {
+        if (led) {
+            led.classList.remove(
+                "bg-[#b4b4b4]", "bg-[#ffbd59]", 
+                "bg-[#ff914d]", "bg-[#ff3131]"
+            );
+        }
+    });
 
-    switch (estado) {
-        case "low":
-            led.classList.add("bg-[#ffbd59]");
-            break;
-        case "medium":
-            led.classList.add("bg-[#ff914d]");
-            break;
-        case "high":
-            led.classList.add("bg-[#ff3131]");
-            break;
-        default:
-            led.classList.add("bg-[#b4b4b4]");
-    }
+    // Aplicar según estado
+    const colores = {
+        off:   { superior: "#b4b4b4", medio: "#b4b4b4", inferior: "#b4b4b4" },
+        low:   { superior: "#ffbd59", medio: "#b4b4b4", inferior: "#b4b4b4" },
+        medium:{ superior: "#ffbd59", medio: "#ff914d", inferior: "#b4b4b4" },
+        high:  { superior: "#ffbd59", medio: "#ff914d", inferior: "#ff3131" }
+    };
+
+    const config = colores[estado] || colores.off;
+    
+    if (ledSuperior) ledSuperior.classList.add(`bg-[${config.superior}]`);
+    if (ledMedio) ledMedio.classList.add(`bg-[${config.medio}]`);
+    if (ledInferior) ledInferior.classList.add(`bg-[${config.inferior}]`);
 }
 
 // Función para cambiar la métrica mostrada en la gráfica biométrica
