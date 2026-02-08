@@ -965,6 +965,15 @@ async function createSheet1Data() {
 async function createSheet2Data() {
     const data = [];
 
+    // Obtener el botón que fue clickeado y su panel contenedor
+    const btnExport = event.currentTarget;
+    const panelContainer = btnExport.closest(".panel-container");
+        
+    // Buscar el selector de cabina dentro del MISMO panel
+    const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
+    const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
+    const cabinaCode = cabinaSeleccionada.includes("2") ? "C2" : "C1";
+
     // Encabezado
     data.push(["CONTROLES Y LOGS DEL SISTEMA"]);
     data.push([]);
@@ -980,7 +989,6 @@ async function createSheet2Data() {
     sentLogs.forEach(log => {
         // Buscar patrones de control en el mensaje
         const message = log.message;
-
         // Detectar estado: PENDIENTE o ENVIADA
         let estado = "PENDIENTE";
         if (message.includes("[PENDIENTE]")) {
@@ -989,9 +997,15 @@ async function createSheet2Data() {
             estado = "ENVIADA";
         };
 
-        if (message) {
-            data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
+        // Aquí verificamos y separamos
+        if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C1') {
+            return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
+        }; 
+
+        if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C2') {
+            return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
         };
+    
     });
 
     if (data.length === 3) {
