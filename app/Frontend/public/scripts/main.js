@@ -1701,7 +1701,7 @@ function actualizarLedCalor(panel, estado) {
     const btnCalor = panel.querySelector('button[data-codigo="CALOR"]');
     if (!btnCalor) return;
 
-    // Seleccionar LEDs por su posición (si tienen clases distintas)
+    // Seleccionar LEDs por su posición
     const ledSuperior = btnCalor.querySelector(".led-superior");    // Top-2
     const ledMedio = btnCalor.querySelector(".led-medio");         // Top-7  
     const ledInferior = btnCalor.querySelector(".led-inferior");   // Top-12
