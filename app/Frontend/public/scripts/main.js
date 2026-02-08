@@ -986,7 +986,7 @@ async function createSheet2Data() {
     const sentLogs = getLogsSent();
     
     // Procesar cada log para extraer informacion de control
-    sentLogs.forEach(log => {
+    sentLogs.map(log => {
         // Buscar patrones de control en el mensaje
         const message = log.message;
         // Detectar estado: PENDIENTE o ENVIADA
@@ -997,7 +997,7 @@ async function createSheet2Data() {
             estado = "ENVIADA";
         };
 
-        // Aquí verificamos y separamos
+        // Verificamos inicio de trama (C1 O C2) y validamos cabina (C1 O C2)
         if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C1') {
             return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
         }; 
