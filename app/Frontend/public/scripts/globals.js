@@ -54,7 +54,8 @@ const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 // Códigos de botones de control
 const codigoBoton = {
     FRIO: { off: "000", on: "001" },
-    CALOR: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
+    CALOR_C1: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
+    CALOR_C2: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
     HUMEDAD: { off: "007", on: "008" },
     VIBRACION: { off: "009", on: "010" },
     VENTILADOR: { off: "011", on: "012" },
@@ -130,11 +131,11 @@ const sensorConfig = {
 
 // Ciclo de temperaturas de calor
 const calorCycle = [
-    "on",
-    "low",
-    "medium",
-    "high",
-    "off",
+    "003",
+    "004",
+    "005",
+    "006",
+    "002",
 ];
 //! Descripcion de control
 const controlDescripcion = {

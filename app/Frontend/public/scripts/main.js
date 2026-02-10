@@ -1670,31 +1670,35 @@ function initTwoColumnsSection(panel) {
 
 // Función para manejar el ciclo de calor
 function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
-    const currentIndex = calorCycle.indexOf(estadoCalor);
+    
+    const estadoActual = codigoBoton[cabinaPrefijo];
+    // Calcular siguiente estado para la cabina
+    const currentIndex = calorCycle.indexOf(estadoActual);
     const nextIndex = (currentIndex + 1) % calorCycle.length;
-    estadoCalor = calorCycle[nextIndex];
+    const nuevoEstado = calorCycle[nextIndex];
 
+    codigoBoton[cabinaPrefijo] = nuevoEstado;
     btn.classList.remove("bg-[#d9d9d9]", "bg-[#00bf63]");
 
-    if (estadoCalor === "off") {
+    if (nuevoEstado === "off") {
         btn.classList.add("bg-[#d9d9d9]");
         enviarTrama(
             cabinaPrefijo,
-            codigoBoton.CALOR.off,
+            nuevoEstado,
             cabinaActiva
         );
         actualizarLedCalor(panel, "off");
         return;
-    }
+    };
 
     btn.classList.add("bg-[#00bf63]");
     enviarTrama(
         cabinaPrefijo,
-        codigoBoton.CALOR[estadoCalor],
+        nuevoEstado,
         cabinaActiva
     );
-    actualizarLedCalor(panel, estadoCalor);
-}
+    actualizarLedCalor(panel, nuevoEstado);
+};
 
 // Función para actualizar el LED de calor según el estado
 function actualizarLedCalor(panel, estado) {
@@ -1718,18 +1722,18 @@ function actualizarLedCalor(panel, estado) {
 
     // Aplicar según estado
     const colores = {
-        off:   { superior: "#b4b4b4", medio: "#b4b4b4", inferior: "#b4b4b4" },
-        low:   { superior: "#ffbd59", medio: "#b4b4b4", inferior: "#b4b4b4" },
-        medium:{ superior: "#ffbd59", medio: "#ff914d", inferior: "#b4b4b4" },
-        high:  { superior: "#ffbd59", medio: "#ff914d", inferior: "#ff3131" }
+        off:   { inferior: "#b4b4b4", medio: "#b4b4b4", superior: "#b4b4b4" },
+        '004':   { inferior: "#ffbd59", medio: "#b4b4b4", superior: "#b4b4b4" },
+        '005':{ inferior: "#ffbd59", medio: "#ff914d", superior: "#b4b4b4" },
+        '006':  { inferior: "#ffbd59", medio: "#ff914d", superior: "#ff3131" }
     };
-
-    const config = colores[estado] || colores.off;
     
+    const config = colores[estado] || colores.off;
+
     if (ledSuperior) ledSuperior.classList.add(`bg-[${config.superior}]`);
     if (ledMedio) ledMedio.classList.add(`bg-[${config.medio}]`);
     if (ledInferior) ledInferior.classList.add(`bg-[${config.inferior}]`);
-}
+};
 
 // Función para cambiar la métrica mostrada en la gráfica biométrica
 function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
