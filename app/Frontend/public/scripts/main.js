@@ -1863,20 +1863,20 @@ function updateWatchButtonsState() {
     if (!connectBtn || !disconnectBtn) {
         console.warn("[Biometría] ⚠️ No se encontraron los botones de reloj!");
         return;
-    }
-    
+    };
+
     if (biometricWatchConnected) {
         // Reloj conectado: deshabilitar botón conectar, habilitar botón desconectar
-        connectBtn.disabled = true;
+        connectBtn.disabled;
         connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
         connectBtn.style.filter = "grayscale(100%)";
         
         disconnectBtn.disabled = false;
         disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
         disconnectBtn.style.filter = "none";
-        
-        console.log("[Biometría] ✅ Botones actualizados: Conectar DESHABILITADO ❌, Desconectar HABILITADO ✅");
-    } else {
+    };
+
+    if (!biometricWatchConnected){
         // Reloj desconectado: habilitar botón conectar, deshabilitar botón desconectar
         connectBtn.disabled = false;
         connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
@@ -1885,10 +1885,8 @@ function updateWatchButtonsState() {
         disconnectBtn.disabled = true;
         disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
         disconnectBtn.style.filter = "grayscale(100%)";
-        
-        console.log("[Biometría] ✅ Botones actualizados: Conectar HABILITADO ✅, Desconectar DESHABILITADO ❌");
-    }
-}
+    };
+};
 
 //Actualiza la gráfica biométrica con una nueva métrica. Reutiliza el mismo canvas destruyendo la instancia anterior
 function updateBiometricChart(canvasIndex, metric, labels, metricConfigs, data) {
