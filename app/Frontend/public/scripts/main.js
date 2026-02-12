@@ -1694,14 +1694,14 @@ function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
     codigoBoton[cabinaPrefijo] = nuevoEstado;
     btn.classList.remove("bg-[#d9d9d9]", "bg-[#00bf63]");
 
-    if (nuevoEstado === "off") {
+    if (nuevoEstado === '002') {
         btn.classList.add("bg-[#d9d9d9]");
         enviarTrama(
             cabinaPrefijo,
             nuevoEstado,
             cabinaActiva
         );
-        actualizarLedCalor(panel, "off");
+        actualizarLedCalor(panel, '002');
         return;
     };
 
@@ -1712,6 +1712,7 @@ function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
         cabinaActiva
     );
     actualizarLedCalor(panel, nuevoEstado);
+    console.log(nuevoEstado);
 };
 
 // Función para actualizar el LED de calor según el estado
