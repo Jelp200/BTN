@@ -924,6 +924,19 @@ async function exportToExcel(event) {
         console.log("[Excel Export] 📄 Creando Sheet 4: Biometría de " + cabinaSeleccionada + " (" + cabinaCode + ")");
         const sheet4Data = await createSheet4Data(cabinaCode);
         const ws4 = XLSX.utils.aoa_to_sheet(sheet4Data);
+        ws4['!cols'] = [
+            { wch: 20 },  // Columna A:  
+            { wch: 15 },  // Columna B: 
+            { wch: 10 },  // Columna C: 
+            { wch: 20 },  // Columna D: 
+            { wch: 15 },  // Columna E:
+            { wch: 10 },  // Columna F: 
+            { wch: 20 },  // Columna G: 
+            { wch: 15 },  // Columna I:
+            { wch: 10 },  // Columna J: 
+            { wch: 20 },  // Columna K: 
+            { wch: 20 },  // Columna L: 
+        ];
         XLSX.utils.book_append_sheet(workbook, ws4, "Biometría");
         console.log("[Excel Export] ✅ Sheet 4 creado (" + sheet4Data.length + " filas)");
 
@@ -1061,46 +1074,47 @@ async function createSheet3Data(cabinaCode) {
 }
 
 // Sheet 4: Datos biométricos históricos
-async function createSheet4Data(cabinaCode) {
+async function createSheet4Data() {
     const data = [];
 
     data.push(["DATOS BIOMÉTRICOS"]);
     data.push([]);
-
+    data.push(["PPM (Pulsos Por Minuto)","","","Sp02 (Oxigenación)","","","°C (Temperatura)","","", "mmHg (Tensión Arterial)"]);
+    data.push(["Hora","Medición","", "Hora","Medición","", "Hora","Medición","", "Hora","Medición Alta","Medición Baja"]);
     // Obtener historial biométrico
-    const biometricHistory = await getBiometricHistory();
+    //const biometricHistory = await getBiometricHistory();
 
-    if (biometricHistory && biometricHistory.length > 0) {
-        data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Presión Arterial", "Fecha y Hora"]);
+    // if (biometricHistory && biometricHistory.length > 0) {
+    //     data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Presión Arterial", "Fecha y Hora"]);
         
-        // Filter records by cabina if cabina data is available in records
-        // Currently biometricHistory contains all data; filter if 'cabina' field exists in records
-        const filteredHistory = biometricHistory.filter(record => {
-            // If record has cabina field, filter by it; otherwise include all
-            if (record.cabina) {
-                return record.cabina === cabinaCode;
-            }
-            return true; // Include if no cabina field
-        });
+    //     // Filter records by cabina if cabina data is available in records
+    //     // Currently biometricHistory contains all data; filter if 'cabina' field exists in records
+    //     const filteredHistory = biometricHistory.filter(record => {
+    //         // If record has cabina field, filter by it; otherwise include all
+    //         if (record.cabina) {
+    //             return record.cabina === cabinaCode;
+    //         }
+    //         return true; // Include if no cabina field
+    //     });
         
-        filteredHistory.forEach(record => {
-            const bp = record.systolic && record.diastolic ? `${record.systolic}/${record.diastolic}` : "-";
-            const timestamp = new Date(record.timestamp).toLocaleString('es-ES') || "-";
-            data.push([
-                record.pulseBpm || "-",
-                record.spO2 || "-",
-                record.temperatureC || "-",
-                bp,
-                timestamp
-            ]);
-        });
+    //     filteredHistory.forEach(record => {
+    //         const bp = record.systolic && record.diastolic ? `${record.systolic}/${record.diastolic}` : "-";
+    //         const timestamp = new Date(record.timestamp).toLocaleString('es-ES') || "-";
+    //         data.push([
+    //             record.pulseBpm || "-",
+    //             record.spO2 || "-",
+    //             record.temperatureC || "-",
+    //             bp,
+    //             timestamp
+    //         ]);
+    //     });
         
-        if (filteredHistory.length === 0) {
-            data.push([`Sin datos biométricos disponibles para ${cabinaCode}`]);
-        }
-    } else {
-        data.push(["Sin datos biométricos disponibles"]);
-    }
+    //     // if (filteredHistory.length === 0) {
+    //     //     data.push([`Sin datos biométricos disponibles para ${cabinaCode}`]);
+    //     // }
+    // } else {
+    //     data.push(["Sin datos biométricos disponibles"]);
+    // }
 
     return data;
 }
