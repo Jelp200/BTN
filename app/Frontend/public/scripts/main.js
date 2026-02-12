@@ -1712,7 +1712,6 @@ function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
         cabinaActiva
     );
     actualizarLedCalor(panel, nuevoEstado);
-    console.log(nuevoEstado);
 };
 
 // Función para actualizar el LED de calor según el estado
