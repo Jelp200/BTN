@@ -932,10 +932,11 @@ async function exportToExcel(event) {
             { wch: 15 },  // Columna E:
             { wch: 10 },  // Columna F: 
             { wch: 20 },  // Columna G: 
-            { wch: 15 },  // Columna I:
-            { wch: 10 },  // Columna J: 
-            { wch: 20 },  // Columna K: 
-            { wch: 20 },  // Columna L: 
+            { wch: 15 },  // Columna H:
+            { wch: 10 },  // Columna I: 
+            { wch: 20 },  // Columna J: 
+            { wch: 20 },  // Columna K:
+            { wch: 20 },  // Columna l: 
         ];
         XLSX.utils.book_append_sheet(workbook, ws4, "Biometría");
         console.log("[Excel Export] ✅ Sheet 4 creado (" + sheet4Data.length + " filas)");
@@ -1869,36 +1870,41 @@ function stopBiometricCharts() {
 function updateWatchButtonsState() {
     console.log("[Biometría] Actualizando estado de botones, reloj conectado:", biometricWatchConnected);
     
-    const connectBtn = document.querySelector("[data-action='connect-watch']");
-    const disconnectBtn = document.querySelector("[data-action='disconnect-watch']");
+    // Selecciona TODOS los pares de botones por separado
+    const allConnectBtns = document.querySelectorAll("[data-action='connect-watch']");
+    const allDisconnectBtns = document.querySelectorAll("[data-action='disconnect-watch']");
     
-    console.log("[Biometría] Botones encontrados:", { conectar: !!connectBtn, desconectar: !!disconnectBtn });
-    
-    if (!connectBtn || !disconnectBtn) {
+    console.log("[Biometría] Botones encontrados:", { conectar: !!allConnectBtns, desconectar: !!allDisconnectBtns });
+
+    if (!allConnectBtns || !allDisconnectBtns) {
         console.warn("[Biometría] ⚠️ No se encontraron los botones de reloj!");
         return;
     };
-
-    if (biometricWatchConnected) {
-        // Reloj conectado: deshabilitar botón conectar, habilitar botón desconectar
-        connectBtn.disabled;
-        connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        connectBtn.style.filter = "grayscale(100%)";
+    
+    // Actualiza cada boton individualmente
+    for (let i = 0; i < allConnectBtns.length; i++) {
+        const connectBtn = allConnectBtns[i];
+        const disconnectBtn = allDisconnectBtns[i];
         
-        disconnectBtn.disabled = false;
-        disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        disconnectBtn.style.filter = "none";
-    };
-
-    if (!biometricWatchConnected){
-        // Reloj desconectado: habilitar botón conectar, deshabilitar botón desconectar
-        connectBtn.disabled = false;
-        connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        connectBtn.style.filter = "none";
+        if (!connectBtn || !disconnectBtn) continue;
         
-        disconnectBtn.disabled = true;
-        disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
-        disconnectBtn.style.filter = "grayscale(100%)";
+        if (biometricWatchConnected) {
+            connectBtn.disabled = true;
+            connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+            connectBtn.style.filter = "grayscale(100%)";
+            
+            disconnectBtn.disabled = false;
+            disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+            disconnectBtn.style.filter = "none";
+        } else {
+            connectBtn.disabled = false;
+            connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+            connectBtn.style.filter = "none";
+            
+            disconnectBtn.disabled = true;
+            disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+            disconnectBtn.style.filter = "grayscale(100%)";
+        };
     };
 };
 
