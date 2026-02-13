@@ -472,8 +472,8 @@ async function initGrafica(panel, sensor = "X") {
                         }
                     });
 
-                    // Limitar a últimos 100 puntos para evitar sobrecarga
-                    const maxPuntos = 100;
+                    // Limitar a últimos 10 puntos para evitar sobrecarga
+                    const maxPuntos = 10;
                     let valoresFinales = nuevosSensorValores;
                     let indiceInicio = 0;
 
@@ -917,6 +917,18 @@ async function exportToExcel(event) {
         console.log("[Excel Export] 📄 Creando Sheet 3: Sensores de " + cabinaSeleccionada + " (" + cabinaCode + ")");
         const sheet3Data = await createSheet3Data(cabinaCode);
         const ws3 = XLSX.utils.aoa_to_sheet(sheet3Data);
+        ws3['!cols'] = [
+            { wch: 20 },  // Columna A:  
+            { wch: 20 },  // Columna B: 
+            { wch: 20 },  // Columna C: 
+            { wch: 20 },  // Columna D: 
+            { wch: 20 },  // Columna E:
+            { wch: 20 },  // Columna F: 
+            { wch: 20 },  // Columna G: 
+            { wch: 20 },  // Columna H:
+            { wch: 20 },  // Columna I: 
+            { wch: 20 },  // Columna J:
+        ];
         XLSX.utils.book_append_sheet(workbook, ws3, "Sensores");
         console.log("[Excel Export] ✅ Sheet 3 creado (" + sheet3Data.length + " filas)");
 
@@ -1056,10 +1068,14 @@ async function createSheet3Data(cabinaCode) {
 
     data.push(["DATOS DE SENSORES"]);
     data.push([]);
-
     // Map cabinaCode to display name
-    const cabinaName = cabinaCode === "C2" ? "CABINA 2" : "CABINA 1";
+    const cabinaName = cabinaCode === "C1" ? "CABINA 1" : "CABINA 2";
+    const cabinaNumero = cabinaCode === "C1" ? "1" : "2";
+    data.push(["Carácter de inicio", "Número de cabina", "Acelerometro","Acelerometro","Acelerometro","Temperatura","Humedad","Luz UV","Calidad del aire", "Sonido"]);
+    data.push(["C", cabinaNumero, "X: #String/flotante","Y: #String/flotante","Z: #String/flotante","T: #String/flotante","UV: #String/flotante", "CO2: #String/flotante","O3: #String/flotante","db: #String/flotante"]);
     
+    data.push([]);
+    data.push([]);
     data.push([cabinaName]);
     data.push(["Sensor", "Última Lectura", "Unidad"]);
     
