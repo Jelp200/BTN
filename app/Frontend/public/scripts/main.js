@@ -28,6 +28,17 @@ window.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("[main.js] window.inicializarApp no está definida");
     }
+
+    const actualizarIndicadoresContinuo = () => {
+        if (typeof window.fetchDatosPorCabina === "function") {
+            window.fetchDatosPorCabina("C1");
+            window.fetchDatosPorCabina("C2");
+        }
+    };
+    
+    // Ejecutar inmediatamente y luego cada 3 segundos
+    actualizarIndicadoresContinuo();
+    setInterval(actualizarIndicadoresContinuo, 3000);
 });
 
 /* *********************************************************************
@@ -257,16 +268,27 @@ async function fetchDatosPorCabina(cabina) {
 
         if (data.success == "false") return;
 
-        if (data) {
-            const datos = {};
-            for (const [key, value] of Object.entries(data)) {
-                if (key.toUpperCase() !== "CABINA") {
-                    datos[key.toUpperCase()] = value;
-                }
-            }
+        if (data && Array.isArray(data) && data.length > 0) {
+            // Tomar última lectura (la más reciente)
+            const ultimaLectura = data[data.length - 1];
+
+            // Mapear claves del backend a identificadores de sensores
+            const datos = {
+                X: ultimaLectura.x,
+                Y: ultimaLectura.y,
+                Z: ultimaLectura.z,
+                T: ultimaLectura.t,
+                H: ultimaLectura.h,
+                UV: ultimaLectura.uv,
+                CO2: ultimaLectura.cO2,
+                O3: ultimaLectura.o3,
+                dB: ultimaLectura.dB
+            };
 
             Object.entries(datos).forEach(([clave, valor]) => {
-                updateIndicador(clave, valor, cabina);
+                if (valor !== undefined && valor !== null) {
+                    updateIndicador(clave, valor, cabina);
+                }
             });
         }
     } catch (error) {
@@ -313,10 +335,17 @@ async function initGrafica(panel, sensor = "X") {
     const graficaCanvas = panel.querySelector("#graficaPanel");
     if (!graficaCanvas) return;
 
+    console.log(`[Gráfica] Inicializando gráfica para sensor: ${sensor}`);
+
+    if (graficaCanvas.updateInterval) {
+        clearInterval(graficaCanvas.updateInterval);
+        console.log(`[Gráfica] Intervalo anterior limpiado al inicio de initGrafica`);
+    }
+
     const selectCabina = panel.querySelector("[data-select='cabina']");
     const cabina = selectCabina?.value.includes("1") ? "c1" : "c2";
 
-    console.log("Sensor seleccionado:", sensor);
+    console.log(`[Gráfica] Cabina seleccionada: ${cabina}`);
 
     try {
         // Obtener datos iniciales
@@ -331,9 +360,17 @@ async function initGrafica(panel, sensor = "X") {
             return;
         }
 
-        // 🔹 Crear labels y valores iniciales
-        const labels = datos.map((_, i) => `${i + 1}`);
-        const valores = datos.map((d) => {
+        const maxPuntos = 10;
+        const datosLimitados = datos.length > maxPuntos 
+            ? datos.slice(datos.length - maxPuntos) 
+            : datos;
+        
+        const indiceInicio = datos.length > maxPuntos 
+            ? datos.length - maxPuntos 
+            : 0;
+
+        const labels = datosLimitados.map((_, i) => `${indiceInicio + i + 1}`);
+        const valores = datosLimitados.map((d) => {
             switch (sensor) {
                 case "T":
                     return d.t;
@@ -358,9 +395,18 @@ async function initGrafica(panel, sensor = "X") {
             }
         });
 
-        // 🔹 Si ya existe una gráfica previa, destrúyela una sola vez al inicio
+        console.log(`[Gráfica] Mostrando ${valores.length} puntos iniciales (máx: ${maxPuntos})`);
+
         const existingChart = Chart.getChart(graficaCanvas);
-        if (existingChart) existingChart.destroy();
+        if (existingChart) {
+            existingChart.destroy();
+            console.log(`[Gráfica] Chart anterior destruido`);
+        }
+        
+        // Limpiar referencias antiguas
+        if (graficaCanvas.chartInstance) {
+            graficaCanvas.chartInstance = null;
+        }
 
         const ctx = graficaCanvas.getContext("2d");
         const chart = new Chart(ctx, {
@@ -414,12 +460,19 @@ async function initGrafica(panel, sensor = "X") {
         graficaCanvas.lastDataCount = datos.length; // Rastrear cantidad de datos
         graficaCanvas.sensor = sensor; // Guardar sensor actual
 
-        // 🔁 Intervalo para actualizar cada 2 segundos
-        setInterval(async () => {
+        // Limpiar intervalo anterior si existe para evitar múltiples intervalos simultáneos
+        if (graficaCanvas.updateInterval) {
+            clearInterval(graficaCanvas.updateInterval);
+            console.log(`[Gráfica] Intervalo anterior limpiado para sensor ${sensor}`);
+        }
+
+        // Intervalo para actualizar cada 2 segundos
+        graficaCanvas.updateInterval = setInterval(async () => {
             try {
-                // Si el sensor cambió, reiniciar
+                // Si el sensor cambió, detener este intervalo
                 if (graficaCanvas.sensor !== sensor) {
-                    initGrafica(panel, sensor);
+                    clearInterval(graficaCanvas.updateInterval);
+                    console.log(`[Gráfica] Sensor cambió de ${sensor} a ${graficaCanvas.sensor}, deteniendo intervalo`);
                     return;
                 }
 
@@ -491,6 +544,8 @@ async function initGrafica(panel, sensor = "X") {
                     chart.data.labels = nuevasLabels;
                     chart.data.datasets[0].data = valoresFinales;
 
+                    console.log(`[Gráfica] Actualización: mostrando ${valoresFinales.length}/${todosDatos.length} puntos (sensor: ${sensor})`);
+
                     // 🔹 Actualizar contador
                     graficaCanvas.lastDataCount = todosDatos.length;
 
@@ -501,6 +556,8 @@ async function initGrafica(panel, sensor = "X") {
                 console.error("Error al actualizar la gráfica:", error);
             }
         }, 2000);
+
+        console.log(`[Gráfica] ✅ Gráfica inicializada para sensor ${sensor}, intervalo activo cada 2s`);
     } catch (error) {
         console.error("Error al cargar datos de sensor:", error);
         alert("No se pudieron cargar datos desde el backend.");
@@ -1287,9 +1344,11 @@ function getUnidad(medicion) {
 function updateIndicador(tipo, valor, cabinaPrefijo) {
     if (tipo === "DB") tipo = "dB";
 
+    // Buscar solo los contenedores de indicadores, no los displays internos
     const elementos = document.querySelectorAll(
-        `[data-medicion='${tipo}']`,
+        `.control-indicador[data-medicion='${tipo}']`,
     );
+    
     elementos.forEach((el) => {
         // Obtener el panel actual
         const panel = el.closest(".panel-container");
@@ -1306,16 +1365,18 @@ function updateIndicador(tipo, valor, cabinaPrefijo) {
         // Verificar si el prefijo coincide
         if (prefijoSeleccionado !== cabinaPrefijo) return;
 
-        // Buscar el botón correspondiente en este panel
-        const btn = panel.querySelector(
-            `.control-btn[data-codigo='${tipo}']`,
-        );
-        if (!btn || !btn.classList.contains("bg-[#00bf63]")) return;
-
-        // Actualizar display
+        // Verificar si el botón del sensor está activo
+        const btn = el.querySelector(`.control-btn[data-codigo='${tipo}']`);
         const display = el.querySelector(".medicion-display");
+        
         if (display) {
-            display.textContent = `${valor} ${getUnidad(tipo)}`;
+            if (btn && btn.classList.contains("bg-[#00bf63]")) {
+                // Botón activo: mostrar valor
+                display.textContent = `${valor} ${getUnidad(tipo)}`;
+            } else {
+                // Botón inactivo: mostrar N/A
+                display.textContent = "N/A";
+            }
         }
     });
 }
@@ -2248,13 +2309,22 @@ document.addEventListener("DOMContentLoaded", () => {
         sensorButtons.forEach((btn) => {
             btn.addEventListener("click", () => {
                 const sensorSeleccionado = btn.dataset.sensor;
-                /*
-                const selectSensor = panel.querySelector("[data-select='sensor']");
-                if (selectSensor) {
-                selectSensor.value = nuevoSensor;
+                console.log(`[Gráfica] Click en botón de sensor: ${sensorSeleccionado}`);
+                
+                // Obtener el canvas de la gráfica para actualizar su sensor
+                const graficaCanvas = panel.querySelector("#graficaPanel");
+                if (graficaCanvas) {
+                    // Limpiar el intervalo anterior antes de cambiar el sensor
+                    if (graficaCanvas.updateInterval) {
+                        clearInterval(graficaCanvas.updateInterval);
+                        console.log(`[Gráfica] Intervalo limpiado antes de cambiar a ${sensorSeleccionado}`);
+                    }
+                    // Actualizar el sensor actual en el canvas
+                    graficaCanvas.sensor = sensorSeleccionado;
                 }
-                */
-                initGrafica(panel, sensorSeleccionado); // vuelve a graficar con el nuevo sensor
+                
+                // Volver a inicializar la gráfica con el nuevo sensor
+                initGrafica(panel, sensorSeleccionado);
             });
         });
 
