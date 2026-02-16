@@ -14,6 +14,7 @@
 using ControlPanel.API.DTOs;
 using ControlPanel.API.Interfaces;
 using ControlPanel.API.Services;
+using ControlPanel.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControlPanel.API.Controllers
@@ -36,16 +37,16 @@ namespace ControlPanel.API.Controllers
         {
             try
             {
-                Console.WriteLine($"[SmartwatchController] Iniciando conexión. Request recibido: DeviceName={request?.DeviceName}, Timeout={request?.ScanTimeoutMs}");
+                FileLogger.Log($"[SmartwatchController] Iniciando conexión. Request recibido: DeviceName={request?.DeviceName}, Timeout={request?.ScanTimeoutMs}");
 
                 var deviceName = string.IsNullOrWhiteSpace(request?.DeviceName) ? "ET570" : request.DeviceName.Trim();
                 var timeout = request?.ScanTimeoutMs is > 0 ? request.ScanTimeoutMs.Value : 15000;
 
-                Console.WriteLine($"[SmartwatchController] Parámetros procesados: DeviceName={deviceName}, Timeout={timeout}");
+                FileLogger.Log($"[SmartwatchController] Parámetros procesados: DeviceName={deviceName}, Timeout={timeout}");
 
                 if (_smartwatchService == null)
                 {
-                    Console.WriteLine("[SmartwatchController] ERROR: _smartwatchService es null!");
+                    FileLogger.LogError("[SmartwatchController] ERROR: _smartwatchService es null!");
                     return StatusCode(500, new SmartwatchConnectResponse
                     {
                         Success = false,
@@ -54,30 +55,40 @@ namespace ControlPanel.API.Controllers
                     });
                 }
 
-                Console.WriteLine("[SmartwatchController] Llamando a ConnectAsync...");
+                FileLogger.Log("[SmartwatchController] Llamando a ConnectAsync...");
                 var result = await _smartwatchService.ConnectAsync(deviceName, timeout, HttpContext.RequestAborted);
-                Console.WriteLine($"[SmartwatchController] ConnectAsync completado. Success={result.Success}, Message={result.Message}");
+                FileLogger.Log($"[SmartwatchController] ConnectAsync completado. Success={result.Success}, Message={result.Message}");
+                FileLogger.Log($"[SmartwatchController] Device Name={result.Device?.Name}, Address={result.Device?.Address}");
+
+                // Convertir WatchDevice a WatchDeviceDto para serialización
+                WatchDeviceDto? deviceDto = result.Device != null
+                    ? new WatchDeviceDto
+                    {
+                        Name = result.Device.Name,
+                        Address = result.Device.Address,
+                        Rssi = result.Device.Rssi
+                    }
+                    : null;
 
                 var response = new SmartwatchConnectResponse
                 {
                     Success = result.Success,
                     Message = result.Message,
-                    Device = result.Device
+                    Device = deviceDto
                 };
 
-                return result.Success ? Ok(response) : BadRequest(response);
+                FileLogger.Log($"[SmartwatchController] Response creado. Success={response.Success}, Message={response.Message}");
+                FileLogger.Log($"[SmartwatchController] DTO Device Name={response.Device?.Name}, Address={response.Device?.Address}");
+                FileLogger.Log("[SmartwatchController] Retornando respuesta HTTP...");
+
+                IActionResult actionResult = result.Success ? Ok(response) : BadRequest(response);
+                FileLogger.Log("[SmartwatchController] IActionResult creado exitosamente");
+                
+                return actionResult;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[SmartwatchController] EXCEPCIÓN NO MANEJADA: {ex.GetType().Name}");
-                Console.WriteLine($"[SmartwatchController] Mensaje: {ex.Message}");
-                Console.WriteLine($"[SmartwatchController] StackTrace: {ex.StackTrace}");
-                
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"[SmartwatchController] InnerException: {ex.InnerException.GetType().Name}");
-                    Console.WriteLine($"[SmartwatchController] InnerException Message: {ex.InnerException.Message}");
-                }
+                FileLogger.LogError("[SmartwatchController] EXCEPCIÓN NO MANEJADA", ex);
 
                 return StatusCode(500, new SmartwatchConnectResponse
                 {

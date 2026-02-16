@@ -141,12 +141,14 @@ namespace HostApp
                 else
                 {
                     // Si en 30 segundos no responde, mostrar error
+                    var logsFolder = Path.Combine(appDirectory, "Logs");
                     MessageBox.Show(
                         "❌ No se pudo conectar al servidor después de 30 segundos.\n\n" +
                         "Posibles causas:\n" +
                         "1. El .exe está bloqueado por Windows (clic derecho → Propiedades → Desbloquear)\n" +
                         "2. El antivirus lo está bloqueando\n" +
-                        "3. Fallo al iniciar el proceso",
+                        "3. Fallo al iniciar el proceso\n\n" +
+                        $"Revisa los logs en: {logsFolder}",
                         "Error de conexión",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -155,8 +157,11 @@ namespace HostApp
             }
             catch (Exception ex)
             {
+                var appDir = Path.GetDirectoryName(Application.ExecutablePath);
+                var logsFolder = Path.Combine(appDir ?? ".", "Logs");
                 MessageBox.Show(
-                    $"❌ Error al iniciar la API:\n\n{ex.Message}", 
+                    $"❌ Error al iniciar la API:\n\n{ex.Message}\n\n" +
+                    $"Revisa los logs en: {logsFolder}", 
                     "Error", 
                     MessageBoxButtons.OK, 
                     MessageBoxIcon.Error);

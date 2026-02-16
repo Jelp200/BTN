@@ -16,7 +16,7 @@ AppComments=Sistema de control y monitoreo de cabinas de prueba ergonómica
 ; ============================================================================
 ; Configuración de Instalación
 ; ============================================================================
-DefaultDirName={pf}\PanelControlGITSE
+DefaultDirName={localappdata}\PanelControlGITSE
 DefaultGroupName=GRADUS TECHNOLOGIES\Panel Control GITSE
 AllowNoIcons=yes
 OutputDir=Output
@@ -25,7 +25,7 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 WizardSizePercent=100
-PrivilegesRequired=none
+PrivilegesRequired=lowest
 ArchitecturesInstallIn64BitMode=x64
 MinVersion=6.1
 VersionInfoVersion=2.0.0.0
@@ -62,6 +62,13 @@ Source: "dist\wwwroot\*"; \
 DestDir: "{app}\wwwroot"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; ============================================================================
+; Directorios a Crear
+; ============================================================================
+[Dirs]
+; Crear carpeta Logs con permisos de escritura completos para el usuario
+Name: "{app}\Logs"; Permissions: users-full
+
+; ============================================================================
 ; Accesos Directos y Menú de Inicio
 ; ============================================================================
 [Icons]
@@ -90,6 +97,11 @@ Name: "{group}\Carpeta de Instalación"; \
 Filename: "{app}"; \
 Comment: "Abrir carpeta de instalación"
 
+; Acceso directo a la carpeta de logs
+Name: "{group}\Ver Logs"; \
+Filename: "{app}\Logs"; \
+Comment: "Ver archivos de registro de la aplicación"
+
 ; ============================================================================
 ; Ejecución Post-Instalación
 ; ============================================================================
@@ -101,15 +113,15 @@ Flags: nowait postinstall skipifsilent
 ; ============================================================================
 ; Limpieza al Desinstalar
 ; ============================================================================
-; ============================================================================
-; Limpieza al Desinstalar
-; ============================================================================
 [UninstallDelete]
 Type: files; Name: "{autodesktop}\Panel Control GITSE.lnk"
 Type: files; Name: "{group}\Panel Control GITSE.lnk"
 Type: files; Name: "{group}\Desinstalar Panel Control GITSE.lnk"
 Type: files; Name: "{group}\Carpeta de Instalación.lnk"
+Type: files; Name: "{group}\Ver Logs.lnk"
 Type: filesandordirs; Name: "{app}\wwwroot"
+; Nota: Los logs se eliminan solo si el usuario lo confirma (ver [Code])
+Type: dirifempty; Name: "{app}\Logs"
 Type: dirifempty; Name: "{group}"
 Type: dirifempty; Name: "{app}"
 
@@ -118,12 +130,12 @@ Type: dirifempty; Name: "{app}"
 ; ============================================================================
 [Messages]
 WelcomeLabel1=Bienvenido a la instalación de Panel Control GITSE
-WelcomeLabel2=Este programa instalará Panel Control GITSE v2.0.0 en su equipo.%n%nPanel Control GITSE es un sistema profesional de control y monitoreo de cabinas.%n%nSe recomienda cerrar todas las aplicaciones antes de continuar.
+WelcomeLabel2=Este programa instalará Panel Control GITSE v2.0.0 en su equipo.%n%nPanel Control GITSE es un sistema profesional de control y monitoreo de cabinas.%n%nLa aplicación se instalará en su carpeta de usuario para garantizar permisos de escritura completos.%n%nSe recomienda cerrar todas las aplicaciones antes de continuar.
 FinishedHeadingLabel=Instalación completada
 FinishedLabelNoIcons=La instalación de Panel Control GITSE se ha completado correctamente.
 FinishedLabel=La instalación de Panel Control GITSE se ha completado correctamente. La aplicación se iniciará automáticamente.
 ClickFinish=Haga clic en "Finalizar" para cerrar el instalador.
-SelectDirLabel3=El instalador copiará los archivos de Panel Control GITSE en la siguiente carpeta.
+SelectDirLabel3=El instalador copiará los archivos de Panel Control GITSE en la siguiente carpeta de usuario.
 SelectGroupLabel=Seleccione una carpeta del Menú Inicio en la que crear los accesos directos del programa.
 SelectStartMenuFolder=Seleccionar Carpeta del Menú Inicio
 
@@ -132,14 +144,46 @@ SelectStartMenuFolder=Seleccionar Carpeta del Menú Inicio
 ; ============================================================================
 [Code]
 function InitializeSetup(): Boolean;
+var
+  WwwrootPath: String;
 begin
-  { Aquí puedes añadir validaciones antes de la instalación }
-  { Por ejemplo, verificar .NET Framework, etc. }
+  { Verificar que exista la carpeta wwwroot }
+  WwwrootPath := ExpandConstant('{#SourcePath}\dist\wwwroot');
+  
+  if not DirExists(WwwrootPath) then
+  begin
+    MsgBox('Error: La carpeta wwwroot no existe en dist.' + #13#10 + #13#10 + 
+           'Por favor ejecuta primero:' + #13#10 + 
+           '1. cd BTN\app\Frontend' + #13#10 +
+           '2. npm run build' + #13#10 +
+           '3. cd BTN\installer' + #13#10 +
+           '4. .\build-installer.ps1', 
+           mbError, MB_OK);
+    Result := False;
+    Exit;
+  end;
+  
+  { Continuar con la instalación }
   Result := True;
 end;
 
 function InitializeUninstall(): Boolean;
+var
+  LogsPath: String;
+  ResultCode: Integer;
 begin
-  { Aquí puedes añadir lógica antes de desinstalar }
+  { Preguntar si desea conservar los logs }
+  LogsPath := ExpandConstant('{app}\Logs');
+  
+  if DirExists(LogsPath) then
+  begin
+    if MsgBox('¿Desea conservar los archivos de registro (logs)?', 
+              mbConfirmation, MB_YESNO) = IDNO then
+    begin
+      { Eliminar carpeta Logs }
+      DelTree(LogsPath, True, True, True);
+    end;
+  end;
+  
   Result := True;
 end;

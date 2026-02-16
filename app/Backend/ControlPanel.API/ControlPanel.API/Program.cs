@@ -11,8 +11,16 @@
 using ControlPanel.API.Interfaces;
 using ControlPanel.API.Services;
 using ControlPanel.API.Bluetooth;
+using ControlPanel.API.Helpers;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+
+// Inicializar FileLogger y mostrar ubicación del archivo de log
+var logPath = FileLogger.GetLogFilePath();
+Console.WriteLine("=".PadRight(70, '='));
+Console.WriteLine($"LOG FILE: {logPath ?? "DISABLED"}");
+Console.WriteLine("=".PadRight(70, '='));
+FileLogger.Log("ControlPanel.API iniciando...");
 
 var builder = WebApplication.CreateBuilder(args);
 
