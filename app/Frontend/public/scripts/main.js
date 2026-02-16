@@ -1202,42 +1202,92 @@ async function createSheet4Data() {
 
     data.push(["DATOS BIOMÉTRICOS"]);
     data.push([]);
-    data.push(["PPM (Pulsos Por Minuto)","","","Sp02 (Oxigenación)","","","°C (Temperatura)","","", "mmHg (Tensión Arterial)"]);
+    data.push(["PPM (Pulsos Por Minuto)","","","SpO2 (Oxigenación)","","","°C (Temperatura)","","", "mmHg (Tensión Arterial)"]);
     data.push(["Hora","Medición","", "Hora","Medición","", "Hora","Medición","", "Hora","Medición Alta","Medición Baja"]);
-    // Obtener historial biométrico
-    //const biometricHistory = await getBiometricHistory();
+    
+    try {
+        // Obtener historial biométrico del backend
+        const biometricHistory = await fetchBiometricHistory(50); // Últimas 50 mediciones
+        
+        if (!biometricHistory || biometricHistory.length === 0) {
+            data.push(["Sin datos biométricos disponibles"]);
+            return data;
+        }
 
-    // if (biometricHistory && biometricHistory.length > 0) {
-    //     data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Presión Arterial", "Fecha y Hora"]);
+        // Separar los datos por tipo de medición
+        const pulseData = [];
+        const oxygenData = [];
+        const temperatureData = [];
+        const bloodPressureData = [];
+
+        biometricHistory.forEach(record => {
+            const timestamp = record.timestamp 
+                ? new Date(record.timestamp).toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                })
+                : "-";
+            
+            if (record.pulseBpm !== null && record.pulseBpm !== undefined) {
+                pulseData.push({ time: timestamp, value: record.pulseBpm });
+            }
+            
+            if (record.spO2 !== null && record.spO2 !== undefined) {
+                oxygenData.push({ time: timestamp, value: record.spO2 });
+            }
+            
+            if (record.temperatureC !== null && record.temperatureC !== undefined) {
+                temperatureData.push({ time: timestamp, value: record.temperatureC });
+            }
+            
+            if (record.systolic !== null && record.systolic !== undefined) {
+                bloodPressureData.push({ 
+                    time: timestamp, 
+                    systolic: record.systolic,
+                    diastolic: record.diastolic || "-"
+                });
+            }
+        });
+
+        // Encontrar el máximo número de filas necesarias
+        const maxRows = Math.max(
+            pulseData.length,
+            oxygenData.length,
+            temperatureData.length,
+            bloodPressureData.length
+        );
+
+        // Construir las filas con datos en columnas paralelas
+        for (let i = 0; i < maxRows; i++) {
+            const row = [
+                // Pulso
+                pulseData[i]?.time || "",
+                pulseData[i]?.value || "",
+                "", // Espacio vacío
+                // Oxigenación
+                oxygenData[i]?.time || "",
+                oxygenData[i]?.value || "",
+                "", // Espacio vacío
+                // Temperatura
+                temperatureData[i]?.time || "",
+                temperatureData[i]?.value || "",
+                "", // Espacio vacío
+                // Presión Arterial
+                bloodPressureData[i]?.time || "",
+                bloodPressureData[i]?.systolic || "",
+                bloodPressureData[i]?.diastolic || ""
+            ];
+            data.push(row);
+        }
+
+        console.log(`[Excel Export] ✅ Datos biométricos cargados: ${biometricHistory.length} registros`);
         
-    //     // Filter records by cabina if cabina data is available in records
-    //     // Currently biometricHistory contains all data; filter if 'cabina' field exists in records
-    //     const filteredHistory = biometricHistory.filter(record => {
-    //         // If record has cabina field, filter by it; otherwise include all
-    //         if (record.cabina) {
-    //             return record.cabina === cabinaCode;
-    //         }
-    //         return true; // Include if no cabina field
-    //     });
-        
-    //     filteredHistory.forEach(record => {
-    //         const bp = record.systolic && record.diastolic ? `${record.systolic}/${record.diastolic}` : "-";
-    //         const timestamp = new Date(record.timestamp).toLocaleString('es-ES') || "-";
-    //         data.push([
-    //             record.pulseBpm || "-",
-    //             record.spO2 || "-",
-    //             record.temperatureC || "-",
-    //             bp,
-    //             timestamp
-    //         ]);
-    //     });
-        
-    //     // if (filteredHistory.length === 0) {
-    //     //     data.push([`Sin datos biométricos disponibles para ${cabinaCode}`]);
-    //     // }
-    // } else {
-    //     data.push(["Sin datos biométricos disponibles"]);
-    // }
+    } catch (error) {
+        console.error("[Excel Export] ❌ Error al obtener datos biométricos:", error);
+        data.push(["Error al cargar datos biométricos"]);
+    }
 
     return data;
 }

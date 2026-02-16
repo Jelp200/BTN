@@ -4,8 +4,8 @@
 ; ============================================================================
 AppId={{GITSE-PANELCONTROL-2025}}
 AppName=Panel Control GITSE
-AppVersion=1.0.0
-AppVerName=Panel Control GITSE v1.0.0
+AppVersion=2.0.0
+AppVerName=Panel Control GITSE v2.0.0
 AppPublisher=GRADUS TECHNOLOGIES
 AppPublisherURL=https://www.gradus.com
 AppSupportURL=https://www.gradus.com/soporte
@@ -20,7 +20,7 @@ DefaultDirName={pf}\PanelControlGITSE
 DefaultGroupName=GRADUS TECHNOLOGIES\Panel Control GITSE
 AllowNoIcons=yes
 OutputDir=Output
-OutputBaseFilename=PanelControlGITSE-v1.0.0-Instalador
+OutputBaseFilename=PanelControlGITSE-v2.0.0-Instalador
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -28,7 +28,7 @@ WizardSizePercent=100
 PrivilegesRequired=none
 ArchitecturesInstallIn64BitMode=x64
 MinVersion=6.1
-VersionInfoVersion=1.0.0.0
+VersionInfoVersion=2.0.0.0
 VersionInfoCompany=GRADUS TECHNOLOGIES
 VersionInfoDescription=Sistema de Control de Cabinas GITSE
 VersionInfoCopyright=© 2025 GRADUS TECHNOLOGIES
@@ -118,7 +118,7 @@ Type: dirifempty; Name: "{app}"
 ; ============================================================================
 [Messages]
 WelcomeLabel1=Bienvenido a la instalación de Panel Control GITSE
-WelcomeLabel2=Este programa instalará Panel Control GITSE v1.0.0 en su equipo.%n%nPanel Control GITSE es un sistema profesional de control y monitoreo de cabinas.%n%nSe recomienda cerrar todas las aplicaciones antes de continuar.
+WelcomeLabel2=Este programa instalará Panel Control GITSE v2.0.0 en su equipo.%n%nPanel Control GITSE es un sistema profesional de control y monitoreo de cabinas.%n%nSe recomienda cerrar todas las aplicaciones antes de continuar.
 FinishedHeadingLabel=Instalación completada
 FinishedLabelNoIcons=La instalación de Panel Control GITSE se ha completado correctamente.
 FinishedLabel=La instalación de Panel Control GITSE se ha completado correctamente. La aplicación se iniciará automáticamente.
