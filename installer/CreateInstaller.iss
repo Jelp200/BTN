@@ -36,9 +36,9 @@ VersionInfoCopyright=© 2025 GRADUS TECHNOLOGIES
 ; ============================================================================
 ; Apariencia del Instalador
 ; ============================================================================
-;SetupIconFile=app.ico
-;WizardImageFile=installer-logo.bmp
-;WizardSmallImageFile=installer-small.bmp
+SetupIconFile=app.ico
+WizardImageFile=installer-logo.bmp
+WizardSmallImageFile=installer-small.bmp
 DisableWelcomePage=no
 DisableProgramGroupPage=no
 UninstallDisplayIcon={app}\HostApp.exe
