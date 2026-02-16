@@ -1140,20 +1140,50 @@ async function createSheet2Data() {
 
 // Sheet 3: Sensores de cabina seleccionada
 async function createSheet3Data(cabinaCode) {
-    const data = [];
+    
+    const response = await fetch(
+        `http://localhost:5000/api/serial/datos/${cabinaCode}`,
+    );
 
+    if (!response.ok) {
+        console.error(
+            `❌ Error al obtener datos de ${cabinaCode}:`,
+            response.status,
+        );
+        return;
+    };
+
+    const dataSensores = await response.json();
+
+    const data = [];
+    const getTime = (ts) => ts ? new Date(ts).toTimeString().slice(0,8) : "Sin hora";
     data.push(["DATOS DE SENSORES"]);
     data.push([]);
-    // Map cabinaCode to display name
-    const cabinaName = cabinaCode === "C1" ? "CABINA 1" : "CABINA 2";
-    const cabinaNumero = cabinaCode === "C1" ? "1" : "2";
-    data.push(["Carácter de inicio", "Número de cabina", "Acelerometro","Acelerometro","Acelerometro","Temperatura","Humedad","Luz UV","Calidad del aire", "Sonido"]);
-    data.push(["C", cabinaNumero, "X: #String/flotante","Y: #String/flotante","Z: #String/flotante","T: #String/flotante","UV: #String/flotante", "CO2: #String/flotante","O3: #String/flotante","db: #String/flotante"]);
+    data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","O3 (PPB)","Db"]);
     
-    data.push([]);
-    data.push([]);
-    data.push([cabinaName]);
-    data.push(["Sensor", "Última Lectura", "Unidad"]);
+    // MAPEAR TODOS LOS OBJETOS DEL ARRAY
+    dataSensores.forEach((lectura) => {
+        // Verificar que la lectura existe
+        if (!lectura) return;
+        //Formateo de tiempo
+        const tiempo = getTime(lectura.timestamp);
+        // Crear una fila con todos los valores de esta lectura
+        const fila = [
+            tiempo,
+            lectura.cabina,
+            lectura.x,
+            lectura.y,
+            lectura.z,
+            lectura.t,
+            lectura.h,
+            lectura.uv,
+            lectura.cO2,
+            lectura.o3,
+            lectura.dB
+        ];
+        
+        data.push(fila);
+    });
     
     const sensorData = await getSensorData(cabinaCode);
     Object.entries(sensorData).forEach(([sensor, value]) => {
