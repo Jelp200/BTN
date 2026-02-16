@@ -1065,7 +1065,11 @@ async function createSheet1Data() {
 
 // Sheet 2: Controles y Logs del sistema
 async function createSheet2Data() {
-    const estado = 'ENVIADA';
+    //Estado extraido del DOM
+    const elemento = document.getElementById('estado-cabina');
+    const textoEstado = elemento?.textContent?.trim() || '';
+    const estado = textoEstado === 'INACTIVA' ? 'PENDIENTE' : 'ENVIADA';
+
     const data = [];
 
     // Obtener el botón que fue clickeado y su panel contenedor
