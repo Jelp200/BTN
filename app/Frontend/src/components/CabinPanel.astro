@@ -1,6 +1,12 @@
 ---
 //* CabinPanel.astro *//
 
+/* Props */
+interface Props {
+    panelNumber: number;
+}
+const { panelNumber } = Astro.props;
+
 /* Imports de componentes del panel generales */
 import WindowsAndSelectorsButtons from "./panel/WindowsAndSelectorsButtons.astro";
 
@@ -14,7 +20,7 @@ import BiometriaSection from "./panel/biometria/BiometriaSection.astro";
 
 <div class="panel-container w-full bg-[#efefef] shadow-lg rounded-lg p-4">
     <!-- Botones de Ventanas y Selectores -->
-    <WindowsAndSelectorsButtons />
+    <WindowsAndSelectorsButtons panelNumber={panelNumber} />
     
     <!-- Contenido de la pestaña "Controles" -->
     <div class="tab-content" data-tab-content="controles">

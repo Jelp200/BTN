@@ -1,5 +1,14 @@
 ---
 //* WindowsAndSelectorsButtons.astro *//
+
+/* Props */
+interface Props {
+    panelNumber: number;
+}
+const { panelNumber } = Astro.props;
+
+// Panel 1 = Cabina 1 por defecto, Panel 2 = Cabina 2 por defecto
+const defaultCabin = panelNumber === 2 ? 2 : 1;
 ---
 
 <div class="flex flex-col gap-2 mb-3">
@@ -50,8 +59,8 @@
                 class="select-style px-3 py-1 text-sm text-black bg-white border border-[#a6a6a6] rounded-lg"
                 data-select="cabina"
             >
-                <option>Cabina 1</option>
-                <option>Cabina 2</option>
+                <option selected={defaultCabin === 1}>Cabina 1</option>
+                <option selected={defaultCabin === 2}>Cabina 2</option>
             </select>
         </div>
     </div>

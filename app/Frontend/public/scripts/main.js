@@ -164,6 +164,17 @@ async function escanearPuertosCOM() {
             option.textContent = port;
             selector.appendChild(option);
         });
+
+        // Auto-reconexión: verificar si hay un puerto guardado
+        const puertoGuardado = localStorage.getItem("lastConnectedPort");
+        if (puertoGuardado && puertos.includes(puertoGuardado)) {
+            console.log(`[Auto-reconexión] Puerto guardado encontrado: ${puertoGuardado}`);
+            selector.value = puertoGuardado;
+            // Conectar automáticamente después de un breve delay
+            setTimeout(() => {
+                conectarPuertoSerial();
+            }, 500);
+        }
     } catch (err) {
         console.error("Error al escanear puertos:", err);
         alert("Error al escanear puertos desde backend.");
@@ -188,6 +199,10 @@ async function conectarPuertoSerial() {
 
         const mensaje = await response.text();
         mostrarNotificacion(mensaje, "real");
+
+        // Guardar el puerto conectado en localStorage
+        localStorage.setItem("lastConnectedPort", port);
+        console.log(`[Auto-reconexión] Puerto guardado: ${port}`);
 
         // Mostrar botón de desconectar
         const btnConnect = document.getElementById("btn-connect-com");
@@ -230,6 +245,10 @@ async function desconectarPuertoSerial() {
 
         const mensaje = await response.text();
         mostrarNotificacion(mensaje, "real");
+
+        // Limpiar el puerto guardado al desconectar manualmente
+        localStorage.removeItem("lastConnectedPort");
+        console.log("[Auto-reconexión] Puerto guardado eliminado (desconexión manual)");
 
         // Actualizar estado visual de los botones
         const btnConnect = document.getElementById("btn-connect-com");
@@ -2162,11 +2181,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Selector de cabina por panel
         const selectCabina = panel.querySelector("[data-select='cabina']");
-        let cabinaPrefijo = "C1"; // Valor inicial por panel
+        // Leer el valor inicial del selector (puede ser "Cabina 1" o "Cabina 2" según el panel)
+        let cabinaPrefijo = selectCabina?.value === "Cabina 2" ? "C2" : "C1";
 
         let ledActivo = null;
 
         if (selectCabina) {
+            // Sincronizar con el valor inicial del selector
+            console.log(
+                `Panel ${index + 1}: Cabina inicial: ${cabinaPrefijo} (selector: ${selectCabina.value})`
+            );
+            
             selectCabina.addEventListener("change", () => {
                 cabinaPrefijo =
                     selectCabina.value === "Cabina 1" ? "C1" : "C2";
@@ -2479,48 +2504,77 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (btnIniciar && estadoCabina) {
-            function actualizarEstadoBotonIniciar() {
-                const activo = puertoSerialConectado;
-                btnIniciar.disabled = !activo;
-                btnIniciar.classList.toggle("opacity-50", !activo);
-                btnIniciar.classList.toggle("cursor-not-allowed", !activo);
-                btnIniciar.title = activo
-                    ? ""
-                    : "Conecte un puerto COM para iniciar la cabina";
+            function actualizarEstadoBotones() {
+                const puertoConectado = puertoSerialConectado;
+                
+                // Botón ACTIVAR CABINA
+                // Solo se habilita si: puerto conectado Y cabina NO activa
+                const puedeActivar = puertoConectado && !cabinaActiva;
+                btnIniciar.disabled = !puedeActivar;
+                btnIniciar.classList.toggle("opacity-50", !puedeActivar);
+                btnIniciar.classList.toggle("cursor-not-allowed", !puedeActivar);
+                
+                if (!puertoConectado) {
+                    btnIniciar.title = "Conecte un puerto COM para iniciar la cabina";
+                } else if (cabinaActiva) {
+                    btnIniciar.title = "La cabina ya está activa";
+                } else {
+                    btnIniciar.title = "";
+                }
 
-                // También actualizamos el botón de reset
+                // Botón PARAR Y RESET
+                // Solo se habilita si: puerto conectado Y cabina activa
                 if (btnReset) {
-                    btnReset.disabled = !activo;
-                    btnReset.classList.toggle("opacity-50", !activo);
-                    btnReset.classList.toggle(
-                        "cursor-not-allowed",
-                        !activo,
-                    );
-                    btnReset.title = activo
-                        ? ""
-                        : "Conecte un puerto COM para usar esta función";
+                    const puedeResetear = puertoConectado && cabinaActiva;
+                    btnReset.disabled = !puedeResetear;
+                    btnReset.classList.toggle("opacity-50", !puedeResetear);
+                    btnReset.classList.toggle("cursor-not-allowed", !puedeResetear);
+                    
+                    if (!puertoConectado) {
+                        btnReset.title = "Conecte un puerto COM para usar esta función";
+                    } else if (!cabinaActiva) {
+                        btnReset.title = "Primero debe activar la cabina";
+                    } else {
+                        btnReset.title = "";
+                    }
                 }
             }
 
             // Escuchar cambios globales de conexión
             window.addEventListener("puertoConectado", () => {
                 puertoSerialConectado = true;
-                actualizarEstadoBotonIniciar();
+                actualizarEstadoBotones();
             });
 
             window.addEventListener("puertoDesconectado", () => {
                 puertoSerialConectado = false;
-                actualizarEstadoBotonIniciar();
+                actualizarEstadoBotones();
             });
 
             // Llamada inicial
-            actualizarEstadoBotonIniciar();
+            actualizarEstadoBotones();
 
             btnIniciar.addEventListener("click", () => {
                 cabinaActiva = true; // ✅ ACTIVAMOS la cabina
-                estadoCabina.classList.remove("bg-[#ff5757]");
+                
+                // Remover ambos tonos de rojo que pueden existir
+                estadoCabina.classList.remove("bg-[#ff5757]", "bg-[#ff4d4d]");
                 estadoCabina.classList.add("bg-[#00bf63]");
-                estadoCabina.textContent = "ACTIVA";
+                estadoCabina.textContent = "";
+                
+                // Mantener el icono visible
+                const iconoEstado = estadoCabina.querySelector("img");
+                if (!iconoEstado) {
+                    const img = document.createElement("img");
+                    img.src = "/icons/active-inactive.svg";
+                    img.alt = "Estado";
+                    img.className = "w-5 h-5";
+                    estadoCabina.appendChild(img);
+                }
+                estadoCabina.appendChild(document.createTextNode(" ACTIVA"));
+
+                // Actualizar estado de botones
+                actualizarEstadoBotones();
 
                 mostrarNotificacion("🚀 Cabina iniciada", "real");
             });
@@ -2529,11 +2583,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Botón Parar y Reset - Reinicia todo
         if (btnReset && estadoCabina) {
             btnReset.addEventListener("click", async () => {
-                if (
-                    !puertoSerial ||
-                    !puertoSerial.readable ||
-                    !puertoSerial.writable
-                ) {
+                if (!puertoSerialConectado) {
                     alert(
                         "⚠️ No hay un puerto COM conectado. No se puede reiniciar la cabina.",
                     );
@@ -2542,8 +2592,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 estadoCabina.classList.remove("bg-[#00bf63]");
                 estadoCabina.classList.add("bg-[#ff4d4d]");
-                estadoCabina.textContent = "INACTIVA";
+                
+                // Mantener el icono visible
+                estadoCabina.textContent = "";
+                const iconoEstado = document.createElement("img");
+                iconoEstado.src = "/icons/active-inactive.svg";
+                iconoEstado.alt = "Estado";
+                iconoEstado.className = "w-5 h-5";
+                estadoCabina.appendChild(iconoEstado);
+                estadoCabina.appendChild(document.createTextNode(" INACTIVA"));
+                
                 cabinaActiva = false;
+
+                // Resetear indicador de humo a rojo (no listo)
+                if (estadoHumo) {
+                    estadoHumo.style.backgroundColor = "#ff4d4d";
+                }
 
                 // Enviar tramas de apagado para todos los LEDs activos
                 if (ledActivo) {
@@ -2580,6 +2644,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Reiniciar estado de calor
                 estadoCalor = "off";
                 actualizarLedCalor(panel, "off");
+
+                // Resetear temporizador de humo
+                if (intervalo) {
+                    clearInterval(intervalo);
+                    intervalo = null;
+                }
+                temporizadorActivo = false;
+                tiempoRestante = 300;
+                if (tiempoMostrado) {
+                    tiempoMostrado.textContent = "05:00";
+                }
+                if (temporizadorBtnText) {
+                    temporizadorBtnText.textContent = "Iniciar 5 min";
+                }
+                humoActivado = false;
+
+                // Desactivar botón de humo visualmente
+                if (botonHumo) {
+                    botonHumo.classList.remove("bg-[#00bf63]");
+                    botonHumo.classList.add("bg-[#d9d9d9]");
+                    botonHumo.setAttribute("aria-pressed", "false");
+                }
+
+                // Desactivar botón de disparo visualmente
+                if (botonDisparo) {
+                    botonDisparo.classList.remove("bg-[#00bf63]");
+                    botonDisparo.classList.add("bg-[#d9d9d9]");
+                }
 
                 // Enviar trama STOP (038) a ambos paneles
                 const panels =
@@ -2634,8 +2726,49 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // Limpiar estado de sonido
-                const cabinaSeleccionada = cabinaSelector.value;
+                const cabinaSeleccionada = selectCabina.value;
                 sonidoActivoPorCabina[cabinaSeleccionada] = null;
+                reproduciendoPorCabina[cabinaSeleccionada] = false;
+                volumenPorCabina[cabinaSeleccionada] = 0;
+
+                // Resetear barra de volumen visual
+                actualizarBarraVolumen(panel, 0);
+
+                // Resetear botón PLAY de este panel
+                const btnPlay = panel.querySelector("[data-sound-codigo='PLAY']");
+                if (btnPlay) {
+                    btnPlay.classList.remove("bg-[#00bf63]", "text-white");
+                    btnPlay.classList.add("bg-[#d9d9d9]");
+                }
+
+                // Limpiar todos los botones de sonido activos
+                const sonidosButtons = panel.querySelectorAll(".sound-btn");
+                sonidosButtons.forEach((btn) => {
+                    btn.classList.remove("bg-[#00bf63]", "text-white");
+                    btn.classList.add("bg-[#efefef]");
+                    const iconoSonando = btn.querySelector(".text-green-800");
+                    if (iconoSonando) {
+                        iconoSonando.classList.add("hidden");
+                    }
+                });
+
+                // Detener gráficas biométricas si existen
+                if (typeof window.stopBiometricCharts === "function") {
+                    window.stopBiometricCharts();
+                }
+
+                // Limpiar datos biométricos acumulados
+                if (window.biometricChartData) {
+                    window.biometricChartData = {
+                        pulse: [],
+                        oxygen: [],
+                        temperature: [],
+                        glucose: [],
+                    };
+                }
+
+                // Actualizar estado de botones
+                actualizarEstadoBotones();
 
                 alert("Sistema detenido. Todo ha sido reiniciado.");
             });
@@ -2677,6 +2810,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             actualizarEstadoBotonHumo(false);
 
+            // Resetear indicador de humo a rojo (no listo)
+            if (estadoHumo) {
+                estadoHumo.style.backgroundColor = "#ff4d4d";
+            }
+
             // Solo enviar trama si se indica
             if (enviarTramaAlDesactivar) {
                 enviarTramaHumo(false); // Enviar trama OFF
@@ -2705,6 +2843,11 @@ document.addEventListener("DOMContentLoaded", () => {
             actualizarEstadoBotonHumo(true);
             enviarTramaHumo(true);
 
+            // Poner indicador en rojo (calentando, no listo)
+            if (estadoHumo) {
+                estadoHumo.style.backgroundColor = "#ff4d4d";
+            }
+
             tiempoRestante = 300; // 5 minutos
             tiempoMostrado.textContent = formatearTiempo(tiempoRestante);
 
@@ -2721,6 +2864,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     intervalo = null;
                     temporizadorActivo = false;
                     actualizarEstadoBoton();
+
+                    // Cambiar indicador de humo a verde (listo)
+                    if (estadoHumo) {
+                        estadoHumo.style.backgroundColor = "#00bf63";
+                    }
 
                     // ⚠️ No se desactiva el humo ni se envía OFF
                     // Solo se notifica que está lista
@@ -2789,22 +2937,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 humoActivado = !humoActivado;
 
                 if (humoActivado) {
-                    estadoHumo.classList.remove(
-                        "bg-[#ff5757]",
-                        "opacity-50",
-                    );
-                    estadoHumo.classList.add("bg-[#00bf63]", "opacity-100");
+                    // Activar botón DISPARO visualmente (verde)
+                    botonDisparo.classList.remove("bg-[#d9d9d9]");
+                    botonDisparo.classList.add("bg-[#00bf63]");
+                    
+                    // El botón DISPARO activa/desactiva la salida de humo
+                    // pero NO cambia el indicador "Humo Listo"
                     enviarTrama(
                         cabinaPrefijo,
                         codigoBoton.DISPARO.on,
                         cabinaActiva,
                     );
                 } else {
-                    estadoHumo.classList.remove(
-                        "bg-[#00bf63]",
-                        "opacity-100",
-                    );
-                    estadoHumo.classList.add("bg-[#ff5757]", "opacity-50");
+                    // Desactivar botón DISPARO visualmente (gris)
+                    botonDisparo.classList.remove("bg-[#00bf63]");
+                    botonDisparo.classList.add("bg-[#d9d9d9]");
+                    
                     enviarTrama(
                         cabinaPrefijo,
                         codigoBoton.DISPARO.off,

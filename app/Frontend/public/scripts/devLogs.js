@@ -36,6 +36,19 @@ if (typeof document !== 'undefined') {
         
         // Actualizar estado global
         window.isDevModeActive = !window.isDevModeActive;
+        
+        // Habilitar/deshabilitar selectores de cabina
+        const selectoresCabina = document.querySelectorAll('[data-select="cabina"]');
+        selectoresCabina.forEach(selector => {
+            selector.disabled = !window.isDevModeActive;
+            if (window.isDevModeActive) {
+                selector.classList.remove("opacity-50", "cursor-not-allowed");
+                selector.title = "";
+            } else {
+                selector.classList.add("opacity-50", "cursor-not-allowed");
+                selector.title = "Modo desarrollador requerido (gitsdev)";
+            }
+        });
     }
     
     // ===============================
@@ -49,12 +62,19 @@ if (typeof document !== 'undefined') {
     });
     
     // ===============================
-    // Proteger tecla F12 (Developer Tools)
+    // Proteger tecla F12 y Ctrl+Shift+I (Developer Tools)
     // ===============================
     document.addEventListener("keydown", (e) => {
-        // Si dev mode no está activo, prevenir F12
-        if (!window.isDevModeActive && e.key === "F12") {
-            e.preventDefault();
+        // Si dev mode no está activo, prevenir F12 y Ctrl+Shift+I
+        if (!window.isDevModeActive) {
+            // F12
+            if (e.key === "F12") {
+                e.preventDefault();
+            }
+            // Ctrl+Shift+I (Windows/Linux) o Cmd+Option+I (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "i") {
+                e.preventDefault();
+            }
         }
     });
 
@@ -62,6 +82,14 @@ if (typeof document !== 'undefined') {
     // DOM Ready
     // ===============================
     document.addEventListener("DOMContentLoaded", () => {
+        // Deshabilitar selectores de cabina por defecto
+        const selectoresCabina = document.querySelectorAll('[data-select="cabina"]');
+        selectoresCabina.forEach(selector => {
+            selector.disabled = true;
+            selector.classList.add("opacity-50", "cursor-not-allowed");
+            selector.title = "Modo desarrollador requerido (gitsdev)";
+        });
+        
         const btnToggleSent = document.getElementById("btn-toggle-sent");
         const btnToggleReceived = document.getElementById("btn-toggle-received");
 
