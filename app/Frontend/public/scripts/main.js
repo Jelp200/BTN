@@ -1065,12 +1065,12 @@ async function createSheet1Data() {
 
 // Sheet 2: Controles y Logs del sistema
 async function createSheet2Data() {
+    const estado = 'ENVIADA';
     const data = [];
 
     // Obtener el botón que fue clickeado y su panel contenedor
     const btnExport = event.currentTarget;
     const panelContainer = btnExport.closest(".panel-container");
-        
     // Buscar el selector de cabina dentro del MISMO panel
     const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
     const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
@@ -1086,19 +1086,9 @@ async function createSheet2Data() {
 
     // Obtener los logs enviados y filtrar por controles
     const sentLogs = getLogsSent();
-    
     // Procesar cada log para extraer informacion de control
     sentLogs.map(log => {
-        // Buscar patrones de control en el mensaje
         const message = log.message;
-        // Detectar estado: PENDIENTE o ENVIADA
-        let estado = "PENDIENTE";
-        if (message.includes("[PENDIENTE]")) {
-            estado = "PENDIENTE";
-        } else if (message.includes("[ENVIADA]")) {
-            estado = "ENVIADA";
-        };
-
         // Verificamos inicio de trama (C1 O C2) y validamos cabina (C1 O C2)
         if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C1') {
             return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
@@ -1156,7 +1146,21 @@ async function createSheet3Data(cabinaCode) {
     const dataSensores = await response.json();
 
     const data = [];
-    const getTime = (ts) => ts ? new Date(ts).toTimeString().slice(0,8) : "Sin hora";
+
+    const getTiempo = (ts) => {
+    
+    const d = new Date(ts);
+    let h = d.getHours();
+    const m = d.getMinutes().toString().padStart(2, '0');
+    const s = d.getSeconds().toString().padStart(2, '0');
+    const ampm = h >= 12 ? 'p.m.' : 'a.m.';
+    
+    h = h % 12 || 12;
+    const hStr = h.toString().padStart(2, '0');
+    
+    return `${hStr}:${m}:${s} ${ampm}`;
+};
+
     data.push(["DATOS DE SENSORES"]);
     data.push([]);
     data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","O3 (PPB)","Db"]);
@@ -1166,7 +1170,7 @@ async function createSheet3Data(cabinaCode) {
         // Verificar que la lectura existe
         if (!lectura) return;
         //Formateo de tiempo
-        const tiempo = getTime(lectura.timestamp);
+        const tiempo = getTiempo(lectura.timestamp);
         // Crear una fila con todos los valores de esta lectura
         const fila = [
             tiempo,
