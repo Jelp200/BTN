@@ -1204,6 +1204,20 @@ async function createSheet3Data(cabinaCode) {
 async function createSheet4Data() {
     const data = [];
 
+    // Función para formatear timestamp a formato 12 horas
+    const getTiempo = (ts) => {
+        const d = new Date(ts);
+        let h = d.getHours();
+        const m = d.getMinutes().toString().padStart(2, '0');
+        const s = d.getSeconds().toString().padStart(2, '0');
+        const ampm = h >= 12 ? 'p.m.' : 'a.m.';
+        
+        h = h % 12 || 12;
+        const hStr = h.toString().padStart(2, '0');
+        
+        return `${hStr}:${m}:${s} ${ampm}`;
+    };
+
     data.push(["DATOS BIOMÉTRICOS"]);
     data.push([]);
     data.push(["PPM (Pulsos Por Minuto)","","","SpO2 (Oxigenación)","","","°C (Temperatura)","","", "mmHg (Tensión Arterial)"]);
@@ -1218,6 +1232,9 @@ async function createSheet4Data() {
             return data;
         }
 
+        console.log("[Excel Export] Datos biométricos recibidos:", biometricHistory.length, "registros");
+        console.log("[Excel Export] Primer registro:", biometricHistory[0]);
+
         // Separar los datos por tipo de medición
         const pulseData = [];
         const oxygenData = [];
@@ -1225,14 +1242,8 @@ async function createSheet4Data() {
         const bloodPressureData = [];
 
         biometricHistory.forEach(record => {
-            const timestamp = record.timestamp 
-                ? new Date(record.timestamp).toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true
-                })
-                : "-";
+            // El campo correcto es timestampUtc, no timestamp
+            const timestamp = record.timestampUtc ? getTiempo(record.timestampUtc) : "-";
             
             if (record.pulseBpm !== null && record.pulseBpm !== undefined) {
                 pulseData.push({ time: timestamp, value: record.pulseBpm });
