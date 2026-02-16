@@ -34,19 +34,58 @@ namespace ControlPanel.API.Controllers
         [HttpPost("connect")]
         public async Task<IActionResult> Connect([FromBody] SmartwatchConnectRequest? request)
         {
-            var deviceName = string.IsNullOrWhiteSpace(request?.DeviceName) ? "ET570" : request.DeviceName.Trim();
-            var timeout = request?.ScanTimeoutMs is > 0 ? request.ScanTimeoutMs.Value : 15000;
-
-            var result = await _smartwatchService.ConnectAsync(deviceName, timeout, HttpContext.RequestAborted);
-
-            var response = new SmartwatchConnectResponse
+            try
             {
-                Success = result.Success,
-                Message = result.Message,
-                Device = result.Device
-            };
+                Console.WriteLine($"[SmartwatchController] Iniciando conexión. Request recibido: DeviceName={request?.DeviceName}, Timeout={request?.ScanTimeoutMs}");
 
-            return result.Success ? Ok(response) : BadRequest(response);
+                var deviceName = string.IsNullOrWhiteSpace(request?.DeviceName) ? "ET570" : request.DeviceName.Trim();
+                var timeout = request?.ScanTimeoutMs is > 0 ? request.ScanTimeoutMs.Value : 15000;
+
+                Console.WriteLine($"[SmartwatchController] Parámetros procesados: DeviceName={deviceName}, Timeout={timeout}");
+
+                if (_smartwatchService == null)
+                {
+                    Console.WriteLine("[SmartwatchController] ERROR: _smartwatchService es null!");
+                    return StatusCode(500, new SmartwatchConnectResponse
+                    {
+                        Success = false,
+                        Message = "Error interno: El servicio de smartwatch no está inicializado.",
+                        Device = null
+                    });
+                }
+
+                Console.WriteLine("[SmartwatchController] Llamando a ConnectAsync...");
+                var result = await _smartwatchService.ConnectAsync(deviceName, timeout, HttpContext.RequestAborted);
+                Console.WriteLine($"[SmartwatchController] ConnectAsync completado. Success={result.Success}, Message={result.Message}");
+
+                var response = new SmartwatchConnectResponse
+                {
+                    Success = result.Success,
+                    Message = result.Message,
+                    Device = result.Device
+                };
+
+                return result.Success ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SmartwatchController] EXCEPCIÓN NO MANEJADA: {ex.GetType().Name}");
+                Console.WriteLine($"[SmartwatchController] Mensaje: {ex.Message}");
+                Console.WriteLine($"[SmartwatchController] StackTrace: {ex.StackTrace}");
+                
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"[SmartwatchController] InnerException: {ex.InnerException.GetType().Name}");
+                    Console.WriteLine($"[SmartwatchController] InnerException Message: {ex.InnerException.Message}");
+                }
+
+                return StatusCode(500, new SmartwatchConnectResponse
+                {
+                    Success = false,
+                    Message = $"Error no controlado: {ex.Message}",
+                    Device = null
+                });
+            }
         }
 
         [HttpPost("disconnect")]

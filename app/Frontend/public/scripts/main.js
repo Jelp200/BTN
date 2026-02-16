@@ -2602,12 +2602,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        if (btnIniciar && estadoCabina) {
-            function actualizarEstadoBotones() {
-                const puertoConectado = puertoSerialConectado;
-                
-                // Botón ACTIVAR CABINA
-                // Solo se habilita si: puerto conectado Y cabina NO activa
+        // Función para actualizar estado de botones (ACTIVAR y RESET)
+        // Definida fuera del scope de los botones para ser accesible desde ambos
+        function actualizarEstadoBotones() {
+            const puertoConectado = puertoSerialConectado;
+            
+            // Botón ACTIVAR CABINA
+            // Solo se habilita si: puerto conectado Y cabina NO activa
+            if (btnIniciar) {
                 const puedeActivar = puertoConectado && !cabinaActiva;
                 btnIniciar.disabled = !puedeActivar;
                 btnIniciar.classList.toggle("opacity-50", !puedeActivar);
@@ -2620,24 +2622,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     btnIniciar.title = "";
                 }
+            }
 
-                // Botón PARAR Y RESET
-                // Solo se habilita si: puerto conectado Y cabina activa
-                if (btnReset) {
-                    const puedeResetear = puertoConectado && cabinaActiva;
-                    btnReset.disabled = !puedeResetear;
-                    btnReset.classList.toggle("opacity-50", !puedeResetear);
-                    btnReset.classList.toggle("cursor-not-allowed", !puedeResetear);
-                    
-                    if (!puertoConectado) {
-                        btnReset.title = "Conecte un puerto COM para usar esta función";
-                    } else if (!cabinaActiva) {
-                        btnReset.title = "Primero debe activar la cabina";
-                    } else {
-                        btnReset.title = "";
-                    }
+            // Botón PARAR Y RESET
+            // Solo se habilita si: puerto conectado Y cabina activa
+            if (btnReset) {
+                const puedeResetear = puertoConectado && cabinaActiva;
+                btnReset.disabled = !puedeResetear;
+                btnReset.classList.toggle("opacity-50", !puedeResetear);
+                btnReset.classList.toggle("cursor-not-allowed", !puedeResetear);
+                
+                if (!puertoConectado) {
+                    btnReset.title = "Conecte un puerto COM para usar esta función";
+                } else if (!cabinaActiva) {
+                    btnReset.title = "Primero debe activar la cabina";
+                } else {
+                    btnReset.title = "";
                 }
             }
+        }
+
+        if (btnIniciar && estadoCabina) {
 
             // Escuchar cambios globales de conexión
             window.addEventListener("puertoConectado", () => {
@@ -2801,9 +2806,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
+                // Limpiar gráfica de sensores y su intervalo de actualización
                 const graficaCanvas = panel.querySelector("#graficaPanel");
-                if (graficaCanvas && graficaCanvas.chartInstance) {
-                    graficaCanvas.chartInstance.destroy();
+                if (graficaCanvas) {
+                    // ✅ IMPORTANTE: Detener intervalo ANTES de destruir la gráfica
+                    if (graficaCanvas.updateInterval) {
+                        clearInterval(graficaCanvas.updateInterval);
+                        graficaCanvas.updateInterval = null;
+                        console.log("[Reset] Intervalo de actualización de gráfica detenido");
+                    }
+                    
+                    // Destruir instancia de Chart.js
+                    if (graficaCanvas.chartInstance) {
+                        graficaCanvas.chartInstance.destroy();
+                        graficaCanvas.chartInstance = null;
+                        console.log("[Reset] Gráfica de sensores destruida");
+                    }
                 }
 
                 const medicionTextos =
