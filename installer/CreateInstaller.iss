@@ -1,3 +1,10 @@
+; ============================================================================
+; Validación en Tiempo de Compilación
+; ============================================================================
+#if !DirExists("dist\wwwroot")
+  #error "ERROR: La carpeta dist\wwwroot no existe. Ejecuta: npm run build en BTN\app\Frontend y luego .\build-installer.ps1"
+#endif
+
 [Setup]
 ; ============================================================================
 ; Información General de la Aplicación
@@ -143,30 +150,6 @@ SelectStartMenuFolder=Seleccionar Carpeta del Menú Inicio
 ; Código Personalizado (Validaciones)
 ; ============================================================================
 [Code]
-function InitializeSetup(): Boolean;
-var
-  WwwrootPath: String;
-begin
-  { Verificar que exista la carpeta wwwroot }
-  WwwrootPath := ExpandConstant('{#SourcePath}\dist\wwwroot');
-  
-  if not DirExists(WwwrootPath) then
-  begin
-    MsgBox('Error: La carpeta wwwroot no existe en dist.' + #13#10 + #13#10 + 
-           'Por favor ejecuta primero:' + #13#10 + 
-           '1. cd BTN\app\Frontend' + #13#10 +
-           '2. npm run build' + #13#10 +
-           '3. cd BTN\installer' + #13#10 +
-           '4. .\build-installer.ps1', 
-           mbError, MB_OK);
-    Result := False;
-    Exit;
-  end;
-  
-  { Continuar con la instalación }
-  Result := True;
-end;
-
 function InitializeUninstall(): Boolean;
 var
   LogsPath: String;
