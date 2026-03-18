@@ -1,0 +1,54 @@
+---
+//* TopMetricsGrid.astro *//
+
+import MetricTile from "./MetricTile.astro";
+---
+
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-1">
+    <div class="biometric-tile" data-metric="pulse">
+        <div class="flex items-center gap-2 bg-white border border-[#bababa] rounded-lg px-3 h-31">
+            <div class="w-10 h-10 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-heart.svg" alt="BPM" class="w-6 h-6" />
+            </div>
+            <div class="text-sm font-semibold text-[#111827]">
+                <span class="metric-value-pulse">-</span> BPM
+            </div>
+        </div>
+    </div>
+
+    <div class="biometric-tile" data-metric="oxygen">
+        <div class="flex items-center gap-2 bg-white border border-[#bababa] rounded-lg px-3 h-31">
+            <div class="w-10 h-10 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-lungs.svg" alt="SpO2" class="w-6 h-6" />
+            </div>
+            <div class="text-sm font-semibold text-[#111827]">
+                <span class="metric-value-oxygen">-</span> %
+            </div>
+        </div>
+    </div>
+
+    <div class="biometric-tile" data-metric="bloodPressure">
+        <div class="flex items-center gap-2 bg-white border border-[#bababa] rounded-lg px-3 h-31">
+            <div class="w-10 h-10 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-bp.svg" alt="Tensión Arterial" class="w-6 h-6" />
+            </div>
+            <div class="text-sm font-semibold text-[#111827]">
+                <span class="metric-value-bloodpressure">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="biometric-tile" data-metric="temperature">
+        <div class="flex items-center gap-2 bg-white border border-[#bababa] rounded-lg px-3 h-31">
+            <div class="w-10 h-10 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-thermo.svg" alt="Temperatura" class="w-6 h-6" />
+            </div>
+            <div class="text-sm font-semibold text-[#111827]">
+                <span class="metric-value-temperature">-</span> °C
+            </div>
+        </div>
+    </div>
+
+    <MetricTile title="-" iconSrc="/icons/biometry-glucose.svg" />
+    <MetricTile title="-" iconSrc="/icons/biometry-counter.svg" />
+</div>

@@ -1,0 +1,37 @@
+---
+// BiometricCharts.astro - Gráfica única de métricas biométricas con selector
+---
+
+<div class="bg-white rounded-md border border-[#a6a6a6] p-2 w-full biometric-charts-container">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-semibold text-[#111827]">Métricas Biométricas</h3>
+        
+        <!-- Selector de métrica (sin ID, usa clase) -->
+        <select class="biometric-metric-selector px-3 py-1 border border-[#a6a6a6] rounded bg-white text-sm">
+            <option value="pulse">Pulso (bpm)</option>
+            <option value="oxygen">Oxigenación (%)</option>
+            <option value="temperature">Temperatura (°C)</option>
+            <option value="bloodPressure">Presión Arterial (mmHg)</option>
+        </select>
+    </div>
+    
+    <!-- Canvas para la gráfica con contenedor sizing específico -->
+    <div class="relative w-full overflow-hidden bg-gray-50 rounded biometric-chart-container" style="min-height: 300px;">
+        <canvas class="biometric-chart"></canvas>
+    </div>
+</div>
+
+<script>
+    // Debugging: verificar que el canvas existe
+    document.addEventListener("DOMContentLoaded", () => {
+        const canvases = document.querySelectorAll(".biometric-chart") as NodeListOf<HTMLCanvasElement>;
+        console.log("[BiometricCharts.astro] Cantidad de canvas encontrados:", canvases.length);
+        canvases.forEach((canvas, idx) => {
+            console.log(`[BiometricCharts.astro] Canvas ${idx} dimensiones iniciales:`, {
+                width: canvas.width,
+                height: canvas.height,
+                offsetWidth: canvas.offsetWidth,
+                offsetHeight: canvas.offsetHeight
+            });
+        });    });
+</script>

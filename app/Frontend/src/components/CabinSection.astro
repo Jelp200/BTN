@@ -1,0 +1,24 @@
+---
+//* CabinSection.astro *//
+
+/* Import de componentes */
+import CabinPanel from "./CabinPanel.astro";
+---
+
+<div class="flex flex-col md:flex-row gap-3 p-3">
+    <CabinPanel panelNumber={1} />
+    <CabinPanel panelNumber={2} />
+</div>
+
+<!-- CDN de Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom "></script>
+
+<!-- Cargar variables globales PRIMERO -->
+<script is:inline src="/scripts/globals.js"></script>
+
+<!-- Cargar inicialización de eventos -->
+<script is:inline src="/scripts/initialization.js"></script>
+
+<!-- Script principal -->
+<script type="module" src="/scripts/main.js"></script>

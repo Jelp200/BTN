@@ -1,0 +1,142 @@
+---
+//* HeaderLogos.astro *//
+
+/* Importar logos e imagenes */
+import logoPC from "../../public/logos/control-panel.svg";
+import logoGT from "../../public/logos/GT_logoColores.svg";
+import uC from "../../public/logos/uC.svg";
+import ucUno from "../../public/logos/uc-arduino-uno.svg";
+import ucMega from "../../public/logos/uc-arduino-mega.svg";
+import ucEsp32 from "../../public/logos/uc-esp32.svg";
+import ucMsp430 from "../../public/logos/uc-msp430.svg";
+import iconConnect from "../../public/logos/icon-connect.svg";
+
+/* Importar estilos */
+import "../styles/header.css";
+---
+
+<!-- Header sticky -->
+<header class="sticky top-0 z-50 w-full bg-white shadow-md">
+    <div
+        class="w-full flex flex-wrap justify-between items-center gap-4 px-6 py-1 bg-white border-b border-gray-200"
+    >
+        <!-- Logo PC -->
+        <img src={logoPC.src} alt="Logo PC" class="h-12" />
+
+        <!-- Controles de desarrollo (OCULTOS POR DEFECTO) -->
+        <div
+            id="dev-com-controls"
+            class="dev-feature hidden items-center gap-2 flex-wrap"
+        >
+            <!-- Grupo: uC + Puerto + Acciones (misma fila) -->
+            <div class="flex items-center gap-2 flex-nowrap">
+                <!-- Selector de uC (a la izquierda del selector de puertos) -->
+                <select
+                    id="uc-selector"
+                    class="select-with-icon px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-44"
+                    style={`background-image: url('${uC.src}')`}
+                >
+                    <option disabled selected>Seleccionar Microcontrolador</option>
+                    <option value="uno" data-icon={ucUno.src}>Arduino Uno</option>
+                    <option value="mega" data-icon={ucMega.src}>Arduino Mega</option>
+                    <option value="esp32" data-icon={ucEsp32.src}>ESP32</option>
+                    <option value="msp430" data-icon={ucMsp430.src}>MSP430</option>
+                </select>
+
+                <!-- Selector de Puerto -->
+                <select
+                    id="com-port-selector"
+                    class="px-3 py-2 text-sm bg-white border border-[#a6a6a6] rounded-lg min-w-40"
+                >
+                    <option disabled selected>Seleccionar Puerto</option>
+                </select>
+
+                <!-- Botón: Escanear Puertos -->
+                <button
+                    id="btn-scan-com"
+                    class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded border border-gray-300"
+                    >🔄 Escanear</button
+                >
+
+                <!-- Botón: Desconectar Puerto -->
+                <button
+                    id="btn-disconnect-com"
+                    class="bg-[#ff4d4d] hover:bg-[#d94343] px-3 py-2 text-sm text-white rounded hidden"
+                    >🔓 Desconectar</button
+                >
+
+                <!-- Botón: Conectar Puerto -->
+                <button
+                    id="btn-connect-com"
+                    class="bg-[#00bf63] hover:bg-[#00a152] px-3 py-2 text-sm text-white rounded flex items-center gap-2"
+                >
+                    <img src={iconConnect.src} alt="Conectar" class="w-4 h-4" />
+                    <span>Conectar</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Botones para Logs (OCULTO POR DEFECTO) -->
+        <div id="dev-log-controls" class="dev-feature hidden relative">
+            <div class="flex gap-2">
+                <!-- Botón: Ver Tramas Enviadas -->
+                <button
+                    id="btn-toggle-sent"
+                    class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded"
+                    aria-expanded="false"
+                    aria-controls="log-sent">📤 Enviadas</button
+                >
+
+                <!-- Botón: Ver Tramas Recibidas -->
+                <button
+                    id="btn-toggle-received"
+                    class="bg-[#efefef] hover:bg-[#d9d9d9] px-3 py-2 text-sm rounded"
+                    aria-expanded="false"
+                    aria-controls="log-received">📥 Recibidas</button
+                >
+            </div>
+
+            <!-- Ventana de Logs - Tramas Enviadas -->
+            <div
+                id="log-sent"
+                class="hidden absolute right-0 mt-2 w-72 bg-white border border-[#ccc] shadow-lg rounded p-2 z-50"
+            >
+                <div class="text-center text-xs text-gray-500 mb-1">
+                    Tramas Enviadas
+                </div>
+                <div
+                    id="log-sent-messages"
+                    class="log-window flex flex-col gap-1 text-xs font-mono text-gray-700 max-h-48 overflow-y-auto"
+                >
+                    <div class="text-center text-gray-500">
+                        No hay tramas aún...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana de Logs - Tramas Recibidas -->
+            <div
+                id="log-received"
+                class="hidden absolute right-0 mt-2 w-72 bg-white border border-[#ccc] shadow-lg rounded p-2 z-50"
+            >
+                <div class="text-center text-xs text-gray-500 mb-1">
+                    Tramas Recibidas
+                </div>
+                <div
+                    id="log-received-messages"
+                    class="log-window flex flex-col gap-1 text-xs font-mono text-gray-700 max-h-48 overflow-y-auto"
+                >
+                    <div class="text-center text-gray-500">
+                        No hay tramas aún...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logo GT -->
+        <img src={logoGT.src} alt="Logo GT" class="h-12" />
+    </div>
+</header>
+
+<!-- Script cliente -->
+<script type="module" src="/scripts/devLogs.js"></script>

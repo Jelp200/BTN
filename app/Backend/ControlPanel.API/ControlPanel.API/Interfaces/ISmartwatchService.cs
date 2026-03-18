@@ -1,0 +1,47 @@
+using ControlPanel.API.Models;
+
+namespace ControlPanel.API.Interfaces
+{
+    public interface ISmartwatchService
+    {
+        Task<SmartwatchConnectionResult> ConnectAsync(string targetName, int scanTimeoutMs, CancellationToken cancellationToken);
+        Task<SmartwatchDisconnectResult> DisconnectAsync(CancellationToken cancellationToken);
+        SmartwatchVitals? GetLatestVitals();
+        IReadOnlyList<SmartwatchVitals> GetRecentVitals(int maxCount);
+        
+        /// <summary>
+        /// Start BPM (heart rate) monitoring - will collect 10 measurements over 60 seconds
+        /// </summary>
+        Task<bool> StartBpmMonitoringAsync(CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// Start SpO2 (blood oxygen) monitoring - will collect 10 measurements over 60 seconds
+        /// </summary>
+        Task<bool> StartSpO2MonitoringAsync(CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// Start Temperature monitoring - will collect 10 measurements over 60 seconds
+        /// </summary>
+        Task<bool> StartTemperatureMonitoringAsync(CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// Start Blood Pressure monitoring - will collect 10 measurements over 60 seconds
+        /// </summary>
+        Task<bool> StartBloodPressureMonitoringAsync(CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// Get current monitoring status for all vital measurements
+        /// </summary>
+        MonitoringStatus GetMonitoringStatus();
+    }
+
+    public record SmartwatchConnectionResult(bool Success, string Message, WatchDevice? Device = null);
+    public record SmartwatchDisconnectResult(bool Success, string Message);
+    public record MonitoringStatus(
+        bool BpmActive,
+        bool Spo2Active,
+        bool TemperatureActive,
+        bool BloodPressureActive,
+        string? ActiveMeasurementType
+    );
+}

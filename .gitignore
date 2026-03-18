@@ -13,6 +13,8 @@ dist-ssr
 *.local
 
 # Editor directories and files
+client/.astro
+.vs
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -20,9 +22,22 @@ dist-ssr
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
 .env
+.env.production
+app/Frontend/.astro
+
+# Archivos grandes
+source/HBand-decompiled/*
+source/H_Band/*
+*.apk
+*.exe
+# TODO: Agregar .iss despues de las pruebas
+
+# Ignorar carpetas bin y obj en todos los proyectos
+**/bin
+**/obj
+**/wwwroot
 
 # Ignore package files
 package-lock.json

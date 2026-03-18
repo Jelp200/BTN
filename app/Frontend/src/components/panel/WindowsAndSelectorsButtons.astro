@@ -1,0 +1,70 @@
+---
+//* WindowsAndSelectorsButtons.astro *//
+
+/* Props */
+interface Props {
+    panelNumber: number;
+}
+const { panelNumber } = Astro.props;
+
+// Panel 1 = Cabina 1 por defecto, Panel 2 = Cabina 2 por defecto
+const defaultCabin = panelNumber === 2 ? 2 : 1;
+---
+
+<div class="flex flex-col gap-2 mb-3">
+    <!-- Barra superior -->
+    <div
+        class="flex items-center justify-between bg-[#efefef] rounded-2xl px-3 py-2"
+    >
+        <!-- BOTONES DE PESTAÑAS -->
+        <div class="flex gap-6" role="tablist">
+            <button
+                class="tab-button active bg-[#d9d9d9] text-black font-semibold px-4 py-1 transition-colors rounded-lg"
+                data-tab="controles"
+                role="tab"
+                aria-selected="true">Controles</button
+            >
+            <button
+                class="tab-button bg-transparent hover:bg-[#d9d9d9] text-black font-semibold px-4 py-1 transition-colors rounded-lg"
+                data-tab="graficas"
+                role="tab"
+                aria-selected="false"
+                tabindex="-1">Sensores</button
+            >
+            <button
+                class="tab-button bg-transparent hover:bg-[#d9d9d9] text-black font-semibold px-4 py-1 transition-colors rounded-lg"
+                data-tab="biometria"
+                role="tab"
+                aria-selected="false"
+                tabindex="-1">Biometría</button
+            >
+        </div>
+
+        <!-- Acciones y selector a la derecha -->
+        <div class="flex items-center gap-2">
+            <button
+                id="btn-export-csv"
+                class="bg-[#00bf63] hover:bg-[#00a152] text-white text-sm px-3 py-2 rounded flex items-center gap-2"
+                aria-label="Exportar a Excel"
+                title="Exportar datos a Excel (Información personal, Controles, Sensores y Biometría)"
+            >
+                <img
+                    src="/logos/icon-export-csv.svg"
+                    alt="Excel"
+                    class="w-5 h-5"
+                />
+                <span>Exportar</span>
+            </button>
+            <select
+                class="select-style px-3 py-1 text-sm text-black bg-white border border-[#a6a6a6] rounded-lg"
+                data-select="cabina"
+            >
+                <option selected={defaultCabin === 1}>Cabina 1</option>
+                <option selected={defaultCabin === 2}>Cabina 2</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Separador inferior -->
+    <div class="border-b border-[#a6a6a6]"></div>
+</div>
