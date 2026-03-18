@@ -29,17 +29,30 @@ const { waitMs = 8000 } = Astro.props;
             <!-- Logo de GITSE en el centro -->
             <div class="relative z-10 flex items-center justify-center h-60 w-60">
                 <img 
-                    src="/logos/logo-gitse.svg" 
-                    alt="GITSE Logo" 
+                    src="/logos/GT_logoColores.svg" 
+                    alt="Gradus Tech Logo" 
                     class="h-full w-full object-contain filter drop-shadow-lg"
                 />
             </div>
         </div>
 
         <!-- Texto de carga -->
-        <h1 class="text-black font-medium tracking-widest animate-pulse text-lg">
-            GESTIÓN E INNOVACIÓN EN TECNOLÓGICA SOCIAL S.A. DE C.V.
-        </h1>
+        <div class="flex flex-col items-center justify-center space-y-1">
+            
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center tracking-[0.35em]">
+                <span class="text-[#5e17eb]">G</span>
+                <span class="text-[#ffbd59]">R</span>
+                <span class="text-[#0cc0df]">A</span>
+                <span class="text-[#7ed957]">D</span>
+                <span class="text-[#ff5757]">U</span>
+                <span class="text-[#000000]">S</span>
+            </h1>
+
+            <h2 class="text-gray-700 text-xs sm:text-sm md:text-base font-light tracking-widest uppercase">
+                Technologies
+            </h2>
+
+        </div>
     </div>
 
     <!-- Barra de carga -->
