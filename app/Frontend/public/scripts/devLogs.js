@@ -5,7 +5,7 @@
 // Solo ejecutar en el navegador
 if (typeof document !== 'undefined') {
     let keySequence = "";
-    const DEV_CODE = "gitsdev";
+    const DEV_CODE = "pcdev";
     
     // Variable global para rastrear si dev mode está activo
     window.isDevModeActive = false;
@@ -46,7 +46,7 @@ if (typeof document !== 'undefined') {
                 selector.title = "";
             } else {
                 selector.classList.add("opacity-50", "cursor-not-allowed");
-                selector.title = "Modo desarrollador requerido (gitsdev)";
+                selector.title = "Modo desarrollador requerido (pcdev)";
             }
         });
     }
@@ -87,7 +87,7 @@ if (typeof document !== 'undefined') {
         selectoresCabina.forEach(selector => {
             selector.disabled = true;
             selector.classList.add("opacity-50", "cursor-not-allowed");
-            selector.title = "Modo desarrollador requerido (gitsdev)";
+            selector.title = "Modo desarrollador requerido (pcdev)";
         });
         
         const btnToggleSent = document.getElementById("btn-toggle-sent");
