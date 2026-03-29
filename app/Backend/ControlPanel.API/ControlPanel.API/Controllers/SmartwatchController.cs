@@ -23,12 +23,12 @@ namespace ControlPanel.API.Controllers
     [Route("api/[controller]")]
     public class SmartwatchController : ControllerBase
     {
-        private readonly ISmartwatchService _smartwatchService;
+        private readonly ISmartwatchServiceFactory _smartwatchServiceFactory;
         private readonly BiometricExportService _exportService;
 
-        public SmartwatchController(ISmartwatchService smartwatchService)
+        public SmartwatchController(ISmartwatchServiceFactory smartwatchServiceFactory)
         {
-            _smartwatchService = smartwatchService;
+            _smartwatchServiceFactory = smartwatchServiceFactory;
             _exportService = new BiometricExportService();
         }
 
@@ -37,26 +37,17 @@ namespace ControlPanel.API.Controllers
         {
             try
             {
-                FileLogger.Log($"[SmartwatchController] Iniciando conexión. Request recibido: DeviceName={request?.DeviceName}, Timeout={request?.ScanTimeoutMs}");
+                var cabin = NormalizeCabin(request?.Cabin);
+                FileLogger.Log($"[SmartwatchController] Iniciando conexión. Cabin={cabin}, DeviceName={request?.DeviceName}, Timeout={request?.ScanTimeoutMs}");
 
                 var deviceName = string.IsNullOrWhiteSpace(request?.DeviceName) ? "ET570" : request.DeviceName.Trim();
                 var timeout = request?.ScanTimeoutMs is > 0 ? request.ScanTimeoutMs.Value : 15000;
+                var service = _smartwatchServiceFactory.GetForCabin(cabin);
 
-                FileLogger.Log($"[SmartwatchController] Parámetros procesados: DeviceName={deviceName}, Timeout={timeout}");
-
-                if (_smartwatchService == null)
-                {
-                    FileLogger.LogError("[SmartwatchController] ERROR: _smartwatchService es null!");
-                    return StatusCode(500, new SmartwatchConnectResponse
-                    {
-                        Success = false,
-                        Message = "Error interno: El servicio de smartwatch no está inicializado.",
-                        Device = null
-                    });
-                }
+                FileLogger.Log($"[SmartwatchController] Parámetros procesados: Cabin={cabin}, DeviceName={deviceName}, Timeout={timeout}");
 
                 FileLogger.Log("[SmartwatchController] Llamando a ConnectAsync...");
-                var result = await _smartwatchService.ConnectAsync(deviceName, timeout, HttpContext.RequestAborted);
+                var result = await service.ConnectAsync(deviceName, timeout, HttpContext.RequestAborted);
                 FileLogger.Log($"[SmartwatchController] ConnectAsync completado. Success={result.Success}, Message={result.Message}");
                 FileLogger.Log($"[SmartwatchController] Device Name={result.Device?.Name}, Address={result.Device?.Address}");
 
@@ -100,9 +91,10 @@ namespace ControlPanel.API.Controllers
         }
 
         [HttpPost("disconnect")]
-        public async Task<IActionResult> Disconnect()
+        public async Task<IActionResult> Disconnect([FromQuery] string? cabin)
         {
-            var result = await _smartwatchService.DisconnectAsync(HttpContext.RequestAborted);
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var result = await service.DisconnectAsync(HttpContext.RequestAborted);
 
             var response = new SmartwatchDisconnectResponse
             {
@@ -114,9 +106,10 @@ namespace ControlPanel.API.Controllers
         }
 
         [HttpGet("vitals/latest")]
-        public IActionResult GetLatestVitals()
+        public IActionResult GetLatestVitals([FromQuery] string? cabin)
         {
-            var vitals = _smartwatchService.GetLatestVitals();
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var vitals = service.GetLatestVitals();
             if (vitals == null)
             {
                 return Ok(new { success = false, message = "Sin datos biométricos disponibles.", data = (object?)null });
@@ -126,9 +119,10 @@ namespace ControlPanel.API.Controllers
         }
 
         [HttpGet("vitals/history")]
-        public IActionResult GetVitalsHistory([FromQuery] int limit = 60)
+        public IActionResult GetVitalsHistory([FromQuery] string? cabin, [FromQuery] int limit = 60)
         {
-            var data = _smartwatchService.GetRecentVitals(limit);
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var data = service.GetRecentVitals(limit);
             return Ok(new { success = true, data });
         }
 
@@ -136,9 +130,10 @@ namespace ControlPanel.API.Controllers
         /// Get current monitoring status - returns which measurements are currently active
         /// </summary>
         [HttpGet("vitals/monitoring-status")]
-        public IActionResult GetMonitoringStatus()
+        public IActionResult GetMonitoringStatus([FromQuery] string? cabin)
         {
-            var status = _smartwatchService.GetMonitoringStatus();
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var status = service.GetMonitoringStatus();
             return Ok(new { success = true, status });
         }
 
@@ -147,11 +142,12 @@ namespace ControlPanel.API.Controllers
         /// Will collect 10 measurements over 60 seconds and then automatically stop
         /// </summary>
         [HttpPost("vitals/start-spo2")]
-        public async Task<IActionResult> StartSpO2Monitoring()
+        public async Task<IActionResult> StartSpO2Monitoring([FromQuery] string? cabin)
         {
             try
             {
-                var success = await _smartwatchService.StartSpO2MonitoringAsync(HttpContext.RequestAborted);
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var success = await service.StartSpO2MonitoringAsync(HttpContext.RequestAborted);
                 
                 if (success)
                 {
@@ -180,11 +176,12 @@ namespace ControlPanel.API.Controllers
         /// Will collect 10 measurements over 60 seconds and then automatically stop
         /// </summary>
         [HttpPost("vitals/start-bpm")]
-        public async Task<IActionResult> StartBpmMonitoring()
+        public async Task<IActionResult> StartBpmMonitoring([FromQuery] string? cabin)
         {
             try
             {
-                var success = await _smartwatchService.StartBpmMonitoringAsync(HttpContext.RequestAborted);
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var success = await service.StartBpmMonitoringAsync(HttpContext.RequestAborted);
                 
                 if (success)
                 {
@@ -213,11 +210,12 @@ namespace ControlPanel.API.Controllers
         /// Will collect 10 measurements over 60 seconds and then automatically stop
         /// </summary>
         [HttpPost("vitals/start-temperature")]
-        public async Task<IActionResult> StartTemperatureMonitoring()
+        public async Task<IActionResult> StartTemperatureMonitoring([FromQuery] string? cabin)
         {
             try
             {
-                var success = await _smartwatchService.StartTemperatureMonitoringAsync(HttpContext.RequestAborted);
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var success = await service.StartTemperatureMonitoringAsync(HttpContext.RequestAborted);
                 
                 if (success)
                 {
@@ -246,11 +244,12 @@ namespace ControlPanel.API.Controllers
         /// Will collect 10 measurements over 60 seconds and then automatically stop
         /// </summary>
         [HttpPost("vitals/start-bloodpressure")]
-        public async Task<IActionResult> StartBloodPressureMonitoring()
+        public async Task<IActionResult> StartBloodPressureMonitoring([FromQuery] string? cabin)
         {
             try
             {
-                var success = await _smartwatchService.StartBloodPressureMonitoringAsync(HttpContext.RequestAborted);
+            var service = _smartwatchServiceFactory.GetForCabin(cabin);
+            var success = await service.StartBloodPressureMonitoringAsync(HttpContext.RequestAborted);
                 
                 if (success)
                 {
@@ -351,6 +350,19 @@ namespace ControlPanel.API.Controllers
                     message = $"Error al descargar archivo: {ex.Message}" 
                 });
             }
+        }
+
+        private static string NormalizeCabin(string? cabin)
+        {
+            if (string.IsNullOrWhiteSpace(cabin)) return "C1";
+
+            var normalized = cabin.Trim().ToUpperInvariant();
+            return normalized switch
+            {
+                "C1" => "C1",
+                "C2" => "C2",
+                _ => "C1"
+            };
         }
     }
 }
