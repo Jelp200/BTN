@@ -33,7 +33,7 @@ builder.Services.AddSingleton<ISerialService, SerialService>();
 builder.Services.AddSingleton<IBleScanner, BleScanner>();
 builder.Services.AddSingleton<IBleConnector, BleConnector>();
 builder.Services.AddSingleton<SessionLogger>();
-builder.Services.AddSingleton<ISmartwatchService, SmartwatchService>();
+builder.Services.AddSingleton<ISmartwatchServiceFactory, SmartwatchServiceFactory>();
 
 // ======================== CONFIGURACION EXISTENTE ========================
 // Habilitar CORS

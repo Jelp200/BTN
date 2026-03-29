@@ -2,6 +2,15 @@
  * Funciones para exportar datos biométricos a Excel
  */
 
+function normalizeCabinForExport(cabin) {
+    if (window.normalizeCabin) {
+        return window.normalizeCabin(cabin);
+    }
+
+    const value = (cabin || "C1").toString().trim().toUpperCase();
+    return value === "C2" ? "C2" : "C1";
+}
+
 /**
  * Exporta datos biométricos al servidor para generar archivo Excel
  * @param {Object} biometricData - Datos de las gráficas biométricas
@@ -10,7 +19,8 @@
  */
 async function exportBiometricsToExcel(biometricData, cabin, measurementType = 'Completo') {
     try {
-        console.log(`[EXPORT] Iniciando exportación de datos: Cabina ${cabin}, Tipo: ${measurementType}`);
+        const normalizedCabin = normalizeCabinForExport(cabin);
+        console.log(`[EXPORT] Iniciando exportación de datos: Cabina ${normalizedCabin}, Tipo: ${measurementType}`);
 
         // Construir datos en formato que espera el backend
         const vitalsArray = [];
@@ -31,8 +41,8 @@ async function exportBiometricsToExcel(biometricData, cabin, measurementType = '
                     pulseBpm: biometricData.pulse?.[i] || null,
                     spO2: biometricData.oxygen?.[i] || null,
                     temperatureC: biometricData.temperature?.[i] || null,
-                    systolic: biometricData.bloodPressure?.[i]?.systolic || null,
-                    diastolic: biometricData.bloodPressure?.[i]?.diastolic || null,
+                    systolic: biometricData.bloodPressure?.[i]?.systolic || biometricData.bloodPressure?.[i]?.s || null,
+                    diastolic: biometricData.bloodPressure?.[i]?.diastolic || biometricData.bloodPressure?.[i]?.d || null,
                     timestampUtc: new Date().toISOString()
                 });
             }
@@ -91,7 +101,7 @@ async function exportBiometricsToExcel(biometricData, cabin, measurementType = '
             },
             body: JSON.stringify({
                 vitals: vitalsArray,
-                cabin: cabin,
+                cabin: normalizedCabin,
                 measurementType: measurementType
             })
         });
@@ -150,9 +160,10 @@ async function downloadExportFile(fileName) {
 /**
  * Obtiene los datos de biometría desde el servidor
  */
-async function fetchBiometricData() {
+async function fetchBiometricData(cabin = 'C1') {
+    const normalizedCabin = normalizeCabinForExport(cabin);
     try {
-        const response = await fetch('http://localhost:5000/api/smartwatch/vitals/history?limit=1000');
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/history?cabin=${normalizedCabin}&limit=1000`);
         
         if (!response.ok) {
             throw new Error('No se pudo obtener datos biométricos');
@@ -203,7 +214,10 @@ export function createExportButton() {
     button.innerHTML = '<span>📊</span><span>Exportar a Excel</span>';
 
     button.addEventListener('click', async () => {
-        const cabin = document.querySelector('[data-select="cabina"]')?.value || '1';
+        const panel = button.closest('.panel-container');
+        const selector = panel?.querySelector('[data-select="cabina"]') || document.querySelector('[data-select="cabina"]');
+        const rawCabin = selector?.value || 'C1';
+        const cabin = normalizeCabinForExport(rawCabin.includes('2') ? 'C2' : rawCabin);
         
         // Mostrar opciones de qué exportar
         const exportType = prompt(
@@ -233,7 +247,14 @@ export function createExportButton() {
         button.innerHTML = '<span>⏳ Exportando...</span>';
 
         try {
-            await exportBiometricsToExcel(window.biometricChartData || {}, cabin, measurementType);
+            let biometricData = window.biometricChartDataByCabin?.[cabin] || null;
+
+            if (!biometricData || !Object.values(biometricData).some(arr => Array.isArray(arr) && arr.length > 0)) {
+                const serverData = await fetchBiometricData(cabin);
+                biometricData = convertServerDataToChartFormat(serverData);
+            }
+
+            await exportBiometricsToExcel(biometricData || {}, cabin, measurementType);
         } finally {
             button.disabled = false;
             button.innerHTML = '<span>📊</span><span>Exportar a Excel</span>';
