@@ -145,123 +145,130 @@ async function createSheet3Data() {
 }
 
 /**
- * Sheet 4: Biometría de ambas cabinas
+ * Sheet 4: Biometría de ambas cabinas (C1 y C2 separadas)
  */
 async function createSheet4Data() {
     const data = [];
 
-    data.push(["DATOS BIOMÉTRICOS"]);
+    data.push(["DATOS BIOMÉTRICOS (DUAL-CABIN)"]);
     data.push([]);
 
-    // Primero intentar obtener del historial del servidor
-    const biometricHistory = await getBiometricHistory();
-
-    if (biometricHistory && biometricHistory.length > 0) {
-        data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Sistólica", "Diastólica", "Hora"]);
-        
-        biometricHistory.forEach(record => {
-            data.push([
-                record.pulseBpm || "-",
-                record.spO2 || "-",
-                record.temperatureC || "-",
-                record.systolic || "-",
-                record.diastolic || "-",
-                new Date(record.timestampUtc).toLocaleString() || "-"
-            ]);
-        });
-
-        // Agregar estadísticas
+    // Procesar ambas cabinas
+    for (const cabin of ["C1", "C2"]) {
+        data.push([`\n=== CABINA ${cabin} ===`]);
         data.push([]);
-        data.push(["ESTADÍSTICAS"]);
-        data.push(["Métrica", "Promedio", "Máximo", "Mínimo", "Total de Registros"]);
 
-        // Estadísticas de BPM
-        const pulsesFiltered = biometricHistory.map(r => r.pulseBpm).filter(v => v);
-        if (pulsesFiltered.length > 0) {
-            const avg = (pulsesFiltered.reduce((a, b) => a + b, 0) / pulsesFiltered.length).toFixed(1);
-            const max = Math.max(...pulsesFiltered);
-            const min = Math.min(...pulsesFiltered);
-            data.push(["BPM", avg, max, min, pulsesFiltered.length]);
-        }
+        // Intentar obtener del historial del servidor por cabina
+        const biometricHistory = await getBiometricHistory(cabin);
 
-        // Estadísticas de SpO2
-        const oxygenFiltered = biometricHistory.map(r => r.spO2).filter(v => v);
-        if (oxygenFiltered.length > 0) {
-            const avg = (oxygenFiltered.reduce((a, b) => a + b, 0) / oxygenFiltered.length).toFixed(1);
-            const max = Math.max(...oxygenFiltered);
-            const min = Math.min(...oxygenFiltered);
-            data.push(["SpO2 (%)", avg, max, min, oxygenFiltered.length]);
-        }
-
-        // Estadísticas de Temperatura
-        const temperatureFiltered = biometricHistory.map(r => r.temperatureC).filter(v => v);
-        if (temperatureFiltered.length > 0) {
-            const avg = (temperatureFiltered.reduce((a, b) => a + b, 0) / temperatureFiltered.length).toFixed(1);
-            const max = Math.max(...temperatureFiltered);
-            const min = Math.min(...temperatureFiltered);
-            data.push(["Temperatura (°C)", avg, max, min, temperatureFiltered.length]);
-        }
-
-    } else {
-        // Fallback: intentar con biometricChartData global si está disponible
-        const chartData = window.biometricChartData;
-        
-        if (chartData && (chartData.pulse?.length > 0 || chartData.oxygen?.length > 0 || 
-                          chartData.temperature?.length > 0 || chartData.bloodPressure?.length > 0)) {
+        if (biometricHistory && biometricHistory.length > 0) {
+            data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Sistólica", "Diastólica", "Hora"]);
             
-            // Usar datos del gráfico en formato tabular
-            const maxLength = Math.max(
-                chartData.pulse?.length || 0,
-                chartData.oxygen?.length || 0,
-                chartData.temperature?.length || 0,
-                chartData.bloodPressure?.length || 0
-            );
-
-            data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Sistólica", "Diastólica", "Índice"]);
-            
-            for (let i = 0; i < maxLength; i++) {
-                const pulse = chartData.pulse?.[i] || "-";
-                const oxygen = chartData.oxygen?.[i] || "-";
-                const temperature = chartData.temperature?.[i] || "-";
-                const bp = chartData.bloodPressure?.[i];
-                // Blood pressure puede ser un objeto {systolic, diastolic} o solo un número
-                const systolic = (typeof bp === 'object' ? bp?.systolic : bp) || "-";
-                const diastolic = (typeof bp === 'object' ? bp?.diastolic : "-") || "-";
-
-                data.push([pulse, oxygen, temperature, systolic, diastolic, i + 1]);
-            }
+            biometricHistory.forEach(record => {
+                data.push([
+                    record.pulseBpm || "-",
+                    record.spO2 || "-",
+                    record.temperatureC || "-",
+                    record.systolic || "-",
+                    record.diastolic || "-",
+                    new Date(record.timestampUtc).toLocaleString() || "-"
+                ]);
+            });
 
             // Agregar estadísticas
             data.push([]);
             data.push(["ESTADÍSTICAS"]);
-            data.push(["Métrica", "Promedio", "Máximo", "Mínimo"]);
+            data.push(["Métrica", "Promedio", "Máximo", "Mínimo", "Total de Registros"]);
 
             // Estadísticas de BPM
-            if (chartData.pulse?.length > 0) {
-                const avg = (chartData.pulse.reduce((a, b) => a + b, 0) / chartData.pulse.length).toFixed(1);
-                const max = Math.max(...chartData.pulse);
-                const min = Math.min(...chartData.pulse);
-                data.push(["BPM", avg, max, min]);
+            const pulsesFiltered = biometricHistory.map(r => r.pulseBpm).filter(v => v);
+            if (pulsesFiltered.length > 0) {
+                const avg = (pulsesFiltered.reduce((a, b) => a + b, 0) / pulsesFiltered.length).toFixed(1);
+                const max = Math.max(...pulsesFiltered);
+                const min = Math.min(...pulsesFiltered);
+                data.push(["BPM", avg, max, min, pulsesFiltered.length]);
             }
 
             // Estadísticas de SpO2
-            if (chartData.oxygen?.length > 0) {
-                const avg = (chartData.oxygen.reduce((a, b) => a + b, 0) / chartData.oxygen.length).toFixed(1);
-                const max = Math.max(...chartData.oxygen);
-                const min = Math.min(...chartData.oxygen);
-                data.push(["SpO2 (%)", avg, max, min]);
+            const oxygenFiltered = biometricHistory.map(r => r.spO2).filter(v => v);
+            if (oxygenFiltered.length > 0) {
+                const avg = (oxygenFiltered.reduce((a, b) => a + b, 0) / oxygenFiltered.length).toFixed(1);
+                const max = Math.max(...oxygenFiltered);
+                const min = Math.min(...oxygenFiltered);
+                data.push(["SpO2 (%)", avg, max, min, oxygenFiltered.length]);
             }
 
             // Estadísticas de Temperatura
-            if (chartData.temperature?.length > 0) {
-                const avg = (chartData.temperature.reduce((a, b) => a + b, 0) / chartData.temperature.length).toFixed(1);
-                const max = Math.max(...chartData.temperature);
-                const min = Math.min(...chartData.temperature);
-                data.push(["Temperatura (°C)", avg, max, min]);
+            const temperatureFiltered = biometricHistory.map(r => r.temperatureC).filter(v => v);
+            if (temperatureFiltered.length > 0) {
+                const avg = (temperatureFiltered.reduce((a, b) => a + b, 0) / temperatureFiltered.length).toFixed(1);
+                const max = Math.max(...temperatureFiltered);
+                const min = Math.min(...temperatureFiltered);
+                data.push(["Temperatura (°C)", avg, max, min, temperatureFiltered.length]);
             }
         } else {
-            data.push(["Sin datos biométricos disponibles"]);
+            // Fallback: intentar con biometricChartDataByCabin (dual-cabin state map)
+            const cabinData = window.biometricChartDataByCabin?.[cabin];
+            
+            if (cabinData && (cabinData.pulse?.length > 0 || cabinData.oxygen?.length > 0 || 
+                              cabinData.temperature?.length > 0 || cabinData.bloodPressure?.length > 0)) {
+                
+                // Usar datos del gráfico en formato tabular
+                const maxLength = Math.max(
+                    cabinData.pulse?.length || 0,
+                    cabinData.oxygen?.length || 0,
+                    cabinData.temperature?.length || 0,
+                    cabinData.bloodPressure?.length || 0
+                );
+
+                data.push(["Pulso (BPM)", "SpO2 (%)", "Temperatura (°C)", "Sistólica", "Diastólica", "Índice"]);
+                
+                for (let i = 0; i < maxLength; i++) {
+                    const pulse = cabinData.pulse?.[i] || "-";
+                    const oxygen = cabinData.oxygen?.[i] || "-";
+                    const temperature = cabinData.temperature?.[i] || "-";
+                    const bp = cabinData.bloodPressure?.[i];
+                    // Blood pressure puede ser un objeto {systolic, diastolic} o solo un número
+                    const systolic = (typeof bp === 'object' ? bp?.systolic : bp) || "-";
+                    const diastolic = (typeof bp === 'object' ? bp?.diastolic : "-") || "-";
+
+                    data.push([pulse, oxygen, temperature, systolic, diastolic, i + 1]);
+                }
+
+                // Agregar estadísticas
+                data.push([]);
+                data.push(["ESTADÍSTICAS"]);
+                data.push(["Métrica", "Promedio", "Máximo", "Mínimo"]);
+
+                // Estadísticas de BPM
+                if (cabinData.pulse?.length > 0) {
+                    const avg = (cabinData.pulse.reduce((a, b) => a + b, 0) / cabinData.pulse.length).toFixed(1);
+                    const max = Math.max(...cabinData.pulse);
+                    const min = Math.min(...cabinData.pulse);
+                    data.push(["BPM", avg, max, min]);
+                }
+
+                // Estadísticas de SpO2
+                if (cabinData.oxygen?.length > 0) {
+                    const avg = (cabinData.oxygen.reduce((a, b) => a + b, 0) / cabinData.oxygen.length).toFixed(1);
+                    const max = Math.max(...cabinData.oxygen);
+                    const min = Math.min(...cabinData.oxygen);
+                    data.push(["SpO2 (%)", avg, max, min]);
+                }
+
+                // Estadísticas de Temperatura
+                if (cabinData.temperature?.length > 0) {
+                    const avg = (cabinData.temperature.reduce((a, b) => a + b, 0) / cabinData.temperature.length).toFixed(1);
+                    const max = Math.max(...cabinData.temperature);
+                    const min = Math.min(...cabinData.temperature);
+                    data.push(["Temperatura (°C)", avg, max, min]);
+                }
+            } else {
+                data.push([`Sin datos biométricos para ${cabin}`]);
+            }
         }
+
+        data.push([]); // Separador entre cabinas
     }
 
     return data;
@@ -350,17 +357,19 @@ async function getSensorData(cabina) {
 }
 
 /**
- * Obtiene historial biométrico
+ * Obtiene historial biométrico por cabina
+ * @param {string} cabin - Cabina (C1 o C2)
  */
-async function getBiometricHistory() {
+async function getBiometricHistory(cabin = "C1") {
     try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/history");
+        const normalizedCabin = (cabin || "C1").toString().trim().toUpperCase();
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/history?cabin=${normalizedCabin}`);
         if (!response.ok) return [];
         
         const result = await response.json();
-        return result.success && result.history ? result.history : [];
+        return result.success && result.data ? result.data : [];
     } catch (error) {
-        console.warn("[Excel Export] Error obteniendo historial biométrico:", error);
+        console.warn(`[Excel Export] Error obteniendo historial biométrico para ${cabin}:`, error);
         return [];
     }
 }

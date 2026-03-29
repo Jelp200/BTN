@@ -17,6 +17,7 @@ let estadoCalor = "off";
 /* ==================== ESTADOS BIOMÉTRICOS ==================== */
 let biometricChartsEnabled = false;
 let biometricWatchConnected = false;
+let biometricWatchConnectedByCabin = { C1: false, C2: false };
 let biometricChartInstances = {
     pulse: null,
     oxygen: null,
@@ -29,16 +30,20 @@ let biometricChartData = {
     temperature: [],
     bloodPressure: [],
 };
+let biometricChartDataByCabin = {
+  C1: { pulse: [], oxygen: [], temperature: [], bloodPressure: [] },
+  C2: { pulse: [], oxygen: [], temperature: [], bloodPressure: [] },
+};
 let biometricUpdateInterval = null;
-let biometricMonitoringStatusInterval = null;
+let biometricMonitoringStatusIntervals = { C1: null, C2: null };
 let biometricLastMetric = "pulse";
-let biometricLastBpmRequestAt = 0;
-let biometricLastSpo2RequestAt = 0;
-let biometricLastTemperatureRequestAt = 0;
-let biometricLastBloodPressureRequestAt = 0;
-let biometricCurrentActiveMeasurement = null;
-let biometricPreviousActiveMeasurement = null;
-let biometricMeasurementCompletionNotified = false; // Flag para evitar múltiples notificaciones
+let biometricLastRequestByCabin = {
+  C1: { bpm: 0, spo2: 0, temperature: 0, bloodPressure: 0 },
+  C2: { bpm: 0, spo2: 0, temperature: 0, bloodPressure: 0 },
+};
+let biometricCurrentActiveMeasurementByCabin = { C1: null, C2: null };
+let biometricPreviousActiveMeasurementByCabin = { C1: null, C2: null };
+let biometricMeasurementCompletionNotifiedByCabin = { C1: false, C2: false };
 
 /* ==================== DATOS PERSONALES ==================== */
 let personalDataStored = {
