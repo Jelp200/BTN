@@ -12,6 +12,7 @@
 *************************************************************************** */
 using ControlPanel.API.Interfaces;
 using ControlPanel.API.DTOs;
+using ControlPanel.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControlPanel.API.Controllers;
@@ -47,7 +48,8 @@ public class SerialController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error al obtener puertos: {ex.Message}");
+            FileLogger.LogError("[SerialController] Error al obtener puertos", ex);
+            return StatusCode(500, "Error interno al obtener puertos disponibles.");
         }
     }
 
@@ -67,7 +69,8 @@ public class SerialController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error al conectar: {ex.Message}");
+            FileLogger.LogError("[SerialController] Error al conectar puerto serial", ex);
+            return StatusCode(500, "Error interno al conectar el puerto serial.");
         }
     }
 
@@ -84,15 +87,18 @@ public class SerialController : ControllerBase
         // Manejo de errores más específico
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            FileLogger.LogError("[SerialController] Argumento inválido al desconectar", ex);
+            return BadRequest("Puerto serial no válido.");
         }
         catch (InvalidOperationException ex)
         {
-            return NotFound(ex.Message);
+            FileLogger.LogError("[SerialController] Puerto no encontrado al desconectar", ex);
+            return NotFound("Puerto serial no encontrado o no conectado.");
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"❌ Error al desconectar: {ex.Message}");
+            FileLogger.LogError("[SerialController] Error al desconectar puerto serial", ex);
+            return StatusCode(500, "Error interno al desconectar el puerto serial.");
         }
     }
 
@@ -118,7 +124,8 @@ public class SerialController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error al enviar trama: {ex.Message}");
+            FileLogger.LogError("[SerialController] Error al enviar trama", ex);
+            return StatusCode(500, "Error interno al enviar la trama.");
         }
     }
 
@@ -135,13 +142,19 @@ public class SerialController : ControllerBase
         return string.IsNullOrWhiteSpace(ultimaTrama) ? NoContent() : Ok(ultimaTrama);
     }
 
-    // GET: api/serial/historial
-    // Devuelve todas las tramas almacenadas
+    // GET: api/serial/historial?page=1&size=100
+    // Devuelve tramas almacenadas con paginación (máximo 500 por página)
     [HttpGet("historial")]
-    public async Task<IActionResult> GetAllTramas()
+    public async Task<IActionResult> GetAllTramas([FromQuery] int page = 1, [FromQuery] int size = 100)
     {
+        if (page < 1) page = 1;
+        size = Math.Clamp(size, 1, 500);
+
         var tramas = await _serialService.GetAllTramasAsync();
-        return Ok(tramas);
+        var total = tramas.Count;
+        var data = tramas.Skip((page - 1) * size).Take(size).ToList();
+
+        return Ok(new { page, size, total, data });
     }
 
     // GET: api/serial/count
