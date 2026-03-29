@@ -1,56 +1,154 @@
-// ===============================
-// Detectar secuencia de teclas
-// ===============================
-
 // Solo ejecutar en el navegador
 if (typeof document !== 'undefined') {
-    let keySequence = "";
-    const DEV_CODE = "pcdev";
-    
-    // Variable global para rastrear si dev mode está activo
+    // ===============================
+    // Estado global de dev mode
+    // ===============================
     window.isDevModeActive = false;
 
-    document.addEventListener("keydown", (e) => {
-        keySequence += e.key.toLowerCase();
+    // ===============================
+    // Detección de secuencia "pcdev"
+    // ===============================
+    let keySequence = "";
+    const DEV_CODE = "pcdev";
 
-        // Mantener solo los últimos caracteres
+    document.addEventListener("keydown", (e) => {
+        // No acumular si el foco está en un input/textarea
+        const tag = document.activeElement?.tagName?.toLowerCase();
+        if (tag === "input" || tag === "textarea") return;
+
+        keySequence += e.key.toLowerCase();
         if (keySequence.length > DEV_CODE.length) {
             keySequence = keySequence.slice(-DEV_CODE.length);
         }
 
         if (keySequence === DEV_CODE) {
-            toggleDevFeatures();
             keySequence = "";
+            if (window.isDevModeActive) {
+                deactivateDevMode();
+            } else {
+                openDevPasswordModal();
+            }
         }
     });
 
     // ===============================
-    // Toggle de features de desarrollo
+    // Modal de autenticación
     // ===============================
-    function toggleDevFeatures() {
-        const devComControls = document.getElementById("dev-com-controls");
-        const devLogControls = document.getElementById("dev-log-controls");
+    const DEV_PASSWORD = "pcdev-nezahualcoyotl-gt";
 
-        devComControls?.classList.toggle("hidden");
-        devLogControls?.classList.toggle("hidden");
-        
-        // Actualizar estado global
-        window.isDevModeActive = !window.isDevModeActive;
-        
-        // Habilitar/deshabilitar selectores de cabina
-        const selectoresCabina = document.querySelectorAll('[data-select="cabina"]');
-        selectoresCabina.forEach(selector => {
-            selector.disabled = !window.isDevModeActive;
-            if (window.isDevModeActive) {
-                selector.classList.remove("opacity-50", "cursor-not-allowed");
-                selector.title = "";
+    function openDevPasswordModal() {
+        if (document.getElementById("dev-auth-modal")) return;
+
+        const overlay = document.createElement("div");
+        overlay.id = "dev-auth-modal";
+        overlay.style.cssText = [
+            "position:fixed", "inset:0", "z-index:99999",
+            "display:flex", "align-items:center", "justify-content:center",
+            "background:rgba(0,0,0,0.6)", "backdrop-filter:blur(3px)"
+        ].join(";");
+
+        overlay.innerHTML = `
+            <div style="background:#1e1e2e;border:1px solid #3b3b5c;border-radius:12px;
+                        padding:28px 32px;width:340px;max-width:90vw;
+                        box-shadow:0 20px 60px rgba(0,0,0,0.5);font-family:monospace;">
+                <p style="margin:0 0 6px;font-size:11px;color:#6b7280;letter-spacing:2px;
+                           text-transform:uppercase;">Modo Desarrollador</p>
+                <p style="margin:0 0 20px;font-size:15px;color:#e2e8f0;font-weight:600;">
+                    Ingresa la contraseña
+                </p>
+                <input
+                    id="dev-password-input"
+                    type="password"
+                    autocomplete="off"
+                    placeholder="••••••••••••••••••••"
+                    style="width:100%;box-sizing:border-box;padding:10px 12px;
+                           background:#0f0f1a;border:1px solid #3b3b5c;border-radius:8px;
+                           color:#e2e8f0;font-size:14px;font-family:monospace;outline:none;
+                           margin-bottom:8px;"
+                />
+                <p id="dev-auth-error"
+                   style="margin:0 0 14px;font-size:12px;color:#f87171;min-height:16px;"></p>
+                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                    <button id="dev-auth-cancel"
+                        style="padding:8px 16px;background:transparent;border:1px solid #3b3b5c;
+                               border-radius:8px;color:#9ca3af;font-size:13px;cursor:pointer;">
+                        Cancelar
+                    </button>
+                    <button id="dev-auth-submit"
+                        style="padding:8px 16px;background:#6366f1;border:none;
+                               border-radius:8px;color:#fff;font-size:13px;
+                               cursor:pointer;font-weight:600;">
+                        Acceder
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const input  = document.getElementById("dev-password-input");
+        const error  = document.getElementById("dev-auth-error");
+        const submit = document.getElementById("dev-auth-submit");
+        const cancel = document.getElementById("dev-auth-cancel");
+
+        // Foco automático
+        setTimeout(() => input?.focus(), 50);
+
+        function attemptUnlock() {
+            if (input.value === DEV_PASSWORD) {
+                closeDevPasswordModal();
+                activateDevMode();
             } else {
-                selector.classList.add("opacity-50", "cursor-not-allowed");
-                selector.title = "Modo desarrollador requerido (pcdev)";
+                error.textContent = "Contraseña incorrecta. Inténtalo de nuevo.";
+                input.value = "";
+                input.focus();
             }
+        }
+
+        submit.addEventListener("click", attemptUnlock);
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") attemptUnlock();
+            if (e.key === "Escape") closeDevPasswordModal();
+        });
+        cancel.addEventListener("click", closeDevPasswordModal);
+        overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) closeDevPasswordModal();
         });
     }
-    
+
+    function closeDevPasswordModal() {
+        document.getElementById("dev-auth-modal")?.remove();
+    }
+
+    // ===============================
+    // Activar / desactivar dev mode
+    // ===============================
+    function activateDevMode() {
+        window.isDevModeActive = true;
+
+        document.getElementById("dev-com-controls")?.classList.remove("hidden");
+        document.getElementById("dev-log-controls")?.classList.remove("hidden");
+
+        document.querySelectorAll('[data-select="cabina"]').forEach(selector => {
+            selector.disabled = false;
+            selector.classList.remove("opacity-50", "cursor-not-allowed");
+            selector.title = "";
+        });
+    }
+
+    function deactivateDevMode() {
+        window.isDevModeActive = false;
+
+        document.getElementById("dev-com-controls")?.classList.add("hidden");
+        document.getElementById("dev-log-controls")?.classList.add("hidden");
+
+        document.querySelectorAll('[data-select="cabina"]').forEach(selector => {
+            selector.disabled = true;
+            selector.classList.add("opacity-50", "cursor-not-allowed");
+            selector.title = "Modo desarrollador requerido (pcdev)";
+        });
+    }
+
     // ===============================
     // Proteger menú contextual
     // ===============================
@@ -221,21 +319,6 @@ if (typeof document !== 'undefined') {
             }
         }
 
-        // Función legacy (compatibilidad)
-        function _addLog(
-            container,
-            message,
-            icono = "🟡",
-        ) {
-            removePlaceholder(container);
 
-            const now = new Date().toLocaleTimeString();
-            const logItem = document.createElement("div");
-            logItem.className = "bg-gray-100 p-1 rounded whitespace-pre-wrap";
-            logItem.textContent = `${icono} [${now}] ${message}`;
-
-            container.appendChild(logItem);
-            container.scrollTop = container.scrollHeight;
-        }
     });
 }

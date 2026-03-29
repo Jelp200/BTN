@@ -40,11 +40,12 @@ namespace ControlPanel.API.Controllers
                 var cabin = NormalizeCabin(request?.Cabin);
                 FileLogger.Log($"[SmartwatchController] Iniciando conexión. Cabin={cabin}, DeviceName={request?.DeviceName}, Timeout={request?.ScanTimeoutMs}");
 
-                var deviceName = string.IsNullOrWhiteSpace(request?.DeviceName) ? "ET570" : request.DeviceName.Trim();
-                var timeout = request?.ScanTimeoutMs is > 0 ? request.ScanTimeoutMs.Value : 15000;
+                var deviceName = string.IsNullOrWhiteSpace(request?.DeviceName) ? "ET570" : request.DeviceName.Trim()[..Math.Min(request.DeviceName.Trim().Length, 64)];
+                var rawTimeout = request?.ScanTimeoutMs is > 0 ? request.ScanTimeoutMs.Value : 15000;
+                var timeout = Math.Clamp(rawTimeout, 1000, 30000);
                 var service = _smartwatchServiceFactory.GetForCabin(cabin);
 
-                FileLogger.Log($"[SmartwatchController] Parámetros procesados: Cabin={cabin}, DeviceName={deviceName}, Timeout={timeout}");
+                FileLogger.Log($"[SmartwatchController] Parámetros procesados: Cabin={cabin}, DeviceName={deviceName}, Timeout={timeout}ms");
 
                 FileLogger.Log("[SmartwatchController] Llamando a ConnectAsync...");
                 var result = await service.ConnectAsync(deviceName, timeout, HttpContext.RequestAborted);
@@ -84,7 +85,7 @@ namespace ControlPanel.API.Controllers
                 return StatusCode(500, new SmartwatchConnectResponse
                 {
                     Success = false,
-                    Message = $"Error no controlado: {ex.Message}",
+                    Message = "Error interno al intentar conectar el smartwatch.",
                     Device = null
                 });
             }
@@ -121,9 +122,10 @@ namespace ControlPanel.API.Controllers
         [HttpGet("vitals/history")]
         public IActionResult GetVitalsHistory([FromQuery] string? cabin, [FromQuery] int limit = 60)
         {
+            limit = Math.Clamp(limit, 1, 200);
             var service = _smartwatchServiceFactory.GetForCabin(cabin);
             var data = service.GetRecentVitals(limit);
-            return Ok(new { success = true, data });
+            return Ok(new { success = true, limit, data });
         }
 
         /// <summary>
@@ -164,9 +166,10 @@ namespace ControlPanel.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = $"Error al iniciar medición de SpO2: {ex.Message}" 
+                FileLogger.LogError("[SmartwatchController] Error al iniciar medición de SpO2", ex);
+                return StatusCode(500, new {
+                    success = false,
+                    message = "Error interno al iniciar la medición de SpO2."
                 });
             }
         }
@@ -198,9 +201,10 @@ namespace ControlPanel.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = $"Error al iniciar medición de BPM: {ex.Message}" 
+                FileLogger.LogError("[SmartwatchController] Error al iniciar medición de BPM", ex);
+                return StatusCode(500, new {
+                    success = false,
+                    message = "Error interno al iniciar la medición de BPM."
                 });
             }
         }
@@ -232,9 +236,10 @@ namespace ControlPanel.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = $"Error al iniciar medición de Temperatura: {ex.Message}" 
+                FileLogger.LogError("[SmartwatchController] Error al iniciar medición de Temperatura", ex);
+                return StatusCode(500, new {
+                    success = false,
+                    message = "Error interno al iniciar la medición de Temperatura."
                 });
             }
         }
@@ -266,9 +271,10 @@ namespace ControlPanel.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = $"Error al iniciar medición de Presión Arterial: {ex.Message}" 
+                FileLogger.LogError("[SmartwatchController] Error al iniciar medición de Presión Arterial", ex);
+                return StatusCode(500, new {
+                    success = false,
+                    message = "Error interno al iniciar la medición de Presión Arterial."
                 });
             }
         }
@@ -305,9 +311,10 @@ namespace ControlPanel.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = $"Error al exportar datos: {ex.Message}" 
+                FileLogger.LogError("[SmartwatchController] Error al exportar datos biométricos", ex);
+                return StatusCode(500, new {
+                    success = false,
+                    message = "Error interno al exportar los datos."
                 });
             }
         }
@@ -345,9 +352,10 @@ namespace ControlPanel.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = $"Error al descargar archivo: {ex.Message}" 
+                FileLogger.LogError("[SmartwatchController] Error al descargar archivo exportado", ex);
+                return StatusCode(500, new {
+                    success = false,
+                    message = "Error interno al descargar el archivo."
                 });
             }
         }
