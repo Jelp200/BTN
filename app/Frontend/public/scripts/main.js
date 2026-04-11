@@ -2773,6 +2773,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+                // UX-02: Confirmación antes de acción destructiva
+                const confirmado = await window.showConfirm(
+                    "¿Finalizar la sesión actual?\n\nEsto apagará todos los actuadores y borrará el historial de sensores del backend.\n\nAsegúrate de haber exportado los datos del participante antes de continuar.",
+                    { confirmText: "Finalizar sesión", cancelText: "Cancelar", type: "warning" }
+                );
+                if (!confirmado) return;
+
+                // FUNC-03: Limpiar historial de sensores en el backend para la nueva sesión
+                try {
+                    await fetch("http://localhost:5000/api/serial/limpiar", { method: "POST" });
+                    console.log("[Session] ✓ Historial del backend limpiado.");
+                } catch (e) {
+                    console.warn("[Session] No se pudo limpiar el historial del backend:", e);
+                }
+
+                // FUNC-03: Limpiar datos del participante (DOM + estado en memoria)
+                if (typeof window.limpiarDatosPersonales === "function") {
+                    window.limpiarDatosPersonales();
+                }
+
                 estadoCabina.classList.remove("bg-[#00bf63]");
                 estadoCabina.classList.add("bg-[#ff4d4d]");
                 
@@ -2966,7 +2986,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Actualizar estado de botones
                 actualizarEstadoBotones();
 
-                alert("Sistema detenido. Todo ha sido reiniciado.");
+                alert("✅ Sesión finalizada. Sistema listo para el siguiente participante.");
             });
         }
 

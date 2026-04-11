@@ -567,3 +567,28 @@ function initBiometricCharts(specificCanvasIndex = null) {
 // Exponer funciones para que puedan ser llamadas desde main.js
 window.inicializarApp = inicializarApp;
 window.initBiometricCharts = initBiometricCharts;
+
+/**
+ * FUNC-03: Limpia los datos del participante actual para iniciar una nueva sesión.
+ * Resetea el estado en memoria (personalDataStored) y todos los campos del formulario
+ * de datos personales en ambos paneles.
+ */
+window.limpiarDatosPersonales = function () {
+    // Resetear estado en memoria
+    personalDataStored = { edad: "", altura: "", peso: "", genero: "" };
+
+    // Limpiar todos los formularios de datos personales en el DOM
+    document.querySelectorAll(".personal-data-form-container").forEach((form) => {
+        const age    = form.querySelector(".personal-age");
+        const height = form.querySelector(".personal-height");
+        const weight = form.querySelector(".personal-weight");
+        const gender = form.querySelector(".personal-gender");
+
+        if (age)    age.value    = "";
+        if (height) height.value = "";
+        if (weight) weight.value = "";
+        if (gender) gender.selectedIndex = 0;
+    });
+
+    console.log("[Session] ✓ Datos del participante limpiados para nueva sesión.");
+};

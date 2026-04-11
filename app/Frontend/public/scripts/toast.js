@@ -218,8 +218,153 @@
         toast.addEventListener('gt-dismiss', () => dismiss(toast));
     }
 
+    // ─── Modal de confirmación (UX-02) ──────────────────────────────────────
+    // Retorna Promise<boolean>: true = confirmado, false = cancelado.
+    function showConfirm(message, options = {}) {
+        return new Promise((resolve) => {
+            const {
+                confirmText  = 'Confirmar',
+                cancelText   = 'Cancelar',
+                type         = 'warning',   // 'warning' | 'error' | 'info'
+            } = options;
+
+            const c = COLORS[type] || COLORS.warning;
+
+            // ── Overlay ──
+            const overlay = document.createElement('div');
+            overlay.style.cssText = [
+                'position:fixed',
+                'inset:0',
+                'background:rgba(0,0,0,0.45)',
+                'z-index:99999',
+                'display:flex',
+                'align-items:center',
+                'justify-content:center',
+                'padding:20px',
+                'box-sizing:border-box',
+                'opacity:0',
+                'transition:opacity 0.2s ease',
+            ].join(';');
+
+            // ── Tarjeta ──
+            const card = document.createElement('div');
+            card.style.cssText = [
+                'background:#fff',
+                `border-top:4px solid ${c.border}`,
+                'border-radius:12px',
+                'box-shadow:0 8px 32px rgba(0,0,0,0.22)',
+                'padding:24px 28px 20px',
+                'max-width:420px',
+                'width:100%',
+                'box-sizing:border-box',
+                'transform:scale(0.93)',
+                'transition:transform 0.2s cubic-bezier(.21,1.02,.73,1)',
+                'font-family:system-ui,sans-serif',
+            ].join(';');
+
+            // ── Encabezado con icono ──
+            const header = document.createElement('div');
+            header.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:12px;';
+
+            const iconWrap = document.createElement('span');
+            iconWrap.style.cssText = `color:${c.icon};flex-shrink:0;`;
+            iconWrap.innerHTML = ICONS[type] || ICONS.warning;
+
+            const title = document.createElement('span');
+            title.style.cssText = `font-size:15px;font-weight:600;color:${c.text};`;
+            title.textContent = type === 'error' ? 'Atención' : type === 'warning' ? 'Confirmación requerida' : 'Información';
+
+            header.appendChild(iconWrap);
+            header.appendChild(title);
+
+            // ── Mensaje ──
+            const msgEl = document.createElement('p');
+            msgEl.style.cssText = `font-size:13.5px;color:#374151;line-height:1.55;margin:0 0 20px;white-space:pre-line;`;
+            msgEl.textContent = message;
+
+            // ── Botones ──
+            const btnRow = document.createElement('div');
+            btnRow.style.cssText = 'display:flex;justify-content:flex-end;gap:10px;';
+
+            const btnCancel = document.createElement('button');
+            btnCancel.textContent = cancelText;
+            btnCancel.style.cssText = [
+                'padding:8px 18px',
+                'border-radius:8px',
+                'border:1px solid #d1d5db',
+                'background:#f9fafb',
+                'color:#374151',
+                'font-size:13px',
+                'font-weight:500',
+                'cursor:pointer',
+                'font-family:system-ui,sans-serif',
+                'transition:background 0.15s',
+            ].join(';');
+            btnCancel.addEventListener('mouseover', () => { btnCancel.style.background = '#f3f4f6'; });
+            btnCancel.addEventListener('mouseout',  () => { btnCancel.style.background = '#f9fafb'; });
+
+            const btnConfirm = document.createElement('button');
+            btnConfirm.textContent = confirmText;
+            btnConfirm.style.cssText = [
+                'padding:8px 18px',
+                'border-radius:8px',
+                'border:none',
+                `background:${c.border}`,
+                'color:#fff',
+                'font-size:13px',
+                'font-weight:600',
+                'cursor:pointer',
+                'font-family:system-ui,sans-serif',
+                'transition:opacity 0.15s',
+            ].join(';');
+            btnConfirm.addEventListener('mouseover', () => { btnConfirm.style.opacity = '0.85'; });
+            btnConfirm.addEventListener('mouseout',  () => { btnConfirm.style.opacity = '1'; });
+
+            btnRow.appendChild(btnCancel);
+            btnRow.appendChild(btnConfirm);
+
+            card.appendChild(header);
+            card.appendChild(msgEl);
+            card.appendChild(btnRow);
+            overlay.appendChild(card);
+            document.body.appendChild(overlay);
+
+            // ── Animación de entrada ──
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    overlay.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                });
+            });
+
+            // ── Cierre con animación ──
+            function close(result) {
+                overlay.style.opacity = '0';
+                card.style.transform = 'scale(0.93)';
+                overlay.addEventListener('transitionend', () => {
+                    overlay.remove();
+                    resolve(result);
+                }, { once: true });
+            }
+
+            btnCancel.addEventListener('click',  () => close(false));
+            btnConfirm.addEventListener('click', () => close(true));
+
+            // Cerrar con Escape
+            function onKeyDown(e) {
+                if (e.key === 'Escape') { document.removeEventListener('keydown', onKeyDown); close(false); }
+                if (e.key === 'Enter')  { document.removeEventListener('keydown', onKeyDown); close(true);  }
+            }
+            document.addEventListener('keydown', onKeyDown);
+
+            // Foco automático en Confirmar para accesibilidad
+            setTimeout(() => btnConfirm.focus(), 50);
+        });
+    }
+
     // ─── Exponer globalmente ──────────────────────────────────────────────────
-    window.showToast = showToast;
+    window.showToast   = showToast;
+    window.showConfirm = showConfirm;
 
     // Reemplazar window.alert por toasts (preservar referencia original por si se necesita)
     window._nativeAlert = window.alert;
