@@ -112,13 +112,13 @@ import SoundControlButtons from "./SoundControlButtons.astro";
 
         <!-- Botones de control de audio -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <SoundControlButtons icon="vmas" data-sound-codigo="VMAS" />
             <SoundControlButtons icon="vmen" data-sound-codigo="VMEN" />
+            <SoundControlButtons icon="vmas" data-sound-codigo="VMAS" />
             <SoundControlButtons icon="stop" data-sound-codigo="STOP" />
         </div>
 
-        <!-- Barra de volumen estilizada -->
-        <div class="volume-control space-y-2">
+        <!-- Barra de volumen estilizada (deshabilitada temporalmente) -->
+        <div class="volume-control space-y-2 hidden">
             <div class="flex items-center gap-2">
                 <!-- Icono de volumen bajo -->
                 <svg
