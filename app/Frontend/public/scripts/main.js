@@ -2638,13 +2638,66 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        const BRIGHTNESS_LED_CODES = new Set(["101", "102", "103", "104", "109", "114"]);
+
+        function actualizarBotonesBrillo() {
+            const btnUp   = panel.querySelector('.led-button[data-codigo="121"]');
+            const btnDown = panel.querySelector('.led-button[data-codigo="122"]');
+            if (!btnUp || !btnDown) return;
+
+            const codigoActivo = ledActivo ? ledActivo.getAttribute("data-codigo") : null;
+            const habilitado   = codigoActivo !== null && BRIGHTNESS_LED_CODES.has(codigoActivo);
+
+            [btnUp, btnDown].forEach((btn) => {
+                btn.disabled          = !habilitado;
+                btn.style.opacity     = habilitado ? "1"           : "0.35";
+                btn.style.cursor      = habilitado ? "pointer"     : "not-allowed";
+            });
+        }
+
+        actualizarBotonesBrillo();
+
         // Solo un led puede estar activo a la vez
         ledButtons.forEach((button) => {
-            button.addEventListener("click", () => {
+            button.addEventListener("click", (e) => {
                 const codigo = button.getAttribute("data-codigo");
                 const isActive = button.classList.contains("active-led");
 
                 if (!codigo) return;
+
+                if (codigo === "121" || codigo === "122") {
+                    e.stopPropagation();
+
+                    enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+
+                    const ledActivoSnapshot = ledActivo;
+                    const botonBrillo = button;
+
+                    setTimeout(() => {
+                        botonBrillo.classList.remove("active-led");
+                        botonBrillo.style.backgroundColor =
+                            botonBrillo.getAttribute("data-inactive-color");
+
+                        if (ledActivoSnapshot) {
+                            ledActivoSnapshot.classList.add("active-led");
+                            ledActivoSnapshot.style.backgroundColor =
+                                ledActivoSnapshot.getAttribute("data-active-color");
+                            colorCabina.style.backgroundColor =
+                                ledActivoSnapshot.getAttribute("data-active-color");
+                        }
+
+                        botonBrillo.animate(
+                            [
+                                { backgroundColor: botonBrillo.getAttribute("data-inactive-color") },
+                                { backgroundColor: botonBrillo.getAttribute("data-active-color"), offset: 0.35 },
+                                { backgroundColor: botonBrillo.getAttribute("data-inactive-color") },
+                            ],
+                            { duration: 380, easing: "ease-in-out", fill: "none" }
+                        );
+                    }, 0);
+
+                    return;
+                }
 
                 if (isActive) {
                     button.classList.remove("active-led");
@@ -2655,6 +2708,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
                     ledActivo = null;
+                    actualizarBotonesBrillo();
                 } else {
                     if (ledActivo) {
                         const codAnterior =
@@ -2677,6 +2731,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
 
                     ledActivo = button;
+                    actualizarBotonesBrillo();
                 }
             });
         });
@@ -2824,6 +2879,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         ledActivo.getAttribute("data-inactive-color");
                     colorCabina.style.backgroundColor = "#d9d9d9";
                     ledActivo = null;
+                    actualizarBotonesBrillo();
                 }
 
                 // Enviar trama OFF para cada botón activo
