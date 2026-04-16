@@ -1207,7 +1207,7 @@ async function createSheet3Data(cabinaCode) {
 
     data.push(["DATOS DE SENSORES"]);
     data.push([]);
-    data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","O3 (PPB)","Db"]);
+    data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","Lux (lm/m2)","Db"]);
     
     // MAPEAR TODOS LOS OBJETOS DEL ARRAY
     dataSensores.forEach((lectura) => {
@@ -1927,7 +1927,7 @@ function initTwoColumnsSection(panel) {
 
 // Función para manejar el ciclo de calor
 function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
-    
+
     const estadoActual = codigoBoton[cabinaPrefijo];
     // Calcular siguiente estado para la cabina
     const currentIndex = calorCycle.indexOf(estadoActual);
@@ -1939,21 +1939,26 @@ function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
 
     if (nuevoEstado === '002') {
         btn.classList.add("bg-[#d9d9d9]");
-        enviarTrama(
-            cabinaPrefijo,
-            nuevoEstado,
-            cabinaActiva
-        );
+        enviarTrama(cabinaPrefijo, nuevoEstado, cabinaActiva);
         actualizarLedCalor(panel, '002');
         return;
-    };
+    }
+
+    // Al activarse por primera vez (003), desactivar los demás botones de control
+    if (nuevoEstado === '003') {
+        panel.querySelectorAll('.control-btn').forEach((b) => {
+            if (b === btn) return;
+            const cod = b.getAttribute('data-codigo');
+            if (b.classList.contains('bg-[#00bf63]') && cod && codigoBoton[cod]) {
+                b.classList.remove('bg-[#00bf63]');
+                b.classList.add('bg-[#d9d9d9]');
+                enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
+            }
+        });
+    }
 
     btn.classList.add("bg-[#00bf63]");
-    enviarTrama(
-        cabinaPrefijo,
-        nuevoEstado,
-        cabinaActiva
-    );
+    enviarTrama(cabinaPrefijo, nuevoEstado, cabinaActiva);
     actualizarLedCalor(panel, nuevoEstado);
 };
 
@@ -2481,18 +2486,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     controlButtons.forEach((b) => {
                         const cod = b.getAttribute("data-codigo");
-                        if (
-                            b.classList.contains("bg-[#00bf63]") &&
-                            cod &&
-                            codigoBoton[cod]
-                        ) {
+                        if (!b.classList.contains("bg-[#00bf63]")) return;
+
+                        if (cod === "CALOR") {
+                            // CALOR usa clave CALOR_C1 / CALOR_C2 en codigoBoton
                             b.classList.remove("bg-[#00bf63]");
                             b.classList.add("bg-[#d9d9d9]");
-                            enviarTrama(
-                                cabinaPrefijo,
-                                codigoBoton[cod].off,
-                                cabinaActiva,
-                            );
+                            enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
+                            codigoBoton[cabinaPrefijo] = "002";
+                            actualizarLedCalor(panel, "002");
+                        } else if (cod && codigoBoton[cod]) {
+                            b.classList.remove("bg-[#00bf63]");
+                            b.classList.add("bg-[#d9d9d9]");
+                            enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
                         }
                     });
 

@@ -126,7 +126,7 @@ const sensorConfig = {
     TEMP: { frecuencia: 60, label: "Temperatura (°C)" },
     HUM: { frecuencia: 60, label: "Humedad (%)" },
     CO2: { frecuencia: 60, label: "CO₂ (ppm)" },
-    O3: { frecuencia: 60, label: "Ozono (ppb)" },
+    O3: { frecuencia: 60, label: "Iluminancia (lm/m²)" },
     UV: { frecuencia: 60, label: "UV (W/m²)" },
     DB: { frecuencia: 60, label: "Ruido (dB)" },
     X: { frecuencia: 1, label: "Aceleración X (m/s²)" },
