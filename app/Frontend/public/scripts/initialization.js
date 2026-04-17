@@ -310,6 +310,7 @@ function initBiometricCharts(specificCanvasIndex = null) {
             oxygen: Array(10).fill(null),
             temperature: Array(10).fill(null),
             bloodPressure: Array(10).fill(null),
+            labels: [],
         };
     });
 
@@ -469,19 +470,26 @@ function initBiometricCharts(specificCanvasIndex = null) {
                 newSelector.addEventListener("change", async (e) => {
                     const newMetric = e.target.value;
                     const previousMetric = biometricLastMetric;
-                    
+
                     console.log(`[BiometricCharts] Cambiando métrica a: ${newMetric} (canvas ${idx})`);
-                    
+
+                    // En modo automático, solo actualizar visualización sin disparar medición
+                    if (biometricModeByCabin[cabin] === 'auto') {
+                        window.updateBiometricChart(idx, newMetric, [], null, cabinData);
+                        biometricLastMetric = newMetric;
+                        return;
+                    }
+
                     // Actualizar visualización de la gráfica
                     window.updateBiometricChart(idx, newMetric, selectorLabels, selectorMetricConfigs, cabinData);
                     
                     // Actualizar métrica actual
                     biometricLastMetric = newMetric;
                     
-                    // Si cambió de métrica, iniciar medición correspondiente
-                    if (newMetric !== previousMetric && biometricWatchConnectedByCabin[cabin]) {
-                        console.log(`[BiometricCharts] Iniciando medición de ${newMetric}`);
-                        
+                    // Disparar medición solo en modo "Por evento"
+                    if (biometricModeByCabin[cabin] === 'event' && newMetric !== previousMetric && biometricWatchConnectedByCabin[cabin]) {
+                        console.log(`[BiometricCharts] [Evento] Iniciando medición de ${newMetric}`);
+
                         if (newMetric === "oxygen") {
                             await window.requestSpo2Measurement("selector", cabin);
                         } else if (newMetric === "pulse") {
@@ -494,6 +502,13 @@ function initBiometricCharts(specificCanvasIndex = null) {
                     }
                 });
             }
+
+            // Registrar listeners para botones de modo biométrico
+            const autoBtn  = chartContainer?.querySelector('[data-biometric-mode="auto"]');
+            const eventBtn = chartContainer?.querySelector('[data-biometric-mode="event"]');
+            if (autoBtn)  autoBtn.addEventListener('click',  () => window.onBiometricModeClick('auto',  cabin));
+            if (eventBtn) eventBtn.addEventListener('click', () => window.onBiometricModeClick('event', cabin));
+
         } catch (error) {
             console.error(`[BiometricCharts] ❌ Error inicializando canvas ${idx}:`, error);
         }
@@ -538,8 +553,8 @@ function initBiometricCharts(specificCanvasIndex = null) {
             },
         };
         
-        window.seedBiometricHistory(labels, metricConfigs, "C1");
-        window.seedBiometricHistory(labels, metricConfigs, "C2");
+        window.seedBiometricHistory(metricConfigs, "C1");
+        window.seedBiometricHistory(metricConfigs, "C2");
 
         // Actualizar gráficas cada 5 segundos
         biometricUpdateInterval = setInterval(() => {

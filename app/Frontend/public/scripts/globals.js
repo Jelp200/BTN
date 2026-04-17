@@ -31,9 +31,10 @@ let biometricChartData = {
     bloodPressure: [],
 };
 let biometricChartDataByCabin = {
-  C1: { pulse: [], oxygen: [], temperature: [], bloodPressure: [] },
-  C2: { pulse: [], oxygen: [], temperature: [], bloodPressure: [] },
+  C1: { pulse: [], oxygen: [], temperature: [], bloodPressure: [], labels: [] },
+  C2: { pulse: [], oxygen: [], temperature: [], bloodPressure: [], labels: [] },
 };
+let biometricLastTimestampByCabin = { C1: null, C2: null };
 let biometricUpdateInterval = null;
 let biometricMonitoringStatusIntervals = { C1: null, C2: null };
 let biometricLastMetric = "pulse";
@@ -44,6 +45,14 @@ let biometricLastRequestByCabin = {
 let biometricCurrentActiveMeasurementByCabin = { C1: null, C2: null };
 let biometricPreviousActiveMeasurementByCabin = { C1: null, C2: null };
 let biometricMeasurementCompletionNotifiedByCabin = { C1: false, C2: false };
+
+/* ==================== ESTADOS DE MODO BIOMÉTRICO ==================== */
+let biometricModeByCabin = { C1: null, C2: null };         // null | 'auto' | 'event'
+let biometricAutoTimerByCabin = { C1: null, C2: null };    // setTimeout ID (descanso 5 min)
+let biometricAutoCountdownByCabin = { C1: null, C2: null };// setInterval ID (contador visual)
+let biometricFirstMeasurementDoneByCabin = { C1: false, C2: false }; // habilita botones de modo
+const BIOMETRIC_AUTO_CYCLE_ORDER = ['bpm', 'spo2', 'temperature', 'bloodPressure'];
+const BIOMETRIC_AUTO_REST_MS = 5 * 60 * 1000; // 5 min entre ciclos completos
 
 /* ==================== DATOS PERSONALES ==================== */
 let personalDataStored = {
@@ -123,12 +132,12 @@ const TRAMA_STOP = "038";
 
 // Configuración de sensores
 const sensorConfig = {
-    TEMP: { frecuencia: 60, label: "Temperatura (°C)" },
-    HUM: { frecuencia: 60, label: "Humedad (%)" },
+    T: { frecuencia: 60, label: "Temperatura (°C)" },
+    H: { frecuencia: 60, label: "Humedad (%)" },
     CO2: { frecuencia: 60, label: "CO₂ (ppm)" },
     O3: { frecuencia: 60, label: "Iluminancia (lm/m²)" },
     UV: { frecuencia: 60, label: "UV (W/m²)" },
-    DB: { frecuencia: 60, label: "Ruido (dB)" },
+    dB: { frecuencia: 60, label: "Ruido (dB)" },
     X: { frecuencia: 1, label: "Aceleración X (m/s²)" },
     Y: { frecuencia: 1, label: "Aceleración Y (m/s²)" },
     Z: { frecuencia: 1, label: "Aceleración Z (m/s²)" },
