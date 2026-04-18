@@ -397,6 +397,7 @@ function initBiometricCharts(specificCanvasIndex = null) {
                         borderColor: config.borderColor,
                         backgroundColor: config.bgColor,
                         tension: 0.3,
+                        cubicInterpolationMode: 'monotone',
                         pointRadius: 4,
                         pointBackgroundColor: config.borderColor,
                         fill: true,

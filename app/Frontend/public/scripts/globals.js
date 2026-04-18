@@ -51,6 +51,7 @@ let biometricModeByCabin = { C1: null, C2: null };         // null | 'auto' | 'e
 let biometricAutoTimerByCabin = { C1: null, C2: null };    // setTimeout ID (descanso 5 min)
 let biometricAutoCountdownByCabin = { C1: null, C2: null };// setInterval ID (contador visual)
 let biometricFirstMeasurementDoneByCabin = { C1: false, C2: false }; // habilita botones de modo
+let biometricLastCompletedMetricByCabin = { C1: null, C2: null };   // última métrica completada
 const BIOMETRIC_AUTO_CYCLE_ORDER = ['bpm', 'spo2', 'temperature', 'bloodPressure'];
 const BIOMETRIC_AUTO_REST_MS = 5 * 60 * 1000; // 5 min entre ciclos completos
 

@@ -462,6 +462,7 @@ async function initGrafica(panel, sensor = "X") {
                         borderColor: "#004aad",
                         backgroundColor: "rgba(0, 74, 173, 0.2)",
                         tension: 0.3,
+                        cubicInterpolationMode: 'monotone',
                         pointRadius: 0,
                         fill: false,
                     },
@@ -916,6 +917,9 @@ async function checkMonitoringStatus(cabin = "C1") {
             } catch (error) {
                 console.warn("[BiometricCharts] Error actualizando TopMetricsGrid después de medición:", error);
             }
+
+            // Registrar la última métrica completada para reanudar el ciclo auto desde el punto correcto
+            biometricLastCompletedMetricByCabin[normalizedCabin] = currentActive;
 
             // Habilitar botones de modo tras la primera medición BPM completada
             if (currentActive === 'bpm' && !biometricFirstMeasurementDoneByCabin[normalizedCabin]) {
@@ -2102,12 +2106,30 @@ function updateBiometricModeStatus(cabin, text, colorClass) {
     });
 }
 
-// Sincroniza el <select> de métrica sin disparar el evento change
+// Sincroniza el <select> de métrica y actualiza la gráfica sin disparar el evento change
 function updateBiometricSelectorUI(cabin, metric) {
-    const optVal = METRIC_TO_SELECTOR[metric] || metric;
+    const selectorVal = METRIC_TO_SELECTOR[metric] || metric;
+    const cabinData   = biometricChartDataByCabin[cabin] || {};
+    const allCanvases = document.querySelectorAll('.biometric-chart');
+
+    const chartMetricConfigs = {
+        pulse:         { label: 'Pulso (bpm)',              yScale: { min: 50,  max: 120 }, borderColor: '#e74c3c', bgColor: 'rgba(231,76,60,0.2)'   },
+        oxygen:        { label: 'Oxigenación (%)',           yScale: { min: 90,  max: 100 }, borderColor: '#3498db', bgColor: 'rgba(52,152,219,0.2)'  },
+        temperature:   { label: 'Temperatura (°C)',          yScale: { min: 35,  max: 40  }, borderColor: '#f39c12', bgColor: 'rgba(243,156,18,0.2)'  },
+        bloodPressure: { label: 'Presión Arterial (mmHg)',   yScale: { min: 80,  max: 160 }, borderColor: '#9b59b6', bgColor: 'rgba(155,89,182,0.2)'  },
+    };
+
     _getChartContainersForCabin(cabin).forEach(container => {
         const sel = container.querySelector('.biometric-metric-selector');
-        if (sel && sel.value !== optVal) sel.value = optVal;
+        if (sel && sel.value !== selectorVal) sel.value = selectorVal;
+
+        // Actualizar la gráfica para que refleje la nueva métrica
+        const canvas = container.querySelector('.biometric-chart');
+        if (!canvas) return;
+        const idx = Array.from(allCanvases).indexOf(canvas);
+        if (idx >= 0) {
+            window.updateBiometricChart(idx, selectorVal, cabinData.labels ?? [], chartMetricConfigs, cabinData);
+        }
     });
 }
 
@@ -2144,14 +2166,28 @@ async function activateAutoMode(cabin) {
     window.showToast?.('🔄 Modo automático activado: BPM → SpO2 → Temperatura → Presión → 5 min de descanso', 'info');
 
     const currentActive = biometricCurrentActiveMeasurementByCabin[cabin];
-    if (!currentActive) {
-        updateBiometricModeStatus(cabin, '⟳ Iniciando ciclo — midiendo Pulso...', 'bg-green-50 text-green-700');
-        await window.requestBpmMeasurement('auto', cabin);
-        updateBiometricSelectorUI(cabin, 'bpm');
-    } else {
+    if (currentActive) {
+        // Hay una medición en curso — esperar que termine, el encadenado lo continúa
         const name = METRIC_NAMES[currentActive] || currentActive;
         updateBiometricModeStatus(cabin, `⟳ Completando medición actual: ${name}...`, 'bg-green-50 text-green-700');
+        return;
     }
+
+    // Determinar el siguiente paso según la última métrica completada.
+    // Esto evita repetir BPM justo después de que el hardware lo acaba de medir.
+    const lastCompleted = biometricLastCompletedMetricByCabin[cabin];
+    const lastIdx = lastCompleted ? BIOMETRIC_AUTO_CYCLE_ORDER.indexOf(lastCompleted) : -1;
+    const nextIdx  = lastIdx >= 0 ? (lastIdx + 1) % BIOMETRIC_AUTO_CYCLE_ORDER.length : 0;
+    const next     = BIOMETRIC_AUTO_CYCLE_ORDER[nextIdx];
+    const nextName = METRIC_NAMES[next] || next;
+
+    updateBiometricModeStatus(cabin, `⟳ Iniciando ciclo — midiendo ${nextName}...`, 'bg-green-50 text-green-700');
+    updateBiometricSelectorUI(cabin, next);
+
+    if      (next === 'bpm')          await window.requestBpmMeasurement('auto', cabin);
+    else if (next === 'spo2')         await window.requestSpo2Measurement('auto', cabin);
+    else if (next === 'temperature')  await window.requestTemperatureMeasurement('auto', cabin);
+    else if (next === 'bloodPressure') await window.requestBloodPressureMeasurement('auto', cabin);
 }
 
 // ── Activa el modo por evento ────────────────────────────────────────────────
@@ -2476,6 +2512,7 @@ function updateBiometricChart(canvasIndex, metric, labels, metricConfigs, data) 
                 borderColor: config.borderColor,
                 backgroundColor: config.bgColor,
                 tension: 0.3,
+                cubicInterpolationMode: 'monotone',
                 pointRadius: 4,
                 pointBackgroundColor: config.borderColor,
                 fill: true,
