@@ -1724,7 +1724,9 @@ function initTwoColumnsSection(panel) {
     // Función para mostrar botones de sonidos/tonos
     function mostrarSeccion(seccion) {
         contenedor.innerHTML = "";
-        const datos = seccion === "sonidos" ? sonidosAmbientales : tinitus;
+        const datos = seccion === "sonidos" ? sonidosAmbientales
+                    : seccion === "tonos"   ? tonosPuros
+                    : tinitus;
         datos.forEach((item) => {
             const btn = document.createElement("button");
             btn.className =
@@ -1855,11 +1857,8 @@ function initTwoColumnsSection(panel) {
                 reproduciendoPorCabina[cabinaSeleccionada];
             actualizarEstadoVolumen(panel, reproduciendo);
 
-            const seccionActiva = botonesSeccion[0].classList.contains(
-                "bg-[#00bf63]",
-            )
-                ? "sonidos"
-                : "tinitus";
+            const btnActivo = Array.from(botonesSeccion).find(b => b.classList.contains("bg-[#00bf63]"));
+            const seccionActiva = btnActivo?.getAttribute("data-seccion") || "sonidos";
             mostrarSeccion(seccionActiva);
             restaurarSonidoActivo(panel);
         });

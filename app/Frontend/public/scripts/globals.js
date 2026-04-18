@@ -106,26 +106,30 @@ const sonidosAmbientales = [
 
 // Lista de tonos de tinitus
 const tinitus = [
-    { nombre: "Tinitus 1", codigo: "070" },
-    { nombre: "Tinitus 2", codigo: "071" },
-    { nombre: "Tinitus 3", codigo: "072" },
-    { nombre: "Tinitus 4", codigo: "073" },
-    { nombre: "Tinitus 5", codigo: "074" },
-    { nombre: "Tinitus 6", codigo: "075" },
-    { nombre: "Tinitus 7", codigo: "076" },
-    { nombre: "Tinitus 8", codigo: "077" },
-    { nombre: "Tinitus 9", codigo: "078" },
+    { nombre: "Tinitus 1",  codigo: "070" },
+    { nombre: "Tinitus 2",  codigo: "071" },
+    { nombre: "Tinitus 3",  codigo: "072" },
+    { nombre: "Tinitus 4",  codigo: "073" },
+    { nombre: "Tinitus 5",  codigo: "074" },
+    { nombre: "Tinitus 6",  codigo: "075" },
+    { nombre: "Tinitus 7",  codigo: "076" },
+    { nombre: "Tinitus 8",  codigo: "077" },
+    { nombre: "Tinitus 9",  codigo: "078" },
     { nombre: "Tinitus 10", codigo: "079" },
     { nombre: "Tinitus 11", codigo: "080" },
     { nombre: "Tinitus 12", codigo: "081" },
+];
+
+// Lista de tonos de frecuencia pura (audiometría)
+const tonosPuros = [
     { nombre: "Tono 125Hz", codigo: "082" },
     { nombre: "Tono 250Hz", codigo: "083" },
     { nombre: "Tono 500Hz", codigo: "084" },
-    { nombre: "Tono 1kHz", codigo: "085" },
-    { nombre: "Tono 2kHz", codigo: "086" },
-    { nombre: "Tono 4kHz", codigo: "087" },
-    { nombre: "Tono 6kHz", codigo: "088" },
-    { nombre: "Tono 8kHz", codigo: "089" },
+    { nombre: "Tono 1kHz",  codigo: "085" },
+    { nombre: "Tono 2kHz",  codigo: "086" },
+    { nombre: "Tono 4kHz",  codigo: "087" },
+    { nombre: "Tono 6kHz",  codigo: "088" },
+    { nombre: "Tono 8kHz",  codigo: "089" },
 ];
 
 // Código para detener reproducción
@@ -347,6 +351,7 @@ window.codigoBoton = codigoBoton;
 window.codigoSonidoControl = codigoSonidoControl;
 window.sonidosAmbientales = sonidosAmbientales;
 window.tinitus = tinitus;
+window.tonosPuros = tonosPuros;
 window.TRAMA_STOP = TRAMA_STOP;
 window.sensorConfig = sensorConfig;
 window.controlDescripcion = controlDescripcion;
