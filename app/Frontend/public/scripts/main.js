@@ -104,7 +104,8 @@ function initTabs(panel) {
         }
 
         // ✅ Si se activa el tab de biometría y el reloj está conectado, inicializar gráficas
-        if (target === "biometria" && biometricWatchConnected && !biometricChartsEnabled) {
+        const panelCabin = getCabinFromPanel(panel);
+        if (target === "biometria" && biometricWatchConnectedByCabin[panelCabin] && !biometricChartsEnabled) {
             console.log("[BiometricCharts] Tab de biometría visible. Inicializando gráficas...");
             initBiometricCharts();
         }
@@ -139,6 +140,28 @@ function initTabs(panel) {
 
     panel.dataset.tabsInitialized = "true";
     console.log(dbg, "initialized for panel");
+}
+
+function normalizeCabin(cabin) {
+    const value = (cabin || "C1").toString().trim().toUpperCase();
+    return value === "C2" ? "C2" : "C1";
+}
+
+function getCabinFromPanel(panel) {
+    if (!panel) return "C1";
+
+    const selector = panel.querySelector("[data-select='cabina']");
+    if (selector?.value?.includes("2")) return "C2";
+    return "C1";
+}
+
+function getPanelByCabin(cabin) {
+    const targetCabin = normalizeCabin(cabin);
+    const panels = document.querySelectorAll(".panel-container");
+    for (const panel of panels) {
+        if (getCabinFromPanel(panel) === targetCabin) return panel;
+    }
+    return null;
 }
 
 // Escanear puertos COM del sistema
@@ -439,6 +462,7 @@ async function initGrafica(panel, sensor = "X") {
                         borderColor: "#004aad",
                         backgroundColor: "rgba(0, 74, 173, 0.2)",
                         tension: 0.3,
+                        cubicInterpolationMode: 'monotone',
                         pointRadius: 0,
                         fill: false,
                     },
@@ -605,13 +629,14 @@ async function getSensorData(cabina) {
 }
 
 // Obtiene historial biométrico
-async function getBiometricHistory() {
+async function getBiometricHistory(cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
     try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/history");
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/history?cabin=${normalizedCabin}`);
         if (!response.ok) return [];
         
         const result = await response.json();
-        return result.success && result.history ? result.history : [];
+        return result.success && result.data ? result.data : [];
     } catch (error) {
         console.warn("[Excel Export] Error obteniendo historial biométrico:", error);
         return [];
@@ -619,9 +644,10 @@ async function getBiometricHistory() {
 }
 
 // Funciones para interactuar con el backend del smartwatch
-async function fetchLatestBiometricData() {
+async function fetchLatestBiometricData(cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
     try {
-        const response = await fetch("http://localhost:5000/api/Smartwatch/vitals/latest");
+        const response = await fetch(`http://localhost:5000/api/Smartwatch/vitals/latest?cabin=${normalizedCabin}`);
         if (!response.ok) return null;
 
         const payload = await response.json();
@@ -643,9 +669,10 @@ async function fetchLatestBiometricData() {
     }
 }
 
-async function fetchBiometricHistory(limit = 10) {
+async function fetchBiometricHistory(limit = 10, cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
     try {
-        const response = await fetch(`http://localhost:5000/api/Smartwatch/vitals/history?limit=${limit}`);
+        const response = await fetch(`http://localhost:5000/api/Smartwatch/vitals/history?cabin=${normalizedCabin}&limit=${limit}`);
         if (!response.ok) return [];
 
         const payload = await response.json();
@@ -658,25 +685,26 @@ async function fetchBiometricHistory(limit = 10) {
     }
 }
 
-async function requestBpmMeasurement(source = "ui") {
-    if (!biometricWatchConnected) {
+async function requestBpmMeasurement(source = "ui", cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
+    if (!biometricWatchConnectedByCabin[normalizedCabin]) {
         console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar BPM");
         return;
     }
 
     const now = Date.now();
-    if (now - biometricLastBpmRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+    if (now - biometricLastRequestByCabin[normalizedCabin].bpm < BIOMETRIC_REQUEST_COOLDOWN_MS) {
         console.log("[BiometricCharts] ⏳ Ignorando solicitud BPM por cooldown");
         return;
     }
 
-    biometricLastBpmRequestAt = now;
+    biometricLastRequestByCabin[normalizedCabin].bpm = now;
 
-    console.log(`[BiometricCharts] Solicitando medición BPM (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bpm`);
+    console.log(`[BiometricCharts] Solicitando medición BPM (source=${source}, cabin=${normalizedCabin})`);
+    window.addSentLog?.(`[SMARTWATCH][${normalizedCabin}] POST /api/smartwatch/vitals/start-bpm`);
 
     try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bpm", {
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/start-bpm?cabin=${normalizedCabin}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
         });
@@ -696,25 +724,26 @@ async function requestBpmMeasurement(source = "ui") {
     }
 }
 
-async function requestSpo2Measurement(source = "ui") {
-    if (!biometricWatchConnected) {
+async function requestSpo2Measurement(source = "ui", cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
+    if (!biometricWatchConnectedByCabin[normalizedCabin]) {
         console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar SpO2");
         return;
     }
 
     const now = Date.now();
-    if (now - biometricLastSpo2RequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+    if (now - biometricLastRequestByCabin[normalizedCabin].spo2 < BIOMETRIC_REQUEST_COOLDOWN_MS) {
         console.log("[BiometricCharts] ⏳ Ignorando solicitud SpO2 por cooldown");
         return;
     }
 
-    biometricLastSpo2RequestAt = now;
+    biometricLastRequestByCabin[normalizedCabin].spo2 = now;
 
-    console.log(`[BiometricCharts] Solicitando medición SpO2 (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-spo2`);
+    console.log(`[BiometricCharts] Solicitando medición SpO2 (source=${source}, cabin=${normalizedCabin})`);
+    window.addSentLog?.(`[SMARTWATCH][${normalizedCabin}] POST /api/smartwatch/vitals/start-spo2`);
 
     try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-spo2", {
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/start-spo2?cabin=${normalizedCabin}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
         });
@@ -734,25 +763,26 @@ async function requestSpo2Measurement(source = "ui") {
     }
 }
 
-async function requestTemperatureMeasurement(source = "ui") {
-    if (!biometricWatchConnected) {
+async function requestTemperatureMeasurement(source = "ui", cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
+    if (!biometricWatchConnectedByCabin[normalizedCabin]) {
         console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Temperatura");
         return;
     }
 
     const now = Date.now();
-    if (now - biometricLastTemperatureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+    if (now - biometricLastRequestByCabin[normalizedCabin].temperature < BIOMETRIC_REQUEST_COOLDOWN_MS) {
         console.log("[BiometricCharts] ⏳ Ignorando solicitud Temperatura por cooldown");
         return;
     }
 
-    biometricLastTemperatureRequestAt = now;
+    biometricLastRequestByCabin[normalizedCabin].temperature = now;
 
-    console.log(`[BiometricCharts] Solicitando medición Temperatura (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-temperature`);
+    console.log(`[BiometricCharts] Solicitando medición Temperatura (source=${source}, cabin=${normalizedCabin})`);
+    window.addSentLog?.(`[SMARTWATCH][${normalizedCabin}] POST /api/smartwatch/vitals/start-temperature`);
 
     try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-temperature", {
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/start-temperature?cabin=${normalizedCabin}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
         });
@@ -772,25 +802,26 @@ async function requestTemperatureMeasurement(source = "ui") {
     }
 }
 
-async function requestBloodPressureMeasurement(source = "ui") {
-    if (!biometricWatchConnected) {
+async function requestBloodPressureMeasurement(source = "ui", cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
+    if (!biometricWatchConnectedByCabin[normalizedCabin]) {
         console.warn("[BiometricCharts] Reloj no conectado. No se puede iniciar Presión Arterial");
         return;
     }
 
     const now = Date.now();
-    if (now - biometricLastBloodPressureRequestAt < BIOMETRIC_REQUEST_COOLDOWN_MS) {
+    if (now - biometricLastRequestByCabin[normalizedCabin].bloodPressure < BIOMETRIC_REQUEST_COOLDOWN_MS) {
         console.log("[BiometricCharts] ⏳ Ignorando solicitud Presión Arterial por cooldown");
         return;
     }
 
-    biometricLastBloodPressureRequestAt = now;
+    biometricLastRequestByCabin[normalizedCabin].bloodPressure = now;
 
-    console.log(`[BiometricCharts] Solicitando medición Presión Arterial (source=${source})`);
-    window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/vitals/start-bloodpressure`);
+    console.log(`[BiometricCharts] Solicitando medición Presión Arterial (source=${source}, cabin=${normalizedCabin})`);
+    window.addSentLog?.(`[SMARTWATCH][${normalizedCabin}] POST /api/smartwatch/vitals/start-bloodpressure`);
 
     try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/start-bloodpressure", {
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/start-bloodpressure?cabin=${normalizedCabin}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
         });
@@ -811,11 +842,12 @@ async function requestBloodPressureMeasurement(source = "ui") {
 }
 
 // Función para verificar el estado de monitoreo y mostrar notificación cuando termine
-async function checkMonitoringStatus() {
-    if (!biometricWatchConnected) return;
+async function checkMonitoringStatus(cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
+    if (!biometricWatchConnectedByCabin[normalizedCabin]) return;
 
     try {
-        const response = await fetch("http://localhost:5000/api/smartwatch/vitals/monitoring-status");
+        const response = await fetch(`http://localhost:5000/api/smartwatch/vitals/monitoring-status?cabin=${normalizedCabin}`);
         if (!response.ok) {
             console.warn("[BiometricCharts] Error en monitoring-status:", response.status);
             return;
@@ -828,18 +860,21 @@ async function checkMonitoringStatus() {
         }
 
         const { activeMeasurementType } = result.status;
+        const previousActive = biometricPreviousActiveMeasurementByCabin[normalizedCabin];
+        const currentActive = biometricCurrentActiveMeasurementByCabin[normalizedCabin];
+        const alreadyNotified = biometricMeasurementCompletionNotifiedByCabin[normalizedCabin];
         
-        console.log(`[BiometricCharts] Estado: previo=${biometricPreviousActiveMeasurement}, actual=${biometricCurrentActiveMeasurement}, nuevo=${activeMeasurementType}`);
+        console.log(`[BiometricCharts] Estado (${normalizedCabin}): previo=${previousActive}, actual=${currentActive}, nuevo=${activeMeasurementType}`);
         
         // Detectar cuando una medición INICIA (cambio de null a una métrica)
-        if (!biometricCurrentActiveMeasurement && activeMeasurementType) {
-            biometricMeasurementCompletionNotified = false; // Reset la flag cuando inicia nueva medición
+        if (!currentActive && activeMeasurementType) {
+            biometricMeasurementCompletionNotifiedByCabin[normalizedCabin] = false;
             console.log(`[BiometricCharts] Nueva medición iniciada: ${activeMeasurementType}`);
         }
         
         // Detectar cuando una medición TERMINA (cambio de una métrica a null)
         // Y evitar múltiples notificaciones con la flag
-        if (biometricCurrentActiveMeasurement && !activeMeasurementType && !biometricMeasurementCompletionNotified) {
+        if (currentActive && !activeMeasurementType && !alreadyNotified) {
             // Una medición acaba de terminar
             const measurementNames = {
                 'bpm': 'Pulso',
@@ -847,45 +882,73 @@ async function checkMonitoringStatus() {
                 'temperature': 'Temperatura',
                 'bloodPressure': 'Presión Arterial'
             };
-            const completedName = measurementNames[biometricCurrentActiveMeasurement] || biometricCurrentActiveMeasurement;
+            const completedName = measurementNames[currentActive] || currentActive;
             
             console.log(`[BiometricCharts] ✅ Medición de ${completedName} completada!`);
-            biometricMeasurementCompletionNotified = true; // Marcar que ya notificamos
-            
+            biometricMeasurementCompletionNotifiedByCabin[normalizedCabin] = true;
+
             // Mostrar notificación en el log de tramas
             mostrarNotificacion(
-                `Medición de ${completedName} completada. Ahora puedes cambiar de métrica.`,
+                `Medición de ${completedName} completada en ${normalizedCabin}. Ahora puedes cambiar de métrica.`,
                 { tipo: "info" }
             );
-            
-            // TAMBIÉN mostrar alert para asegurar que el usuario lo vea
-            alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
-            
+
+            // En modo automático NO mostrar alert para no interrumpir el ciclo;
+            // en cualquier otro modo sí notificar al usuario.
+            if (biometricModeByCabin[normalizedCabin] !== 'auto') {
+                alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
+            } else {
+                window.showToast?.(`✅ ${completedName} completado`, 'success');
+            }
+
+            // Re-poblar la gráfica con el historial real y sus timestamps correctos
+            try {
+                await window.seedBiometricHistory(null, normalizedCabin);
+            } catch (error) {
+                console.warn("[BiometricCharts] Error re-seeding gráfica después de medición:", error);
+            }
+
             // Actualizar TopMetricsGrid con los últimos datos medidos
             try {
-                const latestData = await fetchLatestBiometricData();
+                const latestData = await fetchLatestBiometricData(normalizedCabin);
                 if (latestData) {
-                    updateTopMetricsGrid(latestData);
+                    updateTopMetricsGrid(latestData, normalizedCabin);
                 }
             } catch (error) {
                 console.warn("[BiometricCharts] Error actualizando TopMetricsGrid después de medición:", error);
             }
+
+            // Registrar la última métrica completada para reanudar el ciclo auto desde el punto correcto
+            biometricLastCompletedMetricByCabin[normalizedCabin] = currentActive;
+
+            // Habilitar botones de modo tras la primera medición BPM completada
+            if (currentActive === 'bpm' && !biometricFirstMeasurementDoneByCabin[normalizedCabin]) {
+                biometricFirstMeasurementDoneByCabin[normalizedCabin] = true;
+                window.enableBiometricModeButtons?.(normalizedCabin);
+                window.showToast?.('✅ Primera medición lista. Puedes activar el modo Automático o Por Evento.', 'success');
+            }
+
+            // Si está en modo automático, encadenar la siguiente medición del ciclo
+            if (biometricModeByCabin[normalizedCabin] === 'auto') {
+                await window.runNextAutoStep?.(normalizedCabin, currentActive);
+            }
             
-            // Habilitar TODOS los selectores (ambos paneles)
-            const allSelectors = document.querySelectorAll(".biometric-metric-selector");
-            allSelectors.forEach(selector => {
+            const panel = getPanelByCabin(normalizedCabin);
+            const selectors = panel ? panel.querySelectorAll(".biometric-metric-selector") : [];
+            selectors.forEach(selector => {
                 selector.disabled = false;
                 selector.classList.remove("opacity-50", "cursor-not-allowed");
             });
         }
         
         // Actualizar estado actual (SIEMPRE)
-        biometricPreviousActiveMeasurement = biometricCurrentActiveMeasurement;
-        biometricCurrentActiveMeasurement = activeMeasurementType;
+        biometricPreviousActiveMeasurementByCabin[normalizedCabin] = currentActive;
+        biometricCurrentActiveMeasurementByCabin[normalizedCabin] = activeMeasurementType;
         
-        // Deshabilitar/habilitar TODOS los selectores según haya medición activa
-        const allSelectors = document.querySelectorAll(".biometric-metric-selector");
-        allSelectors.forEach(selector => {
+        // Deshabilitar/habilitar selectores del panel asociado
+        const panel = getPanelByCabin(normalizedCabin);
+        const selectors = panel ? panel.querySelectorAll(".biometric-metric-selector") : [];
+        selectors.forEach(selector => {
             if (activeMeasurementType) {
                 selector.disabled = true;
                 selector.classList.add("opacity-50", "cursor-not-allowed");
@@ -899,36 +962,50 @@ async function checkMonitoringStatus() {
     }
 }
 
-async function seedBiometricHistory(labels, metricConfigs) {
-    const history = await fetchBiometricHistory(10);
+async function seedBiometricHistory(metricConfigs, cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
+    const history = await fetchBiometricHistory(10, normalizedCabin);
     if (!history.length) return;
 
-    biometricChartData.pulse = history.map((item) => item.pulseBpm ?? null);
-    biometricChartData.oxygen = history.map((item) => item.spO2 ?? null);
-    biometricChartData.temperature = history.map((item) => item.temperatureC ?? null);
-    biometricChartData.bloodPressure = history.map((item) => item.systolic ?? null);
+    biometricChartDataByCabin[normalizedCabin].pulse = history.map((item) => item.pulseBpm ?? null);
+    biometricChartDataByCabin[normalizedCabin].oxygen = history.map((item) => item.spO2 ?? null);
+    biometricChartDataByCabin[normalizedCabin].temperature = history.map((item) => item.temperatureC ?? null);
+    biometricChartDataByCabin[normalizedCabin].bloodPressure = history.map((item) => item.systolic ?? null);
+
+    // Usar timestamps reales del historial en lugar de labels ficticias
+    const realLabels = history.map((item) =>
+        item.timestampUtc ? new Date(item.timestampUtc).toLocaleTimeString() : '—'
+    );
+    biometricChartDataByCabin[normalizedCabin].labels = realLabels;
+    biometricLastTimestampByCabin[normalizedCabin] = history[history.length - 1]?.timestampUtc ?? null;
 
     // Actualizar TODAS las gráficas activas (una por canvas)
-    // Las keys son: pulse_0, oxygen_1, temperature_0, etc.
     Object.keys(biometricChartInstances).forEach(key => {
         const chart = biometricChartInstances[key];
         if (!chart) return;
-        
-        // Extraer métrica del key (formato: "pulse_0", "oxygen_1", etc.)
+
         const parts = key.split('_');
         const metric = parts[0];
-        
-        if (!biometricChartData[metric] || !metricConfigs[metric]) return;
-        
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = [...biometricChartData[metric]];
+        const canvasIndex = Number(parts[1]);
+        const canvases = document.querySelectorAll(".biometric-chart");
+        const panel = canvases[canvasIndex]?.closest(".panel-container");
+        const panelCabin = getCabinFromPanel(panel);
+        if (panelCabin !== normalizedCabin) return;
 
-        const config = metricConfigs[metric];
-        chart.data.datasets[0].label = config.label;
-        chart.data.datasets[0].borderColor = config.borderColor;
-        chart.data.datasets[0].backgroundColor = config.bgColor;
-        chart.options.scales.y.min = config.yScale.min;
-        chart.options.scales.y.max = config.yScale.max;
+        if (!biometricChartDataByCabin[normalizedCabin][metric]) return;
+
+        chart.data.labels = [...realLabels];
+        chart.data.datasets[0].data = [...biometricChartDataByCabin[normalizedCabin][metric]];
+
+        // Actualizar estilos solo si se proveen metricConfigs (llamada de inicialización)
+        if (metricConfigs?.[metric]) {
+            const config = metricConfigs[metric];
+            chart.data.datasets[0].label = config.label;
+            chart.data.datasets[0].borderColor = config.borderColor;
+            chart.data.datasets[0].backgroundColor = config.bgColor;
+            chart.options.scales.y.min = config.yScale.min;
+            chart.options.scales.y.max = config.yScale.max;
+        }
 
         chart.update();
         console.log(`[BiometricCharts] Historial cargado para ${key}`);
@@ -942,7 +1019,7 @@ async function seedBiometricHistory(labels, metricConfigs) {
             oxygen: latestItem.spO2,
             temperature: latestItem.temperatureC,
             bloodPressure: latestItem.systolic
-        });
+        }, normalizedCabin);
     }
 }
 
@@ -1167,7 +1244,7 @@ async function createSheet3Data(cabinaCode) {
 
     data.push(["DATOS DE SENSORES"]);
     data.push([]);
-    data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","O3 (PPB)","Db"]);
+    data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","Lux (lm/m2)","Db"]);
     
     // MAPEAR TODOS LOS OBJETOS DEL ARRAY
     dataSensores.forEach((lectura) => {
@@ -1205,7 +1282,8 @@ async function createSheet3Data(cabinaCode) {
 }
 
 // Sheet 4: Datos biométricos históricos
-async function createSheet4Data() {
+async function createSheet4Data(cabin = "C1") {
+    const normalizedCabin = normalizeCabin(cabin);
     const data = [];
 
     // Función para formatear timestamp a formato 12 horas
@@ -1229,7 +1307,7 @@ async function createSheet4Data() {
     
     try {
         // Obtener historial biométrico del backend
-        const biometricHistory = await fetchBiometricHistory(50); // Últimas 50 mediciones
+        const biometricHistory = await fetchBiometricHistory(50, normalizedCabin); // Últimas 50 mediciones
         
         if (!biometricHistory || biometricHistory.length === 0) {
             data.push(["Sin datos biométricos disponibles"]);
@@ -1315,45 +1393,60 @@ async function createSheet4Data() {
 async function updateBiometricCharts() {
     if (!biometricChartsEnabled || Object.keys(biometricChartInstances).length === 0) return;
 
-    const newData = await fetchLatestBiometricData();
-    if (!newData) return;
-    
-    if (newData.pulse !== null) biometricChartData.pulse.push(newData.pulse);
-    if (newData.oxygen !== null) biometricChartData.oxygen.push(newData.oxygen);
-    if (newData.temperature !== null) biometricChartData.temperature.push(parseFloat(newData.temperature));
-    if (newData.bloodPressure !== null) biometricChartData.bloodPressure.push(newData.bloodPressure);
+    for (const cabin of ["C1", "C2"]) {
+        const normalizedCabin = normalizeCabin(cabin);
+        if (!biometricWatchConnectedByCabin[normalizedCabin]) continue;
 
-    if (biometricChartData.pulse.length > 10) biometricChartData.pulse.shift();
-    if (biometricChartData.oxygen.length > 10) biometricChartData.oxygen.shift();
-    if (biometricChartData.temperature.length > 10) biometricChartData.temperature.shift();
-    if (biometricChartData.bloodPressure.length > 10) biometricChartData.bloodPressure.shift();
+        const newData = await fetchLatestBiometricData(normalizedCabin);
+        if (!newData) continue;
 
-    // Actualizar labels (timestamp) - últimos 10 registros
-    const now = new Date();
-    const newLabels = [];
-    for (let i = Math.min(9, biometricChartData.pulse.length - 1); i >= 0; i--) {
-        const time = new Date(now - i * 5000);
-        newLabels.push(time.toLocaleTimeString());
+        // Saltar si es el mismo punto de dato que ya se graficó
+        if (newData.timestampUtc && newData.timestampUtc === biometricLastTimestampByCabin[normalizedCabin]) continue;
+        biometricLastTimestampByCabin[normalizedCabin] = newData.timestampUtc ?? null;
+
+        const cabinData = biometricChartDataByCabin[normalizedCabin];
+        if (newData.pulse !== null) cabinData.pulse.push(newData.pulse);
+        if (newData.oxygen !== null) cabinData.oxygen.push(newData.oxygen);
+        if (newData.temperature !== null) cabinData.temperature.push(parseFloat(newData.temperature));
+        if (newData.bloodPressure !== null) cabinData.bloodPressure.push(newData.bloodPressure);
+
+        // Registrar el timestamp real como label de este punto
+        const newLabel = newData.timestampUtc
+            ? new Date(newData.timestampUtc).toLocaleTimeString()
+            : new Date().toLocaleTimeString();
+        if (!cabinData.labels) cabinData.labels = [];
+        cabinData.labels.push(newLabel);
+
+        if (cabinData.pulse.length > 10) cabinData.pulse.shift();
+        if (cabinData.oxygen.length > 10) cabinData.oxygen.shift();
+        if (cabinData.temperature.length > 10) cabinData.temperature.shift();
+        if (cabinData.bloodPressure.length > 10) cabinData.bloodPressure.shift();
+        if (cabinData.labels.length > 10) cabinData.labels.shift();
+
+        // Construir eje X con timestamps reales; rellenar con '—' si hay menos de 10
+        const chartLabels = [...cabinData.labels];
+        while (chartLabels.length < 10) chartLabels.unshift('—');
+
+        Object.keys(biometricChartInstances).forEach(key => {
+            const chart = biometricChartInstances[key];
+            if (!chart) return;
+
+            const parts = key.split('_');
+            const metric = parts[0];
+            const canvasIndex = Number(parts[1]);
+            const canvases = document.querySelectorAll(".biometric-chart");
+            const panel = canvases[canvasIndex]?.closest(".panel-container");
+            const panelCabin = getCabinFromPanel(panel);
+            if (panelCabin !== normalizedCabin) return;
+
+            if (!cabinData[metric]) return;
+            chart.data.labels = chartLabels;
+            chart.data.datasets[0].data = [...cabinData[metric]];
+            chart.update('none');
+        });
+
+        updateTopMetricsGrid(newData, normalizedCabin);
     }
-
-    // Actualizar TODAS las gráficas activas (una por canvas)
-    Object.keys(biometricChartInstances).forEach(key => {
-        const chart = biometricChartInstances[key];
-        if (!chart) return;
-        
-        // Extraer métrica del key (formato: "pulse_0", "oxygen_1", etc.)
-        const parts = key.split('_');
-        const metric = parts[0];
-        
-        if (!biometricChartData[metric]) return;
-        
-        chart.data.labels = newLabels;
-        chart.data.datasets[0].data = [...biometricChartData[metric]];
-        chart.update('none'); // Update sin animación para mejor performance
-    });
-    
-    // Actualizar TopMetricsGrid con los últimos valores
-    updateTopMetricsGrid(newData);
 }
 
 // Función para verificar conexión con el backend
@@ -1448,7 +1541,7 @@ function getUnidad(medicion) {
         case "UV":
             return "W/m²";
         case "O3":
-            return "ppb";
+            return "lm/m²";
         case "dB":
             return "dB";
         case "Z":
@@ -1631,7 +1724,9 @@ function initTwoColumnsSection(panel) {
     // Función para mostrar botones de sonidos/tonos
     function mostrarSeccion(seccion) {
         contenedor.innerHTML = "";
-        const datos = seccion === "sonidos" ? sonidosAmbientales : tinitus;
+        const datos = seccion === "sonidos" ? sonidosAmbientales
+                    : seccion === "tonos"   ? tonosPuros
+                    : tinitus;
         datos.forEach((item) => {
             const btn = document.createElement("button");
             btn.className =
@@ -1762,11 +1857,8 @@ function initTwoColumnsSection(panel) {
                 reproduciendoPorCabina[cabinaSeleccionada];
             actualizarEstadoVolumen(panel, reproduciendo);
 
-            const seccionActiva = botonesSeccion[0].classList.contains(
-                "bg-[#00bf63]",
-            )
-                ? "sonidos"
-                : "tinitus";
+            const btnActivo = Array.from(botonesSeccion).find(b => b.classList.contains("bg-[#00bf63]"));
+            const seccionActiva = btnActivo?.getAttribute("data-seccion") || "sonidos";
             mostrarSeccion(seccionActiva);
             restaurarSonidoActivo(panel);
         });
@@ -1880,7 +1972,7 @@ function initTwoColumnsSection(panel) {
 
 // Función para manejar el ciclo de calor
 function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
-    
+
     const estadoActual = codigoBoton[cabinaPrefijo];
     // Calcular siguiente estado para la cabina
     const currentIndex = calorCycle.indexOf(estadoActual);
@@ -1892,21 +1984,26 @@ function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
 
     if (nuevoEstado === '002') {
         btn.classList.add("bg-[#d9d9d9]");
-        enviarTrama(
-            cabinaPrefijo,
-            nuevoEstado,
-            cabinaActiva
-        );
+        enviarTrama(cabinaPrefijo, nuevoEstado, cabinaActiva);
         actualizarLedCalor(panel, '002');
         return;
-    };
+    }
+
+    // Al activarse por primera vez (003), desactivar los demás botones de control
+    if (nuevoEstado === '003') {
+        panel.querySelectorAll('.control-btn').forEach((b) => {
+            if (b === btn) return;
+            const cod = b.getAttribute('data-codigo');
+            if (b.classList.contains('bg-[#00bf63]') && cod && codigoBoton[cod]) {
+                b.classList.remove('bg-[#00bf63]');
+                b.classList.add('bg-[#d9d9d9]');
+                enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
+            }
+        });
+    }
 
     btn.classList.add("bg-[#00bf63]");
-    enviarTrama(
-        cabinaPrefijo,
-        nuevoEstado,
-        cabinaActiva
-    );
+    enviarTrama(cabinaPrefijo, nuevoEstado, cabinaActiva);
     actualizarLedCalor(panel, nuevoEstado);
 };
 
@@ -1945,6 +2042,241 @@ function actualizarLedCalor(panel, estado) {
     if (ledInferior) ledInferior.classList.add(`bg-[${config.inferior}]`);
 };
 
+// =============================================================================
+//  GESTIÓN DE MODOS DE MEDICIÓN BIOMÉTRICA (Automático / Por Evento)
+// =============================================================================
+
+const METRIC_NAMES = {
+    bpm: 'Pulso', spo2: 'Oxigenación',
+    temperature: 'Temperatura', bloodPressure: 'Presión Arterial',
+};
+
+// Mapeo entre los valores del <select> y los identificadores internos de métrica
+const SELECTOR_TO_METRIC = {
+    pulse: 'bpm', oxygen: 'spo2', temperature: 'temperature', bloodPressure: 'bloodPressure',
+};
+const METRIC_TO_SELECTOR = {
+    bpm: 'pulse', spo2: 'oxygen', temperature: 'temperature', bloodPressure: 'bloodPressure',
+};
+
+function _getChartContainersForCabin(cabin) {
+    const containers = [];
+    document.querySelectorAll('.biometric-charts-container').forEach(c => {
+        const panel = c.closest('.panel-container');
+        if (panel && getCabinFromPanel(panel) === cabin) containers.push(c);
+    });
+    return containers;
+}
+
+// Actualiza la apariencia visual de los botones de modo
+function updateBiometricModeButtons(cabin, mode) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const autoBtn  = container.querySelector('[data-biometric-mode="auto"]');
+        const eventBtn = container.querySelector('[data-biometric-mode="event"]');
+
+        if (autoBtn) {
+            const on = mode === 'auto';
+            autoBtn.classList.toggle('bg-[#00bf63]', on);
+            autoBtn.classList.toggle('text-white', on);
+            autoBtn.classList.toggle('text-[#00bf63]', !on);
+            autoBtn.classList.toggle('bg-white', !on);
+        }
+        if (eventBtn) {
+            const on = mode === 'event';
+            eventBtn.classList.toggle('bg-[#ef4444]', on);
+            eventBtn.classList.toggle('text-white', on);
+            eventBtn.classList.toggle('text-[#ef4444]', !on);
+            eventBtn.classList.toggle('bg-white', !on);
+        }
+    });
+}
+
+// Actualiza la barra de estado debajo de los botones
+function updateBiometricModeStatus(cabin, text, colorClass) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const el = container.querySelector('.biometric-mode-status');
+        if (!el) return;
+        if (!text) {
+            el.classList.add('hidden');
+            return;
+        }
+        el.textContent = text;
+        el.className = `biometric-mode-status text-[11px] text-center py-1 px-3 mb-2 rounded-md font-medium ${colorClass || 'bg-gray-100 text-gray-500'}`;
+    });
+}
+
+// Sincroniza el <select> de métrica y actualiza la gráfica sin disparar el evento change
+function updateBiometricSelectorUI(cabin, metric) {
+    const selectorVal = METRIC_TO_SELECTOR[metric] || metric;
+    const cabinData   = biometricChartDataByCabin[cabin] || {};
+    const allCanvases = document.querySelectorAll('.biometric-chart');
+
+    const chartMetricConfigs = {
+        pulse:         { label: 'Pulso (bpm)',              yScale: { min: 50,  max: 120 }, borderColor: '#e74c3c', bgColor: 'rgba(231,76,60,0.2)'   },
+        oxygen:        { label: 'Oxigenación (%)',           yScale: { min: 90,  max: 100 }, borderColor: '#3498db', bgColor: 'rgba(52,152,219,0.2)'  },
+        temperature:   { label: 'Temperatura (°C)',          yScale: { min: 35,  max: 40  }, borderColor: '#f39c12', bgColor: 'rgba(243,156,18,0.2)'  },
+        bloodPressure: { label: 'Presión Arterial (mmHg)',   yScale: { min: 80,  max: 160 }, borderColor: '#9b59b6', bgColor: 'rgba(155,89,182,0.2)'  },
+    };
+
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const sel = container.querySelector('.biometric-metric-selector');
+        if (sel && sel.value !== selectorVal) sel.value = selectorVal;
+
+        // Actualizar la gráfica para que refleje la nueva métrica
+        const canvas = container.querySelector('.biometric-chart');
+        if (!canvas) return;
+        const idx = Array.from(allCanvases).indexOf(canvas);
+        if (idx >= 0) {
+            window.updateBiometricChart(idx, selectorVal, cabinData.labels ?? [], chartMetricConfigs, cabinData);
+        }
+    });
+}
+
+// Habilita ambos botones de modo tras la primera medición BPM
+function enableBiometricModeButtons(cabin) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        container.querySelectorAll('[data-biometric-mode]').forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('opacity-35', 'cursor-not-allowed');
+            btn.classList.add('cursor-pointer', 'hover:opacity-80', 'active:scale-95');
+        });
+    });
+}
+
+// ── Desactiva el modo automático sin tocar la medición en curso ──────────────
+function deactivateAutoMode(cabin) {
+    if (biometricAutoTimerByCabin[cabin]) {
+        clearTimeout(biometricAutoTimerByCabin[cabin]);
+        biometricAutoTimerByCabin[cabin] = null;
+    }
+    if (biometricAutoCountdownByCabin[cabin]) {
+        clearInterval(biometricAutoCountdownByCabin[cabin]);
+        biometricAutoCountdownByCabin[cabin] = null;
+    }
+    biometricModeByCabin[cabin] = null;
+    updateBiometricModeButtons(cabin, null);
+    updateBiometricModeStatus(cabin, null);
+}
+
+// ── Activa el modo automático ────────────────────────────────────────────────
+async function activateAutoMode(cabin) {
+    biometricModeByCabin[cabin] = 'auto';
+    updateBiometricModeButtons(cabin, 'auto');
+    window.showToast?.('🔄 Modo automático activado: BPM → SpO2 → Temperatura → Presión → 5 min de descanso', 'info');
+
+    const currentActive = biometricCurrentActiveMeasurementByCabin[cabin];
+    if (currentActive) {
+        // Hay una medición en curso — esperar que termine, el encadenado lo continúa
+        const name = METRIC_NAMES[currentActive] || currentActive;
+        updateBiometricModeStatus(cabin, `⟳ Completando medición actual: ${name}...`, 'bg-green-50 text-green-700');
+        return;
+    }
+
+    // Determinar el siguiente paso según la última métrica completada.
+    // Esto evita repetir BPM justo después de que el hardware lo acaba de medir.
+    const lastCompleted = biometricLastCompletedMetricByCabin[cabin];
+    const lastIdx = lastCompleted ? BIOMETRIC_AUTO_CYCLE_ORDER.indexOf(lastCompleted) : -1;
+    const nextIdx  = lastIdx >= 0 ? (lastIdx + 1) % BIOMETRIC_AUTO_CYCLE_ORDER.length : 0;
+    const next     = BIOMETRIC_AUTO_CYCLE_ORDER[nextIdx];
+    const nextName = METRIC_NAMES[next] || next;
+
+    updateBiometricModeStatus(cabin, `⟳ Iniciando ciclo — midiendo ${nextName}...`, 'bg-green-50 text-green-700');
+    updateBiometricSelectorUI(cabin, next);
+
+    if      (next === 'bpm')          await window.requestBpmMeasurement('auto', cabin);
+    else if (next === 'spo2')         await window.requestSpo2Measurement('auto', cabin);
+    else if (next === 'temperature')  await window.requestTemperatureMeasurement('auto', cabin);
+    else if (next === 'bloodPressure') await window.requestBloodPressureMeasurement('auto', cabin);
+}
+
+// ── Activa el modo por evento ────────────────────────────────────────────────
+function activateEventMode(cabin) {
+    if (biometricModeByCabin[cabin] === 'auto') {
+        deactivateAutoMode(cabin);
+        window.showToast?.('⚡ Modo automático cancelado. La medición actual completará normalmente.', 'warning');
+    }
+    biometricModeByCabin[cabin] = 'event';
+    updateBiometricModeButtons(cabin, 'event');
+    updateBiometricModeStatus(cabin, '⚡ Por evento — cambia el selector para iniciar una medición', 'bg-red-50 text-red-600');
+    window.showToast?.('⚡ Modo por evento activado. Selecciona una métrica para medir.', 'info');
+}
+
+// ── Callback para los botones de modo ────────────────────────────────────────
+window.onBiometricModeClick = async function(requestedMode, cabin) {
+    const cab = normalizeCabin(cabin);
+    const current = biometricModeByCabin[cab];
+
+    if (requestedMode === 'auto') {
+        if (current === 'auto') {
+            deactivateAutoMode(cab);
+            window.showToast?.('⏹ Modo automático desactivado', 'info');
+        } else {
+            await activateAutoMode(cab);
+        }
+    } else {
+        if (current === 'event') {
+            biometricModeByCabin[cab] = null;
+            updateBiometricModeButtons(cab, null);
+            updateBiometricModeStatus(cab, null);
+            window.showToast?.('⏹ Modo por evento desactivado', 'info');
+        } else {
+            activateEventMode(cab);
+        }
+    }
+};
+
+// ── Encadena la siguiente medición en el ciclo automático ────────────────────
+async function runNextAutoStep(cabin, completedMetric) {
+    if (biometricModeByCabin[cabin] !== 'auto') return;
+
+    const idx     = BIOMETRIC_AUTO_CYCLE_ORDER.indexOf(completedMetric);
+    const nextIdx = (idx + 1) % BIOMETRIC_AUTO_CYCLE_ORDER.length;
+    const next    = BIOMETRIC_AUTO_CYCLE_ORDER[nextIdx];
+
+    if (nextIdx === 0) {
+        // Ciclo completo — iniciar descanso de 5 minutos con cuenta regresiva
+        window.showToast?.('✅ Ciclo completo. Próximo ciclo en 5 minutos.', 'success');
+        const restStart = Date.now();
+
+        biometricAutoCountdownByCabin[cabin] = setInterval(() => {
+            if (biometricModeByCabin[cabin] !== 'auto') {
+                clearInterval(biometricAutoCountdownByCabin[cabin]);
+                biometricAutoCountdownByCabin[cabin] = null;
+                return;
+            }
+            const rem  = Math.max(0, BIOMETRIC_AUTO_REST_MS - (Date.now() - restStart));
+            const mins = Math.floor(rem / 60000);
+            const secs = Math.floor((rem % 60000) / 1000).toString().padStart(2, '0');
+            updateBiometricModeStatus(cabin, `⏳ Próximo ciclo en ${mins}:${secs}`, 'bg-yellow-50 text-yellow-700');
+        }, 1000);
+
+        biometricAutoTimerByCabin[cabin] = setTimeout(async () => {
+            clearInterval(biometricAutoCountdownByCabin[cabin]);
+            biometricAutoCountdownByCabin[cabin] = null;
+            if (biometricModeByCabin[cabin] !== 'auto') return;
+            updateBiometricModeStatus(cabin, '⟳ Reiniciando ciclo — midiendo Pulso...', 'bg-green-50 text-green-700');
+            await window.requestBpmMeasurement('auto', cabin);
+            updateBiometricSelectorUI(cabin, 'bpm');
+        }, BIOMETRIC_AUTO_REST_MS);
+
+    } else {
+        // Iniciar la siguiente métrica del ciclo
+        const nextName = METRIC_NAMES[next];
+        updateBiometricModeStatus(cabin, `⟳ Midiendo: ${nextName}...`, 'bg-green-50 text-green-700');
+        updateBiometricSelectorUI(cabin, next);
+
+        if (next === 'spo2')          await window.requestSpo2Measurement('auto', cabin);
+        else if (next === 'temperature') await window.requestTemperatureMeasurement('auto', cabin);
+        else if (next === 'bloodPressure') await window.requestBloodPressureMeasurement('auto', cabin);
+    }
+}
+
+window.enableBiometricModeButtons = enableBiometricModeButtons;
+window.runNextAutoStep             = runNextAutoStep;
+window.updateBiometricModeButtons  = updateBiometricModeButtons;
+
+// =============================================================================
+
 // Función para cambiar la métrica mostrada en la gráfica biométrica
 function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
     if (Object.keys(biometricChartInstances).length === 0) return;
@@ -1956,9 +2288,14 @@ function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
     let chart = biometricChartInstances[chartKey];
     
     // Si no existe chart para esta métrica, usar updateBiometricChart para crearlo
+    const canvases = document.querySelectorAll(".biometric-chart");
+    const panel = canvases[canvasIndex]?.closest(".panel-container");
+    const cabin = getCabinFromPanel(panel);
+    const cabinData = biometricChartDataByCabin[cabin] || biometricChartData;
+
     if (!chart) {
         console.log(`[BiometricCharts] Creando nueva gráfica para ${metric} en canvas ${canvasIndex}`);
-        updateBiometricChart(canvasIndex, metric, labels, metricConfigs, biometricChartData);
+        updateBiometricChart(canvasIndex, metric, labels, metricConfigs, cabinData);
         return;
     }
 
@@ -1968,7 +2305,7 @@ function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
     console.log(`[BiometricCharts] Cambiando métrica a: ${metric} (canvas ${canvasIndex})`);
 
     chart.data.datasets[0].label = config.label;
-    chart.data.datasets[0].data = [...biometricChartData[metric]];
+    chart.data.datasets[0].data = [...(cabinData[metric] || [])];
     chart.data.datasets[0].borderColor = config.borderColor;
     chart.data.datasets[0].backgroundColor = config.bgColor;
     chart.data.datasets[0].pointBackgroundColor = config.borderColor;
@@ -1981,48 +2318,51 @@ function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
 
     if (metric !== previousMetric) {
         if (metric === "oxygen") {
-            requestSpo2Measurement("selector");
+            requestSpo2Measurement("selector", cabin);
         } else if (metric === "pulse") {
-            requestBpmMeasurement("selector");
+            requestBpmMeasurement("selector", cabin);
         } else if (metric === "temperature") {
-            requestTemperatureMeasurement("selector");
+            requestTemperatureMeasurement("selector", cabin);
         } else if (metric === "bloodPressure") {
-            requestBloodPressureMeasurement("selector");
+            requestBloodPressureMeasurement("selector", cabin);
         }
     }
 }
 
 // Función para actualizar los valores mostrados en TopMetricsGrid
-function updateTopMetricsGrid(data) {
+function updateTopMetricsGrid(data, cabin = "C1") {
     if (!data) return;
+    const normalizedCabin = normalizeCabin(cabin);
+    const panel = getPanelByCabin(normalizedCabin);
+    if (!panel) return;
     
-    // Actualizar BPM (Pulso) - TODOS los paneles
+    // Actualizar BPM (Pulso)
     if (data.pulse !== null && data.pulse !== undefined) {
-        const pulseElements = document.querySelectorAll(".metric-value-pulse");
+        const pulseElements = panel.querySelectorAll(".metric-value-pulse");
         pulseElements.forEach(el => {
             el.textContent = Math.round(data.pulse);
         });
     }
     
-    // Actualizar SpO2 (Oxigenación) - TODOS los paneles
+    // Actualizar SpO2 (Oxigenación)
     if (data.oxygen !== null && data.oxygen !== undefined) {
-        const oxygenElements = document.querySelectorAll(".metric-value-oxygen");
+        const oxygenElements = panel.querySelectorAll(".metric-value-oxygen");
         oxygenElements.forEach(el => {
             el.textContent = Math.round(data.oxygen);
         });
     }
     
-    // Actualizar Temperatura - TODOS los paneles
+    // Actualizar Temperatura
     if (data.temperature !== null && data.temperature !== undefined) {
-        const temperatureElements = document.querySelectorAll(".metric-value-temperature");
+        const temperatureElements = panel.querySelectorAll(".metric-value-temperature");
         temperatureElements.forEach(el => {
             el.textContent = parseFloat(data.temperature).toFixed(1);
         });
     }
     
-    // Actualizar Presión Arterial - TODOS los paneles
+    // Actualizar Presión Arterial
     if (data.bloodPressure !== null && data.bloodPressure !== undefined) {
-        const bpElements = document.querySelectorAll(".metric-value-bloodpressure");
+        const bpElements = panel.querySelectorAll(".metric-value-bloodpressure");
         bpElements.forEach(el => {
             // Si es un objeto con systolic y diastolic, mostrar ambos
             if (typeof data.bloodPressure === 'object' && data.bloodPressure.systolic) {
@@ -2036,8 +2376,9 @@ function updateTopMetricsGrid(data) {
 }
 
 // Función para detener y limpiar las gráficas biométricas
-function stopBiometricCharts() {
-    console.log("[BiometricCharts] Deteniendo gráficas");
+function stopBiometricCharts(cabin = null) {
+    const normalizedCabin = cabin ? normalizeCabin(cabin) : null;
+    console.log("[BiometricCharts] Deteniendo gráficas", normalizedCabin || "ALL");
 
     // Limpiar intervalo
     if (biometricUpdateInterval) {
@@ -2046,24 +2387,43 @@ function stopBiometricCharts() {
     }
 
     // Destruir gráficas
-    Object.values(biometricChartInstances).forEach(chart => {
-        if (chart) chart.destroy();
+    Object.keys(biometricChartInstances).forEach((key) => {
+        const chart = biometricChartInstances[key];
+        if (!chart) return;
+
+        if (!normalizedCabin) {
+            chart.destroy();
+            return;
+        }
+
+        const parts = key.split('_');
+        const canvasIndex = Number(parts[1]);
+        const canvases = document.querySelectorAll(".biometric-chart");
+        const panel = canvases[canvasIndex]?.closest(".panel-container");
+        const panelCabin = getCabinFromPanel(panel);
+        if (panelCabin === normalizedCabin) {
+            chart.destroy();
+            delete biometricChartInstances[key];
+        }
     });
 
-    biometricChartInstances = {
-        pulse: null,
-        oxygen: null,
-        temperature: null,
-        glucose: null,
-    };
+    if (!normalizedCabin) {
+        biometricChartInstances = {
+            pulse: null,
+            oxygen: null,
+            temperature: null,
+            glucose: null,
+        };
+    }
 
-    biometricChartsEnabled = false;
+    biometricChartsEnabled = Object.keys(biometricChartInstances).length > 0;
     console.log("[BiometricCharts] Gráficas detenidas");
 }
 
 // Función para actualizar el estado de los botones de reloj según conexión
 function updateWatchButtonsState() {
-    console.log("[Biometría] Actualizando estado de botones, reloj conectado:", biometricWatchConnected);
+    biometricWatchConnected = Object.values(biometricWatchConnectedByCabin).some(Boolean);
+    console.log("[Biometría] Actualizando estado de botones por cabina:", biometricWatchConnectedByCabin);
     
     // Selecciona TODOS los pares de botones por separado
     const allConnectBtns = document.querySelectorAll("[data-action='connect-watch']");
@@ -2083,7 +2443,11 @@ function updateWatchButtonsState() {
         
         if (!connectBtn || !disconnectBtn) continue;
         
-        if (biometricWatchConnected) {
+        const panel = connectBtn.closest(".panel-container");
+        const cabin = getCabinFromPanel(panel);
+        const isConnected = !!biometricWatchConnectedByCabin[cabin];
+
+        if (isConnected) {
             connectBtn.disabled = true;
             connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
             connectBtn.style.filter = "grayscale(100%)";
@@ -2147,6 +2511,7 @@ function updateBiometricChart(canvasIndex, metric, labels, metricConfigs, data) 
                 borderColor: config.borderColor,
                 backgroundColor: config.bgColor,
                 tension: 0.3,
+                cubicInterpolationMode: 'monotone',
                 pointRadius: 4,
                 pointBackgroundColor: config.borderColor,
                 fill: true,
@@ -2402,18 +2767,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     controlButtons.forEach((b) => {
                         const cod = b.getAttribute("data-codigo");
-                        if (
-                            b.classList.contains("bg-[#00bf63]") &&
-                            cod &&
-                            codigoBoton[cod]
-                        ) {
+                        if (!b.classList.contains("bg-[#00bf63]")) return;
+
+                        if (cod === "CALOR") {
+                            // CALOR usa clave CALOR_C1 / CALOR_C2 en codigoBoton
                             b.classList.remove("bg-[#00bf63]");
                             b.classList.add("bg-[#d9d9d9]");
-                            enviarTrama(
-                                cabinaPrefijo,
-                                codigoBoton[cod].off,
-                                cabinaActiva,
-                            );
+                            enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
+                            codigoBoton[cabinaPrefijo] = "002";
+                            actualizarLedCalor(panel, "002");
+                        } else if (cod && codigoBoton[cod]) {
+                            b.classList.remove("bg-[#00bf63]");
+                            b.classList.add("bg-[#d9d9d9]");
+                            enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
                         }
                     });
 
@@ -2559,13 +2925,66 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        const BRIGHTNESS_LED_CODES = new Set(["101", "102", "103", "104", "109", "114"]);
+
+        function actualizarBotonesBrillo() {
+            const btnUp   = panel.querySelector('.led-button[data-codigo="121"]');
+            const btnDown = panel.querySelector('.led-button[data-codigo="122"]');
+            if (!btnUp || !btnDown) return;
+
+            const codigoActivo = ledActivo ? ledActivo.getAttribute("data-codigo") : null;
+            const habilitado   = codigoActivo !== null && BRIGHTNESS_LED_CODES.has(codigoActivo);
+
+            [btnUp, btnDown].forEach((btn) => {
+                btn.disabled          = !habilitado;
+                btn.style.opacity     = habilitado ? "1"           : "0.35";
+                btn.style.cursor      = habilitado ? "pointer"     : "not-allowed";
+            });
+        }
+
+        actualizarBotonesBrillo();
+
         // Solo un led puede estar activo a la vez
         ledButtons.forEach((button) => {
-            button.addEventListener("click", () => {
+            button.addEventListener("click", (e) => {
                 const codigo = button.getAttribute("data-codigo");
                 const isActive = button.classList.contains("active-led");
 
                 if (!codigo) return;
+
+                if (codigo === "121" || codigo === "122") {
+                    e.stopPropagation();
+
+                    enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+
+                    const ledActivoSnapshot = ledActivo;
+                    const botonBrillo = button;
+
+                    setTimeout(() => {
+                        botonBrillo.classList.remove("active-led");
+                        botonBrillo.style.backgroundColor =
+                            botonBrillo.getAttribute("data-inactive-color");
+
+                        if (ledActivoSnapshot) {
+                            ledActivoSnapshot.classList.add("active-led");
+                            ledActivoSnapshot.style.backgroundColor =
+                                ledActivoSnapshot.getAttribute("data-active-color");
+                            colorCabina.style.backgroundColor =
+                                ledActivoSnapshot.getAttribute("data-active-color");
+                        }
+
+                        botonBrillo.animate(
+                            [
+                                { backgroundColor: botonBrillo.getAttribute("data-inactive-color") },
+                                { backgroundColor: botonBrillo.getAttribute("data-active-color"), offset: 0.35 },
+                                { backgroundColor: botonBrillo.getAttribute("data-inactive-color") },
+                            ],
+                            { duration: 380, easing: "ease-in-out", fill: "none" }
+                        );
+                    }, 0);
+
+                    return;
+                }
 
                 if (isActive) {
                     button.classList.remove("active-led");
@@ -2576,6 +2995,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
                     ledActivo = null;
+                    actualizarBotonesBrillo();
                 } else {
                     if (ledActivo) {
                         const codAnterior =
@@ -2598,6 +3018,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
 
                     ledActivo = button;
+                    actualizarBotonesBrillo();
                 }
             });
         });
@@ -2694,6 +3115,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+                // UX-02: Confirmación antes de acción destructiva
+                const confirmado = await window.showConfirm(
+                    "¿Finalizar la sesión actual?\n\nEsto apagará todos los actuadores y borrará el historial de sensores del backend.\n\nAsegúrate de haber exportado los datos del participante antes de continuar.",
+                    { confirmText: "Finalizar sesión", cancelText: "Cancelar", type: "warning" }
+                );
+                if (!confirmado) return;
+
+                // FUNC-03: Limpiar historial de sensores en el backend para la nueva sesión
+                try {
+                    await fetch("http://localhost:5000/api/serial/limpiar", { method: "POST" });
+                    console.log("[Session] ✓ Historial del backend limpiado.");
+                } catch (e) {
+                    console.warn("[Session] No se pudo limpiar el historial del backend:", e);
+                }
+
+                // FUNC-03: Limpiar datos del participante (DOM + estado en memoria)
+                if (typeof window.limpiarDatosPersonales === "function") {
+                    window.limpiarDatosPersonales();
+                }
+
                 estadoCabina.classList.remove("bg-[#00bf63]");
                 estadoCabina.classList.add("bg-[#ff4d4d]");
                 
@@ -2725,6 +3166,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         ledActivo.getAttribute("data-inactive-color");
                     colorCabina.style.backgroundColor = "#d9d9d9";
                     ledActivo = null;
+                    actualizarBotonesBrillo();
                 }
 
                 // Enviar trama OFF para cada botón activo
@@ -2871,23 +3313,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Detener gráficas biométricas si existen
                 if (typeof window.stopBiometricCharts === "function") {
-                    window.stopBiometricCharts();
+                    window.stopBiometricCharts(cabinaPrefijo);
                 }
 
                 // Limpiar datos biométricos acumulados
-                if (window.biometricChartData) {
-                    window.biometricChartData = {
+                if (window.biometricChartDataByCabin) {
+                    window.biometricChartDataByCabin[cabinaPrefijo] = {
                         pulse: [],
                         oxygen: [],
                         temperature: [],
-                        glucose: [],
+                        bloodPressure: [],
                     };
                 }
 
                 // Actualizar estado de botones
                 actualizarEstadoBotones();
 
-                alert("Sistema detenido. Todo ha sido reiniciado.");
+                alert("✅ Sesión finalizada. Sistema listo para el siguiente participante.");
             });
         }
 
@@ -3134,6 +3576,8 @@ window.exportToExcel = exportToExcel;
 window.fetchDatosPorCabina = fetchDatosPorCabina;
 window.procesarTrama = procesarTrama;
 window.mostrarNotificacion = mostrarNotificacion;
+window.getCabinFromPanel = getCabinFromPanel;
+window.normalizeCabin = normalizeCabin;
 window.initTabs = initTabs;
 window.initTwoColumnsSection = initTwoColumnsSection;
 window.updateWatchButtonsState = updateWatchButtonsState;

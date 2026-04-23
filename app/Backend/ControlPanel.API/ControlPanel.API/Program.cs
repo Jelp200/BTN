@@ -33,15 +33,26 @@ builder.Services.AddSingleton<ISerialService, SerialService>();
 builder.Services.AddSingleton<IBleScanner, BleScanner>();
 builder.Services.AddSingleton<IBleConnector, BleConnector>();
 builder.Services.AddSingleton<SessionLogger>();
-builder.Services.AddSingleton<ISmartwatchService, SmartwatchService>();
+builder.Services.AddSingleton<ISmartwatchServiceFactory, SmartwatchServiceFactory>();
 
 // ======================== CONFIGURACION EXISTENTE ========================
-// Habilitar CORS
+// CORS: solo se necesita en desarrollo (Astro dev server en :4321).
+// En producción el frontend se sirve desde el mismo origen (:5000),
+// por lo que el navegador nunca envía cabeceras Cross-Origin.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    // Política de desarrollo: permite únicamente el servidor de Astro
+    options.AddPolicy("DevOnly", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:4321")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+
+    // Política de producción: ningún origen externo permitido
+    options.AddPolicy("ProductionPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:5000")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -65,8 +76,9 @@ if (!Directory.Exists(frontendDistPath))
 
 // Middleware en orden correcto
 
-// 1. CORS
-app.UseCors("AllowAll");
+// 1. CORS — política restringida según entorno
+var corsPolicy = app.Environment.IsDevelopment() ? "DevOnly" : "ProductionPolicy";
+app.UseCors(corsPolicy);
 
 // 2. Archivos por defecto (index.html)
 app.UseDefaultFiles(new DefaultFilesOptions

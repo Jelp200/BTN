@@ -111,12 +111,14 @@ function inicializarBiometria() {
         
         if (connectBtn) {
             console.log("[Biometría] Click en botón CONECTAR");
+            const panelContainer = connectBtn.closest(".panel-container");
+            const panelCabin = window.getCabinFromPanel ? window.getCabinFromPanel(panelContainer) : "C1";
             
             const originalText = connectBtn.innerHTML;
             connectBtn.disabled = true;
             connectBtn.innerHTML = "Conectando...";
 
-            const requestPayload = { deviceName: "ET570", scanTimeoutMs: 15000 };
+            const requestPayload = { cabin: panelCabin, deviceName: "ET570", scanTimeoutMs: 15000 };
             
             // Log enviado
             console.log("[Biometría] Enviando solicitud:", requestPayload);
@@ -140,14 +142,14 @@ function inicializarBiometria() {
 
                 const nombre = data.device?.name || "reloj";
                 console.log("[Biometría] Reloj conectado:", nombre);
-                window.mostrarNotificacion?.(`Reloj conectado (${nombre})`, { tipo: "success" });
+                window.mostrarNotificacion?.(`Reloj ${panelCabin} conectado (${nombre})`, { tipo: "success" });
                 
                 // ✅ MARCAR RELOJ COMO CONECTADO (PRIMERO cambiar variable, LUEGO actualizar botones)
-                biometricWatchConnected = true;
+                biometricWatchConnectedByCabin[panelCabin] = true;
+                biometricWatchConnected = Object.values(biometricWatchConnectedByCabin).some(Boolean);
                 window.updateWatchButtonsState();
                 
                 // Inicializar gráficas si el tab de biometría ya está visible EN ESTE PANEL
-                const panelContainer = connectBtn.closest(".panel-container");
                 const biometriaTab = panelContainer?.querySelector("[data-tab-content='biometria']");
                 const panelCanvas = panelContainer?.querySelector(".biometric-chart");
                 
@@ -174,16 +176,18 @@ function inicializarBiometria() {
         } 
         else if (disconnectBtn) {
             console.log("[Biometría] Click en botón DESCONECTAR");
+            const panelContainer = disconnectBtn.closest(".panel-container");
+            const panelCabin = window.getCabinFromPanel ? window.getCabinFromPanel(panelContainer) : "C1";
             
             const originalHTML = disconnectBtn.innerHTML;
             disconnectBtn.disabled = true;
 
             // Log enviado
             console.log("[Biometría] Enviando solicitud de desconexión");
-            window.addSentLog?.(`[SMARTWATCH] POST /api/smartwatch/disconnect`);
+            window.addSentLog?.(`[SMARTWATCH][${panelCabin}] POST /api/smartwatch/disconnect`);
 
             try {
-                const response = await fetch("http://localhost:5000/api/smartwatch/disconnect", {
+                const response = await fetch(`http://localhost:5000/api/smartwatch/disconnect?cabin=${panelCabin}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -197,16 +201,17 @@ function inicializarBiometria() {
                     throw new Error(data.message || "No se pudo desconectar del reloj");
                 }
 
-                console.log("[Biometría] Reloj desconectado");
-                window.mostrarNotificacion?.("Reloj desconectado", { tipo: "success" });
+                console.log("[Biometría] Reloj desconectado", panelCabin);
+                window.mostrarNotificacion?.(`Reloj ${panelCabin} desconectado`, { tipo: "success" });
                 
                 // MARCAR RELOJ COMO DESCONECTADO (PRIMERO cambiar variable, LUEGO actualizar botones)
-                biometricWatchConnected = false;
-                biometricMeasurementCompletionNotified = false; // Reset flag
-                biometricCurrentActiveMeasurement = null; // Limpiar estado de medición
-                biometricPreviousActiveMeasurement = null;
+                biometricWatchConnectedByCabin[panelCabin] = false;
+                biometricWatchConnected = Object.values(biometricWatchConnectedByCabin).some(Boolean);
+                biometricMeasurementCompletionNotifiedByCabin[panelCabin] = false;
+                biometricCurrentActiveMeasurementByCabin[panelCabin] = null;
+                biometricPreviousActiveMeasurementByCabin[panelCabin] = null;
                 window.updateWatchButtonsState();
-                window.stopBiometricCharts();
+                window.stopBiometricCharts(panelCabin);
             } catch (error) {
                 console.error("[Biometria] Error desconectando reloj:", error);
                 const mensaje = error?.message || "No se pudo desconectar del reloj";
@@ -276,13 +281,13 @@ function inicializarBiometria() {
 function initBiometricCharts(specificCanvasIndex = null) {
     console.log(`[BiometricCharts] Inicializando gráficas biométricas${specificCanvasIndex !== null ? ` para panel ${specificCanvasIndex}` : ' para todos los paneles'}`);
     
-    // Limpiar datos previos
-    biometricChartData = {
-        pulse: [],
-        oxygen: [],
-        temperature: [],
-        bloodPressure: [],
-    };
+    // Preparar estructuras por cabina
+    if (!biometricChartDataByCabin.C1) {
+        biometricChartDataByCabin.C1 = { pulse: [], oxygen: [], temperature: [], bloodPressure: [] };
+    }
+    if (!biometricChartDataByCabin.C2) {
+        biometricChartDataByCabin.C2 = { pulse: [], oxygen: [], temperature: [], bloodPressure: [] };
+    }
 
     // Validar que Chart esté disponible
     if (typeof Chart === "undefined") {
@@ -299,12 +304,15 @@ function initBiometricCharts(specificCanvasIndex = null) {
     }
 
     // Inicializar con datos vacíos (se llena desde backend)
-    for (let i = 0; i < 10; i++) {
-        biometricChartData.pulse.push(null);
-        biometricChartData.oxygen.push(null);
-        biometricChartData.temperature.push(null);
-        biometricChartData.bloodPressure.push(null);
-    }
+    ["C1", "C2"].forEach((cabin) => {
+        biometricChartDataByCabin[cabin] = {
+            pulse: Array(10).fill(null),
+            oxygen: Array(10).fill(null),
+            temperature: Array(10).fill(null),
+            bloodPressure: Array(10).fill(null),
+            labels: [],
+        };
+    });
 
     // Configuración de escalas y colores
     const metricConfigs = {
@@ -356,6 +364,9 @@ function initBiometricCharts(specificCanvasIndex = null) {
     // Inicializar gráfica para cada canvas seleccionado
     canvasesToInit.forEach((canvas) => {
         const idx = Array.from(allCanvases).indexOf(canvas);
+        const panel = canvas.closest(".panel-container");
+        const cabin = window.getCabinFromPanel ? window.getCabinFromPanel(panel) : "C1";
+        const cabinData = biometricChartDataByCabin[cabin] || biometricChartData;
         try {
             console.log(`[BiometricCharts] Inicializando canvas ${idx}...`);
             
@@ -382,10 +393,11 @@ function initBiometricCharts(specificCanvasIndex = null) {
                     labels,
                     datasets: [{
                         label: config.label,
-                        data: [...biometricChartData[defaultMetric]],
+                        data: [...(cabinData[defaultMetric] || [])],
                         borderColor: config.borderColor,
                         backgroundColor: config.bgColor,
                         tension: 0.3,
+                        cubicInterpolationMode: 'monotone',
                         pointRadius: 4,
                         pointBackgroundColor: config.borderColor,
                         fill: true,
@@ -459,31 +471,45 @@ function initBiometricCharts(specificCanvasIndex = null) {
                 newSelector.addEventListener("change", async (e) => {
                     const newMetric = e.target.value;
                     const previousMetric = biometricLastMetric;
-                    
+
                     console.log(`[BiometricCharts] Cambiando métrica a: ${newMetric} (canvas ${idx})`);
-                    
+
+                    // En modo automático, solo actualizar visualización sin disparar medición
+                    if (biometricModeByCabin[cabin] === 'auto') {
+                        window.updateBiometricChart(idx, newMetric, [], null, cabinData);
+                        biometricLastMetric = newMetric;
+                        return;
+                    }
+
                     // Actualizar visualización de la gráfica
-                    window.updateBiometricChart(idx, newMetric, selectorLabels, selectorMetricConfigs, biometricChartData);
+                    window.updateBiometricChart(idx, newMetric, selectorLabels, selectorMetricConfigs, cabinData);
                     
                     // Actualizar métrica actual
                     biometricLastMetric = newMetric;
                     
-                    // Si cambió de métrica, iniciar medición correspondiente
-                    if (newMetric !== previousMetric && biometricWatchConnected) {
-                        console.log(`[BiometricCharts] Iniciando medición de ${newMetric}`);
-                        
+                    // Disparar medición solo en modo "Por evento"
+                    if (biometricModeByCabin[cabin] === 'event' && newMetric !== previousMetric && biometricWatchConnectedByCabin[cabin]) {
+                        console.log(`[BiometricCharts] [Evento] Iniciando medición de ${newMetric}`);
+
                         if (newMetric === "oxygen") {
-                            await window.requestSpo2Measurement("selector");
+                            await window.requestSpo2Measurement("selector", cabin);
                         } else if (newMetric === "pulse") {
-                            await window.requestBpmMeasurement("selector");
+                            await window.requestBpmMeasurement("selector", cabin);
                         } else if (newMetric === "temperature") {
-                            await window.requestTemperatureMeasurement("selector");
+                            await window.requestTemperatureMeasurement("selector", cabin);
                         } else if (newMetric === "bloodPressure") {
-                            await window.requestBloodPressureMeasurement("selector");
+                            await window.requestBloodPressureMeasurement("selector", cabin);
                         }
                     }
                 });
             }
+
+            // Registrar listeners para botones de modo biométrico
+            const autoBtn  = chartContainer?.querySelector('[data-biometric-mode="auto"]');
+            const eventBtn = chartContainer?.querySelector('[data-biometric-mode="event"]');
+            if (autoBtn)  autoBtn.addEventListener('click',  () => window.onBiometricModeClick('auto',  cabin));
+            if (eventBtn) eventBtn.addEventListener('click', () => window.onBiometricModeClick('event', cabin));
+
         } catch (error) {
             console.error(`[BiometricCharts] ❌ Error inicializando canvas ${idx}:`, error);
         }
@@ -528,17 +554,26 @@ function initBiometricCharts(specificCanvasIndex = null) {
             },
         };
         
-        window.seedBiometricHistory(labels, metricConfigs);
+        window.seedBiometricHistory(metricConfigs, "C1");
+        window.seedBiometricHistory(metricConfigs, "C2");
 
         // Actualizar gráficas cada 5 segundos
         biometricUpdateInterval = setInterval(() => {
             window.updateBiometricCharts();
         }, 5000);
         
-        // Monitorear estado de mediciones cada 2 segundos
-        biometricMonitoringStatusInterval = setInterval(() => {
-            window.checkMonitoringStatus();
-        }, 2000);
+        // Monitorear estado de mediciones cada 2 segundos por cabina
+        if (!biometricMonitoringStatusIntervals.C1) {
+            biometricMonitoringStatusIntervals.C1 = setInterval(() => {
+                window.checkMonitoringStatus("C1");
+            }, 2000);
+        }
+
+        if (!biometricMonitoringStatusIntervals.C2) {
+            biometricMonitoringStatusIntervals.C2 = setInterval(() => {
+                window.checkMonitoringStatus("C2");
+            }, 2000);
+        }
         
         console.log("[BiometricCharts] ✓ Intervalos de actualización iniciados.");
     }
@@ -548,3 +583,28 @@ function initBiometricCharts(specificCanvasIndex = null) {
 // Exponer funciones para que puedan ser llamadas desde main.js
 window.inicializarApp = inicializarApp;
 window.initBiometricCharts = initBiometricCharts;
+
+/**
+ * FUNC-03: Limpia los datos del participante actual para iniciar una nueva sesión.
+ * Resetea el estado en memoria (personalDataStored) y todos los campos del formulario
+ * de datos personales en ambos paneles.
+ */
+window.limpiarDatosPersonales = function () {
+    // Resetear estado en memoria
+    personalDataStored = { edad: "", altura: "", peso: "", genero: "" };
+
+    // Limpiar todos los formularios de datos personales en el DOM
+    document.querySelectorAll(".personal-data-form-container").forEach((form) => {
+        const age    = form.querySelector(".personal-age");
+        const height = form.querySelector(".personal-height");
+        const weight = form.querySelector(".personal-weight");
+        const gender = form.querySelector(".personal-gender");
+
+        if (age)    age.value    = "";
+        if (height) height.value = "";
+        if (weight) weight.value = "";
+        if (gender) gender.selectedIndex = 0;
+    });
+
+    console.log("[Session] ✓ Datos del participante limpiados para nueva sesión.");
+};

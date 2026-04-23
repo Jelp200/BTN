@@ -17,6 +17,7 @@ let estadoCalor = "off";
 /* ==================== ESTADOS BIOMÉTRICOS ==================== */
 let biometricChartsEnabled = false;
 let biometricWatchConnected = false;
+let biometricWatchConnectedByCabin = { C1: false, C2: false };
 let biometricChartInstances = {
     pulse: null,
     oxygen: null,
@@ -29,16 +30,30 @@ let biometricChartData = {
     temperature: [],
     bloodPressure: [],
 };
+let biometricChartDataByCabin = {
+  C1: { pulse: [], oxygen: [], temperature: [], bloodPressure: [], labels: [] },
+  C2: { pulse: [], oxygen: [], temperature: [], bloodPressure: [], labels: [] },
+};
+let biometricLastTimestampByCabin = { C1: null, C2: null };
 let biometricUpdateInterval = null;
-let biometricMonitoringStatusInterval = null;
+let biometricMonitoringStatusIntervals = { C1: null, C2: null };
 let biometricLastMetric = "pulse";
-let biometricLastBpmRequestAt = 0;
-let biometricLastSpo2RequestAt = 0;
-let biometricLastTemperatureRequestAt = 0;
-let biometricLastBloodPressureRequestAt = 0;
-let biometricCurrentActiveMeasurement = null;
-let biometricPreviousActiveMeasurement = null;
-let biometricMeasurementCompletionNotified = false; // Flag para evitar múltiples notificaciones
+let biometricLastRequestByCabin = {
+  C1: { bpm: 0, spo2: 0, temperature: 0, bloodPressure: 0 },
+  C2: { bpm: 0, spo2: 0, temperature: 0, bloodPressure: 0 },
+};
+let biometricCurrentActiveMeasurementByCabin = { C1: null, C2: null };
+let biometricPreviousActiveMeasurementByCabin = { C1: null, C2: null };
+let biometricMeasurementCompletionNotifiedByCabin = { C1: false, C2: false };
+
+/* ==================== ESTADOS DE MODO BIOMÉTRICO ==================== */
+let biometricModeByCabin = { C1: null, C2: null };         // null | 'auto' | 'event'
+let biometricAutoTimerByCabin = { C1: null, C2: null };    // setTimeout ID (descanso 5 min)
+let biometricAutoCountdownByCabin = { C1: null, C2: null };// setInterval ID (contador visual)
+let biometricFirstMeasurementDoneByCabin = { C1: false, C2: false }; // habilita botones de modo
+let biometricLastCompletedMetricByCabin = { C1: null, C2: null };   // última métrica completada
+const BIOMETRIC_AUTO_CYCLE_ORDER = ['bpm', 'spo2', 'temperature', 'bloodPressure'];
+const BIOMETRIC_AUTO_REST_MS = 5 * 60 * 1000; // 5 min entre ciclos completos
 
 /* ==================== DATOS PERSONALES ==================== */
 let personalDataStored = {
@@ -91,26 +106,30 @@ const sonidosAmbientales = [
 
 // Lista de tonos de tinitus
 const tinitus = [
-    { nombre: "Tinitus 1", codigo: "070" },
-    { nombre: "Tinitus 2", codigo: "071" },
-    { nombre: "Tinitus 3", codigo: "072" },
-    { nombre: "Tinitus 4", codigo: "073" },
-    { nombre: "Tinitus 5", codigo: "074" },
-    { nombre: "Tinitus 6", codigo: "075" },
-    { nombre: "Tinitus 7", codigo: "076" },
-    { nombre: "Tinitus 8", codigo: "077" },
-    { nombre: "Tinitus 9", codigo: "078" },
+    { nombre: "Tinitus 1",  codigo: "070" },
+    { nombre: "Tinitus 2",  codigo: "071" },
+    { nombre: "Tinitus 3",  codigo: "072" },
+    { nombre: "Tinitus 4",  codigo: "073" },
+    { nombre: "Tinitus 5",  codigo: "074" },
+    { nombre: "Tinitus 6",  codigo: "075" },
+    { nombre: "Tinitus 7",  codigo: "076" },
+    { nombre: "Tinitus 8",  codigo: "077" },
+    { nombre: "Tinitus 9",  codigo: "078" },
     { nombre: "Tinitus 10", codigo: "079" },
     { nombre: "Tinitus 11", codigo: "080" },
     { nombre: "Tinitus 12", codigo: "081" },
+];
+
+// Lista de tonos de frecuencia pura (audiometría)
+const tonosPuros = [
     { nombre: "Tono 125Hz", codigo: "082" },
     { nombre: "Tono 250Hz", codigo: "083" },
     { nombre: "Tono 500Hz", codigo: "084" },
-    { nombre: "Tono 1kHz", codigo: "085" },
-    { nombre: "Tono 2kHz", codigo: "086" },
-    { nombre: "Tono 4kHz", codigo: "087" },
-    { nombre: "Tono 6kHz", codigo: "088" },
-    { nombre: "Tono 8kHz", codigo: "089" },
+    { nombre: "Tono 1kHz",  codigo: "085" },
+    { nombre: "Tono 2kHz",  codigo: "086" },
+    { nombre: "Tono 4kHz",  codigo: "087" },
+    { nombre: "Tono 6kHz",  codigo: "088" },
+    { nombre: "Tono 8kHz",  codigo: "089" },
 ];
 
 // Código para detener reproducción
@@ -118,12 +137,12 @@ const TRAMA_STOP = "038";
 
 // Configuración de sensores
 const sensorConfig = {
-    TEMP: { frecuencia: 60, label: "Temperatura (°C)" },
-    HUM: { frecuencia: 60, label: "Humedad (%)" },
+    T: { frecuencia: 60, label: "Temperatura (°C)" },
+    H: { frecuencia: 60, label: "Humedad (%)" },
     CO2: { frecuencia: 60, label: "CO₂ (ppm)" },
-    O3: { frecuencia: 60, label: "Ozono (ppb)" },
+    O3: { frecuencia: 60, label: "Iluminancia (lm/m²)" },
     UV: { frecuencia: 60, label: "UV (W/m²)" },
-    DB: { frecuencia: 60, label: "Ruido (dB)" },
+    dB: { frecuencia: 60, label: "Ruido (dB)" },
     X: { frecuencia: 1, label: "Aceleración X (m/s²)" },
     Y: { frecuencia: 1, label: "Aceleración Y (m/s²)" },
     Z: { frecuencia: 1, label: "Aceleración Z (m/s²)" },
@@ -332,6 +351,7 @@ window.codigoBoton = codigoBoton;
 window.codigoSonidoControl = codigoSonidoControl;
 window.sonidosAmbientales = sonidosAmbientales;
 window.tinitus = tinitus;
+window.tonosPuros = tonosPuros;
 window.TRAMA_STOP = TRAMA_STOP;
 window.sensorConfig = sensorConfig;
 window.controlDescripcion = controlDescripcion;

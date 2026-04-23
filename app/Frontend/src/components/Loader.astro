@@ -7,74 +7,100 @@ interface Props {
 const { waitMs = 8000 } = Astro.props;
 ---
 
+<style>
+    @font-face {
+        font-family: '911Porscha';
+        src: url('/fonts/911porschav3laser.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: block;
+    }
+</style>
+
 <div
     id="splash-screen"
-    class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white transition-opacity duration-700"
+    class="fixed inset-0 z-50 flex flex-col items-center justify-between bg-white transition-opacity duration-700"
     data-wait-ms={waitMs}
 >
-    <!-- Contenedor principal con layout vertical -->
-    <div class="flex-1 flex flex-col items-center justify-center gap-8">
-        <!-- Círculo con gradiente del centro hacia afuera -->
-        <div 
-            class="relative h-40 w-40 flex items-center justify-center rounded-full"
-            style="background: radial-gradient(circle, #cfcfcf 0%, #ffffff 70%, #000000 100%);"
-        >
-            <!-- Efecto de pulse sobre el gradiente -->
-            <div
-                class="absolute inset-0 animate-ping rounded-full opacity-30"
-                style="background: radial-gradient(circle, #5e5e5e, transparent);"
-            >
+
+    <!-- Contenido central -->
+    <div class="flex flex-col items-center justify-center flex-1 gap-10">
+
+        <!-- Logo container -->
+        <div class="relative flex items-center justify-center">
+
+            <!-- Halo animado -->
+            <div class="absolute w-52 h-52 rounded-full blur-2xl opacity-40 animate-pulse"
+                style="background: radial-gradient(circle, #1f497d55, transparent 70%);">
             </div>
-            
-            <!-- Logo de GITSE en el centro -->
-            <div class="relative z-10 flex items-center justify-center h-60 w-60">
-                <img 
-                    src="/logos/GT_logoColores.svg" 
-                    alt="Gradus Tech Logo" 
-                    class="h-full w-full object-contain filter drop-shadow-lg"
-                />
-            </div>
+
+            <!-- Anillo giratorio -->
+            <div class="absolute w-44 h-44 rounded-full border-2 border-gray-200 border-t-[#1f497d] animate-spin"></div>
+
+            <!-- Logo -->
+            <img
+                src="/logos/logo-gitse.svg"
+                alt="GITSE Logo"
+                class="relative h-24 w-24 object-contain drop-shadow-lg"
+            />
+
         </div>
 
-        <!-- Texto de carga -->
-        <div class="flex flex-col items-center justify-center space-y-1">
-            
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center tracking-[0.35em]">
-                <span class="text-[#5e17eb]">G</span>
-                <span class="text-[#ffbd59]">R</span>
-                <span class="text-[#0cc0df]">A</span>
-                <span class="text-[#7ed957]">D</span>
-                <span class="text-[#ff5757]">U</span>
-                <span class="text-[#000000]">S</span>
+
+        <!-- Texto -->
+        <div class="flex flex-col items-center gap-2 text-center">
+
+            <h1 class="text-2xl sm:text-3xl md:text-4xl tracking-wide" style="font-family: '911Porscha', sans-serif;">
+                <span class="text-[#1f497d]">G</span><span class="text-[#cc9900]">estión e</span>
+                <span class="text-[#1f497d]">I</span><span class="text-[#cc9900]">nnovación en</span>
+                <span class="text-[#1f497d]">T</span><span class="text-[#cc9900]">ecnológica</span>
+                <span class="text-[#1f497d]">S</span><span class="text-[#cc9900]">ocial</span>
             </h1>
 
-            <h2 class="text-gray-700 text-xs sm:text-sm md:text-base font-light tracking-widest uppercase">
-                Technologies
-            </h2>
+            <span class="text-gray-500 text-xs tracking-[0.4em] uppercase">
+                Perú
+            </span>
+
+            <p class="text-gray-400 text-xs animate-pulse mt-2">
+                Inicializando plataforma...
+            </p>
 
         </div>
+
     </div>
 
-    <!-- Barra de carga -->
-    <div class="w-64 h-1 bg-gray-300 rounded-full overflow-hidden mb-8">
-        <div 
-            id="progress-bar"
-            class="h-full bg-blue-500 transition-all ease-linear"
-            style="width: 0%;"
-        ></div>
-    </div>
 
-    <!-- Footer con créditos de Gradus Tech -->
-    <div class="pb-8 flex flex-col items-center gap-3">
-        <div class="flex flex-col items-center gap-2">
-            <img 
-                src="/logos/GT_logoColores.svg" 
-                alt="Gradus Tech" 
-                class="h-12 w-12 object-contain opacity-75"
-            />
-            <span class="text-gray-400 text-xs font-light">Realizado por Gradus Tech</span>
+    <!-- Progress bar -->
+    <div class="w-72 mb-10">
+
+        <div class="w-full h-0.75 bg-gray-200 rounded-full overflow-hidden">
+
+            <div
+                id="progress-bar"
+                class="h-full bg-linear-to-r from-[#1f497d] via-[#3b6cb7] to-[#cc9900] transition-all duration-300 ease-linear"
+                style="width: 0%"
+            ></div>
+
         </div>
+
     </div>
+
+
+    <!-- Footer -->
+    <div class="pb-8 flex flex-col items-center gap-2 opacity-70">
+
+        <img
+            src="/logos/GT_logoColores.svg"
+            alt="Gradus Tech"
+            class="h-10 w-10 object-contain"
+        />
+
+        <span class="text-gray-400 text-[11px] tracking-wide">
+            Powered by Gradus Tech
+        </span>
+
+    </div>
+
 </div>
 
 <script type="module" src="/scripts/loaderAnimation.js"></script>
