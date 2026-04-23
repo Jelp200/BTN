@@ -121,6 +121,25 @@ if (typeof document !== 'undefined') {
     }
 
     // ===============================
+    // Cabinas: persistencia
+    // ===============================
+    function applyCabinCount(count) {
+        // Mostrar u ocultar el slot de la segunda cabina
+        const slot2 = document.getElementById("cabin-2-slot");
+        if (slot2) slot2.classList.toggle("hidden", count === 1);
+
+        // Resaltar el botón activo
+        document.querySelectorAll("[data-cabin-count]").forEach(btn => {
+            const active = parseInt(btn.getAttribute("data-cabin-count")) === count;
+            btn.classList.toggle("bg-[#6366f1]", active);
+            btn.classList.toggle("text-white",   active);
+            btn.classList.toggle("border-[#6366f1]", active);
+            btn.classList.toggle("bg-white",     !active);
+            btn.classList.toggle("text-gray-600", !active);
+        });
+    }
+
+    // ===============================
     // Activar / desactivar dev mode
     // ===============================
     function activateDevMode() {
@@ -134,6 +153,10 @@ if (typeof document !== 'undefined') {
             selector.classList.remove("opacity-50", "cursor-not-allowed");
             selector.title = "";
         });
+
+        // Sincronizar botones de cabinas con el valor guardado
+        const saved = parseInt(localStorage.getItem("devCabinCount") || "2");
+        applyCabinCount(saved);
     }
 
     function deactivateDevMode() {
@@ -186,6 +209,18 @@ if (typeof document !== 'undefined') {
             selector.disabled = true;
             selector.classList.add("opacity-50", "cursor-not-allowed");
             selector.title = "Modo desarrollador requerido (pcdev)";
+        });
+
+        // ── Cabinas: aplicar preferencia guardada ────────────────────────────
+        const savedCabinCount = parseInt(localStorage.getItem("devCabinCount") || "2");
+        applyCabinCount(savedCabinCount);
+
+        document.querySelectorAll("[data-cabin-count]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const count = parseInt(btn.getAttribute("data-cabin-count"));
+                localStorage.setItem("devCabinCount", String(count));
+                applyCabinCount(count);
+            });
         });
         
         const btnToggleSent = document.getElementById("btn-toggle-sent");
