@@ -124,18 +124,77 @@ if (typeof document !== 'undefined') {
     // Cabinas: persistencia
     // ===============================
     function applyCabinCount(count) {
-        // Mostrar u ocultar el slot de la segunda cabina
-        const slot2 = document.getElementById("cabin-2-slot");
-        if (slot2) slot2.classList.toggle("hidden", count === 1);
+        const slot2   = document.getElementById("cabin-2-slot");
+        const panels  = document.querySelectorAll(".panel-container");
+        const panel1  = panels[0];
+        const panel2  = panels[1];
+
+        // Siempre mostrar el segundo slot (en modo 1 seguimos mostrando ambos paneles)
+        if (slot2) slot2.classList.remove("hidden");
+
+        if (count === 1) {
+            // ── Modo un solo panel ──────────────────────────────────────────
+            // Panel izquierdo: solo Controles, sin pestañas
+            if (panel1) {
+                panel1.querySelector('[role="tablist"]')?.classList.add("hidden");
+                panel1.querySelector('[data-tab-content="controles"]')?.classList.remove("hidden");
+                panel1.querySelector('[data-tab-content="graficas"]')?.classList.add("hidden");
+                panel1.querySelector('[data-tab-content="biometria"]')?.classList.add("hidden");
+                const sel1 = panel1.querySelector('[data-select="cabina"]');
+                if (sel1) sel1.selectedIndex = 0;
+            }
+            // Panel derecho: pestañas Sensores y Biometría (ocultar Controles)
+            if (panel2) {
+                // Ocultar solo el botón de Controles; mantener tablist visible
+                panel2.querySelector('[data-tab="controles"]')?.classList.add("hidden");
+                // Activar pestaña Sensores por defecto
+                panel2.querySelectorAll("[data-tab]").forEach(btn => {
+                    const isGraficas = btn.getAttribute("data-tab") === "graficas";
+                    btn.classList.toggle("active",        isGraficas);
+                    btn.classList.toggle("bg-[#d9d9d9]",  isGraficas);
+                    btn.classList.toggle("bg-transparent", !isGraficas);
+                    btn.setAttribute("aria-selected", String(isGraficas));
+                    btn.setAttribute("tabindex", isGraficas ? "0" : "-1");
+                });
+                panel2.querySelector('[data-tab-content="controles"]')?.classList.add("hidden");
+                panel2.querySelector('[data-tab-content="graficas"]')?.classList.remove("hidden");
+                panel2.querySelector('[data-tab-content="biometria"]')?.classList.add("hidden");
+                const sel2 = panel2.querySelector('[data-select="cabina"]');
+                if (sel2) sel2.selectedIndex = 0;
+            }
+        } else {
+            // ── Modo dos paneles ────────────────────────────────────────────
+            [panel1, panel2].forEach((panel, i) => {
+                if (!panel) return;
+                // Restaurar todos los botones de pestaña (incluyendo Controles)
+                panel.querySelectorAll("[data-tab]").forEach(btn => {
+                    btn.classList.remove("hidden");
+                    const isControles = btn.getAttribute("data-tab") === "controles";
+                    btn.classList.toggle("active",        isControles);
+                    btn.classList.toggle("bg-[#d9d9d9]",  isControles);
+                    btn.classList.toggle("bg-transparent", !isControles);
+                    btn.setAttribute("aria-selected", String(isControles));
+                    btn.setAttribute("tabindex", isControles ? "0" : "-1");
+                });
+                // Restaurar tablist visible y activar Controles por defecto
+                panel.querySelector('[role="tablist"]')?.classList.remove("hidden");
+                panel.querySelector('[data-tab-content="controles"]')?.classList.remove("hidden");
+                panel.querySelector('[data-tab-content="graficas"]')?.classList.add("hidden");
+                panel.querySelector('[data-tab-content="biometria"]')?.classList.add("hidden");
+                // Panel 1 → Cabina 1 (index 0), Panel 2 → Cabina 2 (index 1)
+                const sel = panel.querySelector('[data-select="cabina"]');
+                if (sel) sel.selectedIndex = i;
+            });
+        }
 
         // Resaltar el botón activo
         document.querySelectorAll("[data-cabin-count]").forEach(btn => {
             const active = parseInt(btn.getAttribute("data-cabin-count")) === count;
-            btn.classList.toggle("bg-[#6366f1]", active);
-            btn.classList.toggle("text-white",   active);
-            btn.classList.toggle("border-[#6366f1]", active);
-            btn.classList.toggle("bg-white",     !active);
-            btn.classList.toggle("text-gray-600", !active);
+            btn.classList.toggle("bg-[#6366f1]",      active);
+            btn.classList.toggle("text-white",         active);
+            btn.classList.toggle("border-[#6366f1]",   active);
+            btn.classList.toggle("bg-white",          !active);
+            btn.classList.toggle("text-gray-600",     !active);
         });
     }
 
