@@ -2447,22 +2447,46 @@ function updateWatchButtonsState() {
         const cabin = getCabinFromPanel(panel);
         const isConnected = !!biometricWatchConnectedByCabin[cabin];
 
+        // LED y leyenda de estado del reloj
+        const led   = panel?.querySelector('.watch-status-led');
+        const label = panel?.querySelector('.watch-status-label');
+
         if (isConnected) {
             connectBtn.disabled = true;
             connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
             connectBtn.style.filter = "grayscale(100%)";
-            
+
             disconnectBtn.disabled = false;
             disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
             disconnectBtn.style.filter = "none";
+
+            if (led) {
+                led.classList.remove("bg-gray-400");
+                led.classList.add("bg-[#00bf63]", "animate-pulse");
+            }
+            if (label) {
+                label.textContent = "Conectado";
+                label.classList.remove("text-gray-500");
+                label.classList.add("text-[#00bf63]");
+            }
         } else {
             connectBtn.disabled = false;
             connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
             connectBtn.style.filter = "none";
-            
+
             disconnectBtn.disabled = true;
             disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
             disconnectBtn.style.filter = "grayscale(100%)";
+
+            if (led) {
+                led.classList.remove("bg-[#00bf63]", "animate-pulse");
+                led.classList.add("bg-gray-400");
+            }
+            if (label) {
+                label.textContent = "Desconectado";
+                label.classList.remove("text-[#00bf63]");
+                label.classList.add("text-gray-500");
+            }
         };
     };
 };
