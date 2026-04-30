@@ -148,14 +148,6 @@ const sensorConfig = {
     Z: { frecuencia: 1, label: "Aceleración Z (m/s²)" },
 };
 
-// Ciclo de temperaturas de calor
-const calorCycle = [
-    "003",
-    "004",
-    "005",
-    "006",
-    "002",
-];
 //! Descripcion de control
 const controlDescripcion = {
 //! ACTUADORES
