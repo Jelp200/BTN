@@ -1,0 +1,57 @@
+---
+// BiometricRangesCard.astro
+---
+
+<div class="bg-white border border-[#bababa] rounded-lg p-5">
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 select-none">
+        Rangos de referencia (adulto en reposo)
+    </p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+        <!-- Pulso -->
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 shrink-0 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-heart.svg" alt="Pulso" class="w-5 h-5" />
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-400 leading-tight select-none">Pulso</p>
+                <p class="text-xs font-bold text-gray-700 select-none">60 – 100 <span class="font-normal text-gray-400">bpm</span></p>
+            </div>
+        </div>
+
+        <!-- SpO2 -->
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 shrink-0 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-lungs.svg" alt="SpO2" class="w-5 h-5" />
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-400 leading-tight select-none">Oxigenación</p>
+                <p class="text-xs font-bold text-gray-700 select-none">95 – 100 <span class="font-normal text-gray-400">%</span></p>
+            </div>
+        </div>
+
+        <!-- Temperatura -->
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 shrink-0 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-thermo.svg" alt="Temperatura" class="w-5 h-5" />
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-400 leading-tight select-none">Temperatura</p>
+                <p class="text-xs font-bold text-gray-700 select-none">36.1 – 37.2 <span class="font-normal text-gray-400">°C</span></p>
+            </div>
+        </div>
+
+        <!-- Presión Arterial -->
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 shrink-0 flex items-center justify-center rounded-md bg-[#e9fbe9] border border-[#cfeecf]">
+                <img src="/icons/biometry-bp.svg" alt="Presión Arterial" class="w-5 h-5" />
+            </div>
+            <div>
+                <p class="text-[10px] text-gray-400 leading-tight select-none">Presión Arterial</p>
+                <p class="text-xs font-bold text-gray-700 select-none">120/80 <span class="font-normal text-gray-400">mmHg</span></p>
+            </div>
+        </div>
+
+    </div>
+</div>

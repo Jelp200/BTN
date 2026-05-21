@@ -2742,6 +2742,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const sensorSeleccionado = btn.dataset.sensor;
                 console.log(`[Gráfica] Click en botón de sensor: ${sensorSeleccionado}`);
 
+                // Actualizar estado visual: solo el botón activo queda en verde
+                sensorButtons.forEach(b => {
+                    b.classList.remove("bg-[#00bf63]", "hover:bg-[#00a152]");
+                    b.classList.add("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                });
+                btn.classList.remove("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                btn.classList.add("bg-[#00bf63]", "hover:bg-[#00a152]");
+
                 // Obtener el canvas de la gráfica para actualizar su sensor
                 const graficaCanvas = panel.querySelector("#graficaPanel");
                 if (graficaCanvas) {
