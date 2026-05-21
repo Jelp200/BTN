@@ -7,7 +7,9 @@ import CabinPanel from "./CabinPanel.astro";
 
 <div class="flex flex-col md:flex-row gap-3 p-3">
     <CabinPanel panelNumber={1} />
-    <CabinPanel panelNumber={2} />
+    <div id="cabin-2-slot" class="w-full">
+        <CabinPanel panelNumber={2} />
+    </div>
 </div>
 
 <!-- Chart.js y plugin de zoom: bundleado localmente por Vite/Astro (sin CDN externo).

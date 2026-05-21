@@ -398,7 +398,7 @@ async function initGrafica(panel, sensor = "X") {
 
         const datos = await response.json();
         if (!Array.isArray(datos) || datos.length === 0) {
-            alert(`Sin datos disponibles para ${cabina.toUpperCase()}`);
+            console.warn(`[Gráfica] Sin datos disponibles para ${cabina.toUpperCase()}. Usa el botón de refrescar cuando el uC esté enviando datos.`);
             return;
         }
 
@@ -461,8 +461,7 @@ async function initGrafica(panel, sensor = "X") {
                         data: valores,
                         borderColor: "#004aad",
                         backgroundColor: "rgba(0, 74, 173, 0.2)",
-                        tension: 0.3,
-                        cubicInterpolationMode: 'monotone',
+                        tension: 0,
                         pointRadius: 0,
                         fill: false,
                     },
@@ -933,30 +932,15 @@ async function checkMonitoringStatus(cabin = "C1") {
                 await window.runNextAutoStep?.(normalizedCabin, currentActive);
             }
             
-            const panel = getPanelByCabin(normalizedCabin);
-            const selectors = panel ? panel.querySelectorAll(".biometric-metric-selector") : [];
-            selectors.forEach(selector => {
-                selector.disabled = false;
-                selector.classList.remove("opacity-50", "cursor-not-allowed");
-            });
+            setBiometricSelectorEnabled(normalizedCabin, true);
         }
-        
+
         // Actualizar estado actual (SIEMPRE)
         biometricPreviousActiveMeasurementByCabin[normalizedCabin] = currentActive;
         biometricCurrentActiveMeasurementByCabin[normalizedCabin] = activeMeasurementType;
-        
-        // Deshabilitar/habilitar selectores del panel asociado
-        const panel = getPanelByCabin(normalizedCabin);
-        const selectors = panel ? panel.querySelectorAll(".biometric-metric-selector") : [];
-        selectors.forEach(selector => {
-            if (activeMeasurementType) {
-                selector.disabled = true;
-                selector.classList.add("opacity-50", "cursor-not-allowed");
-            } else {
-                selector.disabled = false;
-                selector.classList.remove("opacity-50", "cursor-not-allowed");
-            }
-        });
+
+        // Deshabilitar selector mientras hay una medición activa, habilitar cuando termina
+        setBiometricSelectorEnabled(normalizedCabin, !activeMeasurementType);
     } catch (error) {
         console.warn("[BiometricCharts] Error al verificar estado de monitoreo:", error);
     }
@@ -1738,48 +1722,24 @@ function initTwoColumnsSection(panel) {
             btn.setAttribute("data-codigo", item.codigo);
             btn.setAttribute("data-seccion", seccion);
 
-            btn.addEventListener("click", async () => {
+            btn.addEventListener("click", () => {
                 const cabinaSeleccionada =
                     cabinaSelector.value || "Cabina 1";
                 const cabinaPrefijo =
                     cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                 const codigo = btn.getAttribute("data-codigo");
 
-                const sonidoPrevio =
-                    sonidoActivoPorCabina[cabinaSeleccionada];
+                const sonidoPrevio = sonidoActivoPorCabina[cabinaSeleccionada];
 
-                // === Si había un sonido activo, enviamos STOP antes de cambiar ===
+                // Desactivar visualmente el sonido anterior (sin enviar STOP)
                 if (sonidoPrevio && sonidoPrevio !== btn) {
-                    const codigoPrevio =
-                        sonidoPrevio.getAttribute("data-codigo");
-
-                    // Detener el sonido anterior
-                    enviarTrama(
-                        cabinaPrefijo,
-                        codigoSonidoControl.STOP,
-                        true,
-                    );
-                    window.addSentLog(
-                        `[STOP] ${cabinaPrefijo}${codigoSonidoControl.STOP}F`,
-                    );
-
-                    // Desactivar visualmente el sonido anterior
-                    sonidoPrevio.classList.remove(
-                        "bg-[#00bf63]",
-                        "text-white",
-                    );
+                    sonidoPrevio.classList.remove("bg-[#00bf63]", "text-white");
                     sonidoPrevio.classList.add("bg-[#efefef]");
-                    const iconoPrevio =
-                        sonidoPrevio.querySelector(".text-green-800");
+                    const iconoPrevio = sonidoPrevio.querySelector(".text-green-800");
                     if (iconoPrevio) iconoPrevio.classList.add("hidden");
-
-                    // Esperar 0.5 s antes de continuar
-                    await new Promise((resolve) =>
-                        setTimeout(resolve, 500),
-                    );
                 }
 
-                // === Activar visualmente el nuevo sonido ===
+                // Activar visualmente el nuevo sonido
                 btn.classList.remove("bg-[#efefef]");
                 btn.classList.add("bg-[#00bf63]", "text-white");
                 const icono = btn.querySelector(".text-green-800");
@@ -1788,18 +1748,9 @@ function initTwoColumnsSection(panel) {
                 sonidoActivoPorCabina[cabinaSeleccionada] = btn;
                 reproduciendoPorCabina[cabinaSeleccionada] = true;
 
-                // === Enviar trama del nuevo sonido ===
+                // Enviar directamente la trama del sonido seleccionado
                 enviarTrama(cabinaPrefijo, codigo, true);
-                window.addSentLog(
-                    `[SELECCION SONIDO] ${cabinaPrefijo}${codigo}F`,
-                );
-
-                // Esperar 0.5 s y luego enviar PLAY
-                await new Promise((resolve) => setTimeout(resolve, 500));
-                enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, true);
-                window.addSentLog(
-                    `[PLAY] ${cabinaPrefijo}${codigoSonidoControl.PLAY}F`,
-                );
+                window.addSentLog(`[SELECCION SONIDO] ${cabinaPrefijo}${codigo}F`);
 
                 // Habilitar controles de volumen
                 actualizarEstadoVolumen(panel, true);
@@ -1970,78 +1921,6 @@ function initTwoColumnsSection(panel) {
     restaurarSonidoActivo(panel);
 }
 
-// Función para manejar el ciclo de calor
-function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
-
-    const estadoActual = codigoBoton[cabinaPrefijo];
-    // Calcular siguiente estado para la cabina
-    const currentIndex = calorCycle.indexOf(estadoActual);
-    const nextIndex = (currentIndex + 1) % calorCycle.length;
-    const nuevoEstado = calorCycle[nextIndex];
-
-    codigoBoton[cabinaPrefijo] = nuevoEstado;
-    btn.classList.remove("bg-[#d9d9d9]", "bg-[#00bf63]");
-
-    if (nuevoEstado === '002') {
-        btn.classList.add("bg-[#d9d9d9]");
-        enviarTrama(cabinaPrefijo, nuevoEstado, cabinaActiva);
-        actualizarLedCalor(panel, '002');
-        return;
-    }
-
-    // Al activarse por primera vez (003), desactivar los demás botones de control
-    if (nuevoEstado === '003') {
-        panel.querySelectorAll('.control-btn').forEach((b) => {
-            if (b === btn) return;
-            const cod = b.getAttribute('data-codigo');
-            if (b.classList.contains('bg-[#00bf63]') && cod && codigoBoton[cod]) {
-                b.classList.remove('bg-[#00bf63]');
-                b.classList.add('bg-[#d9d9d9]');
-                enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
-            }
-        });
-    }
-
-    btn.classList.add("bg-[#00bf63]");
-    enviarTrama(cabinaPrefijo, nuevoEstado, cabinaActiva);
-    actualizarLedCalor(panel, nuevoEstado);
-};
-
-// Función para actualizar el LED de calor según el estado
-function actualizarLedCalor(panel, estado) {
-    const btnCalor = panel.querySelector('button[data-codigo="CALOR"]');
-    if (!btnCalor) return;
-
-    // Seleccionar LEDs por su posición
-    const ledSuperior = btnCalor.querySelector(".led-superior");    // Top-2
-    const ledMedio = btnCalor.querySelector(".led-medio");         // Top-7  
-    const ledInferior = btnCalor.querySelector(".led-inferior");   // Top-12
-
-    // Limpiar colores
-    [ledSuperior, ledMedio, ledInferior].forEach(led => {
-        if (led) {
-            led.classList.remove(
-                "bg-[#b4b4b4]", "bg-[#ffbd59]", 
-                "bg-[#ff914d]", "bg-[#ff3131]"
-            );
-        }
-    });
-
-    // Aplicar según estado
-    const colores = {
-        off:   { inferior: "#b4b4b4", medio: "#b4b4b4", superior: "#b4b4b4" },
-        '004':   { inferior: "#ffbd59", medio: "#b4b4b4", superior: "#b4b4b4" },
-        '005':{ inferior: "#ffbd59", medio: "#ff914d", superior: "#b4b4b4" },
-        '006':  { inferior: "#ffbd59", medio: "#ff914d", superior: "#ff3131" }
-    };
-    
-    const config = colores[estado] || colores.off;
-
-    if (ledSuperior) ledSuperior.classList.add(`bg-[${config.superior}]`);
-    if (ledMedio) ledMedio.classList.add(`bg-[${config.medio}]`);
-    if (ledInferior) ledInferior.classList.add(`bg-[${config.inferior}]`);
-};
-
 // =============================================================================
 //  GESTIÓN DE MODOS DE MEDICIÓN BIOMÉTRICA (Automático / Por Evento)
 // =============================================================================
@@ -2132,6 +2011,22 @@ function updateBiometricSelectorUI(cabin, metric) {
     });
 }
 
+// Habilita o deshabilita el selector de métrica de una cabina
+function setBiometricSelectorEnabled(cabin, enabled) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const sel = container.querySelector('.biometric-metric-selector');
+        if (!sel) return;
+        sel.disabled = !enabled;
+        if (enabled) {
+            sel.classList.remove('opacity-50', 'cursor-not-allowed');
+            sel.title = '';
+        } else {
+            sel.classList.add('opacity-50', 'cursor-not-allowed');
+            sel.title = 'El selector está disponible solo en modo Por Evento';
+        }
+    });
+}
+
 // Habilita ambos botones de modo tras la primera medición BPM
 function enableBiometricModeButtons(cabin) {
     _getChartContainersForCabin(cabin).forEach(container => {
@@ -2141,6 +2036,8 @@ function enableBiometricModeButtons(cabin) {
             btn.classList.add('cursor-pointer', 'hover:opacity-80', 'active:scale-95');
         });
     });
+    // El selector permanece deshabilitado hasta que el usuario seleccione un modo
+    setBiometricSelectorEnabled(cabin, false);
 }
 
 // ── Desactiva el modo automático sin tocar la medición en curso ──────────────
@@ -2156,12 +2053,14 @@ function deactivateAutoMode(cabin) {
     biometricModeByCabin[cabin] = null;
     updateBiometricModeButtons(cabin, null);
     updateBiometricModeStatus(cabin, null);
+    setBiometricSelectorEnabled(cabin, false);
 }
 
 // ── Activa el modo automático ────────────────────────────────────────────────
 async function activateAutoMode(cabin) {
     biometricModeByCabin[cabin] = 'auto';
     updateBiometricModeButtons(cabin, 'auto');
+    setBiometricSelectorEnabled(cabin, false);
     window.showToast?.('🔄 Modo automático activado: BPM → SpO2 → Temperatura → Presión → 5 min de descanso', 'info');
 
     const currentActive = biometricCurrentActiveMeasurementByCabin[cabin];
@@ -2198,6 +2097,7 @@ function activateEventMode(cabin) {
     biometricModeByCabin[cabin] = 'event';
     updateBiometricModeButtons(cabin, 'event');
     updateBiometricModeStatus(cabin, '⚡ Por evento — cambia el selector para iniciar una medición', 'bg-red-50 text-red-600');
+    setBiometricSelectorEnabled(cabin, true);
     window.showToast?.('⚡ Modo por evento activado. Selecciona una métrica para medir.', 'info');
 }
 
@@ -2218,6 +2118,7 @@ window.onBiometricModeClick = async function(requestedMode, cabin) {
             biometricModeByCabin[cab] = null;
             updateBiometricModeButtons(cab, null);
             updateBiometricModeStatus(cab, null);
+            setBiometricSelectorEnabled(cab, false);
             window.showToast?.('⏹ Modo por evento desactivado', 'info');
         } else {
             activateEventMode(cab);
@@ -2333,46 +2234,41 @@ function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
 function updateTopMetricsGrid(data, cabin = "C1") {
     if (!data) return;
     const normalizedCabin = normalizeCabin(cabin);
-    const panel = getPanelByCabin(normalizedCabin);
-    if (!panel) return;
-    
-    // Actualizar BPM (Pulso)
-    if (data.pulse !== null && data.pulse !== undefined) {
-        const pulseElements = panel.querySelectorAll(".metric-value-pulse");
-        pulseElements.forEach(el => {
-            el.textContent = Math.round(data.pulse);
-        });
-    }
-    
-    // Actualizar SpO2 (Oxigenación)
-    if (data.oxygen !== null && data.oxygen !== undefined) {
-        const oxygenElements = panel.querySelectorAll(".metric-value-oxygen");
-        oxygenElements.forEach(el => {
-            el.textContent = Math.round(data.oxygen);
-        });
-    }
-    
-    // Actualizar Temperatura
-    if (data.temperature !== null && data.temperature !== undefined) {
-        const temperatureElements = panel.querySelectorAll(".metric-value-temperature");
-        temperatureElements.forEach(el => {
-            el.textContent = parseFloat(data.temperature).toFixed(1);
-        });
-    }
-    
-    // Actualizar Presión Arterial
-    if (data.bloodPressure !== null && data.bloodPressure !== undefined) {
-        const bpElements = panel.querySelectorAll(".metric-value-bloodpressure");
-        bpElements.forEach(el => {
-            // Si es un objeto con systolic y diastolic, mostrar ambos
-            if (typeof data.bloodPressure === 'object' && data.bloodPressure.systolic) {
-                el.textContent = `${Math.round(data.bloodPressure.systolic)}/${Math.round(data.bloodPressure.diastolic)}`;
-            } else {
-                // Si es solo un número (systolic), mostrar ese valor
-                el.textContent = Math.round(data.bloodPressure);
-            }
-        });
-    }
+
+    // Actualizar en TODOS los paneles que muestren esta cabina
+    // (en modo un panel ambos paneles son C1, así que el panel de biometría también se actualiza)
+    const matchingPanels = Array.from(document.querySelectorAll(".panel-container"))
+        .filter(p => getCabinFromPanel(p) === normalizedCabin);
+
+    matchingPanels.forEach(panel => {
+        if (data.pulse !== null && data.pulse !== undefined) {
+            panel.querySelectorAll(".metric-value-pulse").forEach(el => {
+                el.textContent = Math.round(data.pulse);
+            });
+        }
+
+        if (data.oxygen !== null && data.oxygen !== undefined) {
+            panel.querySelectorAll(".metric-value-oxygen").forEach(el => {
+                el.textContent = Math.round(data.oxygen);
+            });
+        }
+
+        if (data.temperature !== null && data.temperature !== undefined) {
+            panel.querySelectorAll(".metric-value-temperature").forEach(el => {
+                el.textContent = parseFloat(data.temperature).toFixed(1);
+            });
+        }
+
+        if (data.bloodPressure !== null && data.bloodPressure !== undefined) {
+            panel.querySelectorAll(".metric-value-bloodpressure").forEach(el => {
+                if (typeof data.bloodPressure === 'object' && data.bloodPressure.systolic) {
+                    el.textContent = `${Math.round(data.bloodPressure.systolic)}/${Math.round(data.bloodPressure.diastolic)}`;
+                } else {
+                    el.textContent = Math.round(data.bloodPressure);
+                }
+            });
+        }
+    });
 }
 
 // Función para detener y limpiar las gráficas biométricas
@@ -2447,22 +2343,46 @@ function updateWatchButtonsState() {
         const cabin = getCabinFromPanel(panel);
         const isConnected = !!biometricWatchConnectedByCabin[cabin];
 
+        // LED y leyenda de estado del reloj
+        const led   = panel?.querySelector('.watch-status-led');
+        const label = panel?.querySelector('.watch-status-label');
+
         if (isConnected) {
             connectBtn.disabled = true;
             connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
             connectBtn.style.filter = "grayscale(100%)";
-            
+
             disconnectBtn.disabled = false;
             disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
             disconnectBtn.style.filter = "none";
+
+            if (led) {
+                led.classList.remove("bg-gray-400");
+                led.classList.add("bg-[#00bf63]", "animate-pulse");
+            }
+            if (label) {
+                label.textContent = "Conectado";
+                label.classList.remove("text-gray-500");
+                label.classList.add("text-[#00bf63]");
+            }
         } else {
             connectBtn.disabled = false;
             connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
             connectBtn.style.filter = "none";
-            
+
             disconnectBtn.disabled = true;
             disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
             disconnectBtn.style.filter = "grayscale(100%)";
+
+            if (led) {
+                led.classList.remove("bg-[#00bf63]", "animate-pulse");
+                led.classList.add("bg-gray-400");
+            }
+            if (label) {
+                label.textContent = "Desconectado";
+                label.classList.remove("text-[#00bf63]");
+                label.classList.add("text-gray-500");
+            }
         };
     };
 };
@@ -2749,11 +2669,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                if (codigo === "CALOR") {
-                    manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel);
-                    return;
-                }
-
                 if (isActive) {
                     btn.classList.remove("bg-[#00bf63]");
                     btn.classList.add("bg-[#d9d9d9]");
@@ -2765,23 +2680,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                     }
                 } else {
-                    controlButtons.forEach((b) => {
-                        const cod = b.getAttribute("data-codigo");
-                        if (!b.classList.contains("bg-[#00bf63]")) return;
-
-                        if (cod === "CALOR") {
-                            // CALOR usa clave CALOR_C1 / CALOR_C2 en codigoBoton
-                            b.classList.remove("bg-[#00bf63]");
-                            b.classList.add("bg-[#d9d9d9]");
-                            enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
-                            codigoBoton[cabinaPrefijo] = "002";
-                            actualizarLedCalor(panel, "002");
-                        } else if (cod && codigoBoton[cod]) {
-                            b.classList.remove("bg-[#00bf63]");
-                            b.classList.add("bg-[#d9d9d9]");
-                            enviarTrama(cabinaPrefijo, codigoBoton[cod].off, cabinaActiva);
-                        }
-                    });
+                    // FRIO y CALOR son mutuamente exclusivos entre sí.
+                    // El resto de controles pueden estar activos simultáneamente.
+                    if (codigo === "FRIO") {
+                        // Desactivar cualquier nivel de calor que esté activo
+                        panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
+                            if (b.classList.contains('bg-[#00bf63]')) {
+                                b.classList.remove('bg-[#00bf63]');
+                                b.classList.add('bg-[#c8c8c8]');
+                                enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
+                            }
+                        });
+                    }
 
                     btn.classList.remove("bg-[#d9d9d9]");
                     btn.classList.add("bg-[#00bf63]");
@@ -2796,11 +2706,50 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        // Listeners para la matriz 2x2 de calor
+        panel.querySelectorAll('[data-calor-codigo]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const codigo = btn.getAttribute('data-calor-codigo');
+
+                // Si es un nivel activo (no Apagado), desactivar FRIO si estaba activo
+                if (codigo !== '002') {
+                    const btnFrio = panel.querySelector('button[data-codigo="FRIO"]');
+                    if (btnFrio && btnFrio.classList.contains('bg-[#00bf63]')) {
+                        btnFrio.classList.remove('bg-[#00bf63]');
+                        btnFrio.classList.add('bg-[#d9d9d9]');
+                        enviarTrama(cabinaPrefijo, codigoBoton['FRIO'].off, cabinaActiva);
+                    }
+                }
+
+                // Desactivar todos los sub-botones de calor
+                panel.querySelectorAll('[data-calor-codigo]').forEach(b => {
+                    b.classList.remove('bg-[#00bf63]');
+                    b.classList.add('bg-[#c8c8c8]');
+                });
+
+                // Marcar como activo si no es Apagado
+                if (codigo !== '002') {
+                    btn.classList.remove('bg-[#c8c8c8]');
+                    btn.classList.add('bg-[#00bf63]');
+                }
+
+                enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+            });
+        });
+
         sensorButtons.forEach((btn) => {
             btn.addEventListener("click", () => {
                 const sensorSeleccionado = btn.dataset.sensor;
                 console.log(`[Gráfica] Click en botón de sensor: ${sensorSeleccionado}`);
-                
+
+                // Actualizar estado visual: solo el botón activo queda en verde
+                sensorButtons.forEach(b => {
+                    b.classList.remove("bg-[#00bf63]", "hover:bg-[#00a152]");
+                    b.classList.add("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                });
+                btn.classList.remove("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                btn.classList.add("bg-[#00bf63]", "hover:bg-[#00a152]");
+
                 // Obtener el canvas de la gráfica para actualizar su sensor
                 const graficaCanvas = panel.querySelector("#graficaPanel");
                 if (graficaCanvas) {
@@ -2812,10 +2761,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Actualizar el sensor actual en el canvas
                     graficaCanvas.sensor = sensorSeleccionado;
                 }
-                
+
                 // Volver a inicializar la gráfica con el nuevo sensor
                 initGrafica(panel, sensorSeleccionado);
             });
+        });
+
+        // Botón de refrescar gráfica
+        const refreshBtn = panel.querySelector('[data-action="refresh-grafica"]');
+        refreshBtn?.addEventListener("click", () => {
+            const graficaCanvas = panel.querySelector("#graficaPanel");
+            const sensorActual = graficaCanvas?.sensor || "X";
+            console.log(`[Gráfica] Refrescando gráfica para sensor: ${sensorActual}`);
+            initGrafica(panel, sensorActual);
         });
 
         // Lógica de control de botones de sonido
@@ -3187,9 +3145,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
-                // Reiniciar estado de calor
-                estadoCalor = "off";
-                actualizarLedCalor(panel, "off");
+                // Reiniciar sub-botones de calor
+                let calorActivo = false;
+                panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
+                    if (b.classList.contains('bg-[#00bf63]')) calorActivo = true;
+                    b.classList.remove('bg-[#00bf63]');
+                    b.classList.add('bg-[#c8c8c8]');
+                });
+                if (calorActivo) {
+                    enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, true);
+                }
 
                 // Resetear temporizador de humo
                 if (intervalo) {

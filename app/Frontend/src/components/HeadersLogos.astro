@@ -2,7 +2,7 @@
 //* HeaderLogos.astro *//
 
 /* Importar logos e imagenes */
-import logoPC from "../../public/logos/upch.svg";
+import logoPC from "../../public/logos/cetysu.png";
 import logoGT from "../../public/logos/logo-gitse.svg";
 import uC from "../../public/logos/uC.svg";
 import ucUno from "../../public/logos/uc-arduino-uno.svg";
@@ -73,6 +73,24 @@ import "../styles/header.css";
                     <img src={iconConnect.src} alt="Conectar" class="w-4 h-4" />
                     <span>Conectar</span>
                 </button>
+
+                <!-- Separador -->
+                <div class="h-6 w-px bg-gray-300 self-center mx-1"></div>
+
+                <!-- Control de número de cabinas -->
+                <div class="flex items-center gap-1.5">
+                    <span class="text-xs text-gray-500 font-medium select-none">Cabinas:</span>
+                    <button
+                        data-cabin-count="1"
+                        class="dev-cabin-btn px-2.5 py-1 text-xs font-semibold rounded-md border border-gray-300 bg-white text-gray-600 hover:border-[#6366f1] transition-colors"
+                        title="Mostrar solo Cabina 1"
+                    >1</button>
+                    <button
+                        data-cabin-count="2"
+                        class="dev-cabin-btn px-2.5 py-1 text-xs font-semibold rounded-md border border-gray-300 bg-white text-gray-600 hover:border-[#6366f1] transition-colors"
+                        title="Mostrar Cabina 1 y Cabina 2"
+                    >2</button>
+                </div>
             </div>
         </div>
 
