@@ -7,7 +7,7 @@ interface Props {
 const { waitMs = 8000 } = Astro.props;
 ---
 
-<style>
+<style is:global>
     @font-face {
         font-family: '911Porscha';
         src: url('/fonts/911porschav3laser.ttf') format('truetype');
@@ -15,16 +15,28 @@ const { waitMs = 8000 } = Astro.props;
         font-style: normal;
         font-display: block;
     }
+
+    /* Hexágonos del fondo interactivo */
+    .hex-cell {
+        position: absolute;
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        background: #ffffff;
+        transition: transform 0.06s ease;
+        will-change: transform, background;
+    }
 </style>
 
 <div
     id="splash-screen"
-    class="fixed inset-0 z-50 flex flex-col items-center justify-between bg-white transition-opacity duration-700"
+    class="fixed inset-0 z-50 flex flex-col items-center justify-between transition-opacity duration-700"
+    style="background-color: #eef0f4;"
     data-wait-ms={waitMs}
 >
+    <!-- Fondo de panal interactivo -->
+    <div id="hex-grid" class="absolute inset-0 overflow-hidden"></div>
 
     <!-- Contenido central -->
-    <div class="flex flex-col items-center justify-center flex-1 gap-10">
+    <div class="relative z-10 pointer-events-none flex flex-col items-center justify-center flex-1 gap-10">
 
         <!-- Logo container -->
         <div class="relative flex items-center justify-center">
@@ -71,7 +83,7 @@ const { waitMs = 8000 } = Astro.props;
 
 
     <!-- Progress bar -->
-    <div class="w-72 mb-10">
+    <div class="relative z-10 pointer-events-none w-72 mb-10">
 
         <div class="w-full h-0.75 bg-gray-200 rounded-full overflow-hidden">
 
@@ -87,7 +99,7 @@ const { waitMs = 8000 } = Astro.props;
 
 
     <!-- Footer -->
-    <div class="pb-8 flex flex-col items-center gap-2 opacity-70">
+    <div class="relative z-10 pointer-events-none pb-8 flex flex-col items-center gap-2 opacity-70">
 
         <img
             src="/logos/GT_logoColores.svg"

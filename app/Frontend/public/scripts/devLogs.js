@@ -242,19 +242,26 @@ if (typeof document !== 'undefined') {
     });
     
     // ===============================
-    // Proteger tecla F12 y Ctrl+Shift+I (Developer Tools)
+    // Proteger tecla F12, F5, Ctrl+Shift+I (Developer Tools), Ctrl+Shift+C (Inspect Element)
+    // Ctrl+Shift+J (Console), Ctrl+Shift+R (Hard Reload) y Ctrl+Shift+M (Toggle Device Toolbar)
     // ===============================
     document.addEventListener("keydown", (e) => {
         // Si dev mode no está activo, prevenir F12 y Ctrl+Shift+I
         if (!window.isDevModeActive) {
             // F12
-            if (e.key === "F12") {
-                e.preventDefault();
-            }
+            if (e.key === "F12") { e.preventDefault(); }
+            // F5
+            if (e.key === "F5") { e.preventDefault(); }
             // Ctrl+Shift+I (Windows/Linux) o Cmd+Option+I (Mac)
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "i") {
-                e.preventDefault();
-            }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "i") { e.preventDefault(); }
+            // Ctrl+Shift+C (Windows/Linux) o Cmd+Option+C (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "c") { e.preventDefault(); }
+            // Ctrl+Shift+J (Windows/Linux) o Cmd+Option+J (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "j") { e.preventDefault(); }
+            // Ctrl+Shift+R (Windows/Linux) o Cmd+Option+R (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "r") { e.preventDefault(); }
+            // Ctrl+Shift+M (Windows/Linux) o Cmd+Option+M (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "m") { e.preventDefault(); }
         }
     });
 
