@@ -2568,6 +2568,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // Leer el valor inicial del selector (puede ser "Cabina 1" o "Cabina 2" según el panel)
         let cabinaPrefijo = selectCabina?.value === "Cabina 2" ? "C2" : "C1";
 
+        function setColorCabina(color) {
+            document.querySelectorAll('.panel-container').forEach(p => {
+                const pSelect = p.querySelector("[data-select='cabina']");
+                const pCabin = pSelect?.value === "Cabina 2" ? "C2" : "C1";
+                if (pCabin === cabinaPrefijo) {
+                    const el = p.querySelector('#color-cabina');
+                    if (el) el.style.backgroundColor = color;
+                }
+            });
+        }
+
         let ledActivo = null;
 
         if (selectCabina) {
@@ -2927,8 +2938,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             ledActivoSnapshot.classList.add("active-led");
                             ledActivoSnapshot.style.backgroundColor =
                                 ledActivoSnapshot.getAttribute("data-active-color");
-                            colorCabina.style.backgroundColor =
-                                ledActivoSnapshot.getAttribute("data-active-color");
+                            setColorCabina(ledActivoSnapshot.getAttribute("data-active-color"));
                         }
 
                         botonBrillo.animate(
@@ -2949,7 +2959,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.style.backgroundColor = button.getAttribute(
                         "data-inactive-color",
                     );
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    setColorCabina("#d9d9d9");
 
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
                     ledActivo = null;
@@ -2971,8 +2981,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.classList.add("active-led");
                     button.style.backgroundColor =
                         button.getAttribute("data-active-color");
-                    colorCabina.style.backgroundColor =
-                        button.getAttribute("data-active-color");
+                    setColorCabina(button.getAttribute("data-active-color"));
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
 
                     ledActivo = button;
@@ -3112,40 +3121,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     estadoHumo.style.backgroundColor = "#ff4d4d";
                 }
 
-                // Enviar tramas de apagado para todos los LEDs activos
+                // ── Preparar envío secuencial de tramas de paro (500ms entre cada una) ──
+                const esperar = (ms) => new Promise(r => setTimeout(r, ms));
+                const tramasParaEnviar = [];
+
+                // LED activo → reset visual inmediato + encolar trama OFF
                 if (ledActivo) {
-                    const codAnterior =
-                        ledActivo.getAttribute("data-codigo");
+                    const codAnterior = ledActivo.getAttribute("data-codigo");
                     if (codAnterior) {
-                        await enviarTrama(cabinaPrefijo, codAnterior, true); // Envío real
+                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, codAnterior, true));
                     }
                     ledActivo.classList.remove("active-led");
-                    ledActivo.style.backgroundColor =
-                        ledActivo.getAttribute("data-inactive-color");
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    ledActivo.style.backgroundColor = ledActivo.getAttribute("data-inactive-color");
+                    setColorCabina("#d9d9d9");
                     ledActivo = null;
                     actualizarBotonesBrillo();
                 }
 
-                // Enviar trama OFF para cada botón activo
+                // Botones de control activos → reset visual inmediato + encolar trama OFF
                 controlButtons.forEach((btn) => {
                     const codigo = btn.getAttribute("data-codigo");
-                    if (
-                        btn.classList.contains("bg-[#00bf63]") &&
-                        codigo &&
-                        codigoBoton[codigo]
-                    ) {
+                    if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
                         btn.classList.remove("bg-[#00bf63]");
                         btn.classList.add("bg-[#d9d9d9]");
-                        enviarTrama(
-                            cabinaPrefijo,
-                            codigoBoton[codigo].off,
-                            true,
-                        );
+                        const off = codigoBoton[codigo].off;
+                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
                     }
                 });
 
-                // Reiniciar sub-botones de calor
+                // Sub-botones de calor → reset visual inmediato + encolar trama OFF si había calor activo
                 let calorActivo = false;
                 panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
                     if (b.classList.contains('bg-[#00bf63]')) calorActivo = true;
@@ -3153,7 +3157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     b.classList.add('bg-[#c8c8c8]');
                 });
                 if (calorActivo) {
-                    enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, true);
+                    tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, true));
                 }
 
                 // Resetear temporizador de humo
@@ -3184,34 +3188,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     botonDisparo.classList.add("bg-[#d9d9d9]");
                 }
 
-                // Enviar trama STOP (038) a ambos paneles
-                const panels =
-                    document.querySelectorAll(".panel-container");
-                panels.forEach(async (panel) => {
-                    const selectCabina = panel.querySelector(
-                        "[data-select='cabina']",
-                    );
-                    const cabinaSeleccionada =
-                        selectCabina?.value || "Cabina 1";
-                    const cabinaPrefijo =
-                        cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
-
-                    // Enviar trama STOP
-                    const tramaStop = `${cabinaPrefijo}${TRAMA_STOP}F`;
-                    enviarTrama("", "", false, tramaStop);
-                    window.addSentLog(`[STOP] ${tramaStop}`);
-
-                    // Desactivar visualmente sonidos en este panel
-                    const btnActivo =
-                        sonidoActivoPorCabina[cabinaSeleccionada];
+                // Trama STOP a todos los paneles → reset visual de sonidos inmediato + encolar trama
+                const allPanelsStop = document.querySelectorAll(".panel-container");
+                allPanelsStop.forEach((p) => {
+                    const pSelect = p.querySelector("[data-select='cabina']");
+                    const pCabinaSeleccionada = pSelect?.value || "Cabina 1";
+                    const pCabinaPrefijo = pCabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                    const tramaStop = `${pCabinaPrefijo}${TRAMA_STOP}F`;
+                    tramasParaEnviar.push(() => {
+                        enviarTrama("", "", false, tramaStop);
+                        window.addSentLog(`[STOP] ${tramaStop}`);
+                    });
+                    // Reset visual de sonido inmediato (sin esperar al delay)
+                    const btnActivo = sonidoActivoPorCabina[pCabinaSeleccionada];
                     if (btnActivo) {
-                        btnActivo.classList.remove(
-                            "bg-[#00bf63]",
-                            "text-white",
-                        );
+                        btnActivo.classList.remove("bg-[#00bf63]", "text-white");
                         btnActivo.classList.add("bg-[#efefef]");
                     }
                 });
+
+                // ── Enviar secuencialmente con 500ms entre cada trama ──
+                for (const enviar of tramasParaEnviar) {
+                    enviar();
+                    await esperar(500);
+                }
 
                 // Limpiar gráfica de sensores y su intervalo de actualización
                 const graficaCanvas = panel.querySelector("#graficaPanel");
@@ -3246,8 +3246,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (ledActivo) {
                     ledActivo = null;
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    setColorCabina("#d9d9d9");
                 }
+
+                // Resetear botones de selección de gráfica de sensores a gris
+                sensorButtons.forEach(b => {
+                    b.classList.remove("bg-[#00bf63]", "hover:bg-[#00a152]");
+                    b.classList.add("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                });
 
                 // Limpiar estado de sonido
                 const cabinaSeleccionada = selectCabina.value;
@@ -3276,10 +3282,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
+                // Desconectar reloj biométrico si está conectado
+                if (biometricWatchConnectedByCabin[cabinaPrefijo]) {
+                    try {
+                        await fetch(`http://localhost:5000/api/smartwatch/disconnect?cabin=${cabinaPrefijo}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                        });
+                        console.log(`[Reset] Reloj ${cabinaPrefijo} desconectado`);
+                        window.addSentLog?.(`[SMARTWATCH][${cabinaPrefijo}] POST /api/smartwatch/disconnect (reset)`);
+                    } catch (e) {
+                        console.warn("[Reset] No se pudo desconectar el reloj:", e);
+                    }
+                    biometricWatchConnectedByCabin[cabinaPrefijo] = false;
+                    biometricWatchConnected = Object.values(biometricWatchConnectedByCabin).some(Boolean);
+                    biometricMeasurementCompletionNotifiedByCabin[cabinaPrefijo] = false;
+                    biometricCurrentActiveMeasurementByCabin[cabinaPrefijo] = null;
+                    biometricPreviousActiveMeasurementByCabin[cabinaPrefijo] = null;
+                    if (biometricModeByCabin) biometricModeByCabin[cabinaPrefijo] = null;
+                    window.updateWatchButtonsState?.();
+                }
+
                 // Detener gráficas biométricas si existen
                 if (typeof window.stopBiometricCharts === "function") {
                     window.stopBiometricCharts(cabinaPrefijo);
                 }
+
+                // Resetear selector de métrica biométrica
+                setBiometricSelectorEnabled(cabinaPrefijo, false);
 
                 // Limpiar datos biométricos acumulados
                 if (window.biometricChartDataByCabin) {
