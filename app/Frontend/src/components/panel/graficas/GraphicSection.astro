@@ -2,6 +2,13 @@
 //* GraphicSection.astro *//
 ---
 
-<div class="bg-white rounded-md border border-[#a6a6a6] p-4">
+<div class="bg-white rounded-md border border-[#a6a6a6] p-4 relative">
+    <button
+        data-action="refresh-grafica"
+        title="Refrescar gráfica"
+        class="absolute top-2 right-2 p-1.5 rounded-md bg-[#efefef] hover:bg-[#d9d9d9] transition-colors"
+    >
+        <img src="/icons/refresh.svg" alt="Refrescar" class="w-4 h-4" />
+    </button>
     <canvas id="graficaPanel" class="w-full h-80"></canvas>
 </div>

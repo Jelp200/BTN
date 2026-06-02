@@ -1,8 +1,8 @@
 ---
 import SummaryMetricsRow from "./SummaryMetricsRow.astro";
 import ProfileCard from "./ProfileCard.astro";
-import PersonalDataForm from "./PersonalDataForm.astro";
 import BiometricCharts from "./BiometricCharts.astro";
+import BiometricRangesCard from "./BiometricRangesCard.astro";
 import DivisorLine from "../DivisorLine.astro";
 ---
 
@@ -24,7 +24,9 @@ import DivisorLine from "../DivisorLine.astro";
             <SummaryMetricsRow />
         </div>
     </div>
-    <div class="flex justify-center">
-        <PersonalDataForm />
-    </div>
+
+    <DivisorLine />
+    
+    <!-- Tarjeta de rangos de referencia biométrica -->
+    <BiometricRangesCard />
 </div>
