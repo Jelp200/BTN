@@ -41,6 +41,13 @@ namespace HostApp
             }
         }
 
+        // Espera 4s y lanza la verificación de actualizaciones de forma silenciosa
+        private async Task CheckForUpdatesDelayedAsync()
+        {
+            await Task.Delay(4000);
+            await AutoUpdater.CheckAsync(this);
+        }
+
         // Inicializa el control WebView2 dentro del formulario
         private void InitializeWebViewControl()
         {
@@ -137,6 +144,9 @@ namespace HostApp
                 {
                     Debug.WriteLine("✅ API iniciada y respondiendo.");
                     await InitializeWebViewAsync(); // Una vez lista, carga el frontend en WebView2
+
+                    // Verificar actualizaciones 4s después del arranque (no bloquea la UI)
+                    _ = CheckForUpdatesDelayedAsync();
                 }
                 else
                 {
