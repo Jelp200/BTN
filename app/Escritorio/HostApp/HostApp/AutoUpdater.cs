@@ -19,7 +19,7 @@ namespace HostApp
         // ── Actualizar esta constante junto con <Version> en HostApp.csproj ──
         internal const string AppVersion = "2.0.0";
 
-        private const string VersionJsonUrl = "http://187.77.27.8/updates/version.json";
+        private const string VersionJsonUrl = "https://gradustec.com/updates/version.json";
 
         private static readonly string SkipFilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

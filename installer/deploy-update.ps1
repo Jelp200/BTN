@@ -102,7 +102,7 @@ Write-Step "Actualizando version.json en el VPS..."
 
 $today = Get-Date -Format "yyyy-MM-dd"
 # URL pública — el contenedor sirve /usr/share/nginx/html/updates → /updates/
-$installerUrl = "http://$VpsHost/updates/installers/$installerName"
+$installerUrl = "https://gradustec.com/updates/installers/$installerName"
 
 $notesJson = $Notes -replace '\\', '\\\\' -replace '"', '\"'
 
