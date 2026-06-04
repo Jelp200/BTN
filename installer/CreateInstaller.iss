@@ -11,8 +11,8 @@
 ; ============================================================================
 AppId={{GITSE-PANELCONTROL-2025}}
 AppName=Control Panel
-AppVersion=2.0.0
-AppVerName=Control Panel v2.0.0
+AppVersion=2.0.3
+AppVerName=Control Panel v2.0.3
 AppPublisher=GRADUS TECHNOLOGIES
 AppPublisherURL=https://www.gradus.com
 AppSupportURL=https://www.gradus.com/soporte
@@ -27,7 +27,7 @@ DefaultDirName={localappdata}\PanelControlGITSE
 DefaultGroupName=GRADUS TECHNOLOGIES\Control Panel
 AllowNoIcons=yes
 OutputDir=Output
-OutputBaseFilename=PanelControlGITSE-v2.0.0-Instalador
+OutputBaseFilename=PanelControlGITSE-v2.0.3-Instalador
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -35,7 +35,7 @@ WizardSizePercent=100
 PrivilegesRequired=lowest
 ArchitecturesInstallIn64BitMode=x64
 MinVersion=6.1
-VersionInfoVersion=2.0.0.0
+VersionInfoVersion=2.0.3.0
 VersionInfoCompany=GRADUS TECHNOLOGIES
 VersionInfoDescription=Sistema de Control de Cabinas GITSE
 VersionInfoCopyright=© 2025 GRADUS TECHNOLOGIES
@@ -113,6 +113,11 @@ Comment: "Ver archivos de registro de la aplicación"
 ; Ejecución Post-Instalación
 ; ============================================================================
 [Run]
+; Reinicio automático cuando el instalador corre en modo silencioso (auto-actualización)
+Filename: "{app}\HostApp.exe"; \
+Flags: nowait skipifnotsilent
+
+; Casilla "Iniciar la app" en la pantalla final de instalación normal (no silenciosa)
 Filename: "{app}\HostApp.exe"; \
 Description: "Iniciar Control Panel después de la instalación"; \
 Flags: nowait postinstall skipifsilent

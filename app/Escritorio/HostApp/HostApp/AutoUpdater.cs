@@ -1,6 +1,6 @@
 // ** =====================================================================
 // ** Archivo:   AutoUpdater.cs
-// ** Version:   2.0.0
+// ** Version:   2.0.3
 // **  Autor(es):
 // **             Jorge E. Peña Paz
 // **  Equipo:    Departamento de Computo - Gradus Technologies
@@ -16,14 +16,21 @@ namespace HostApp
 {
     internal static class AutoUpdater
     {
-        // ── Actualizar esta constante junto con <Version> en HostApp.csproj ──
-        internal const string AppVersion = "2.0.0";
+        // Leído del assembly — siempre en sync con <Version> en HostApp.csproj. No editar manualmente.
+        internal static readonly string AppVersion =
+            typeof(AutoUpdater).Assembly.GetName().Version is { } v
+                ? $"{v.Major}.{v.Minor}.{v.Build}"
+                : "0.0.0";
 
         private const string VersionJsonUrl = "https://gradustec.com/updates/version.json";
 
         private static readonly string SkipFilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "ControlPanel", "skipped-version.txt");
+
+        private static readonly string JustUpdatedFlagPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "ControlPanel", "just-updated.flag");
 
         /// <summary>
         /// Consulta el VPS, compara versiones y muestra el diálogo si hay actualización.
@@ -91,6 +98,30 @@ namespace HostApp
             {
                 return File.Exists(SkipFilePath) &&
                        File.ReadAllText(SkipFilePath).Trim() == version.Trim();
+            }
+            catch { return false; }
+        }
+
+        // Escribe el flag antes de cerrar la app para actualizar.
+        // Al siguiente arranque, Form1 lo consume para limpiar el cache del WebView2.
+        internal static void MarkJustUpdated()
+        {
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(JustUpdatedFlagPath)!);
+                File.WriteAllText(JustUpdatedFlagPath, AppVersion);
+            }
+            catch { }
+        }
+
+        // Devuelve true y borra el flag si existe (consumo único por arranque).
+        internal static bool ConsumeJustUpdatedFlag()
+        {
+            try
+            {
+                if (!File.Exists(JustUpdatedFlagPath)) return false;
+                File.Delete(JustUpdatedFlagPath);
+                return true;
             }
             catch { return false; }
         }

@@ -18,12 +18,12 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$Version,
 
-    [string]$Notes = "Correcciones de errores y mejoras de rendimiento.",
+    [string]$Notes = "",
 
-    [string]$InstallerPath = "",
+    [string]$InstallerPath = "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\Output",
 
     [string]$VpsHost = "187.77.27.8",
-    [string]$VpsUser = "root",
+    [string]$VpsUser = "jorge",
 
     # Directorio en el HOST del VPS (montado en el contenedor nginx como /usr/share/nginx/html/updates)
     [string]$VpsUpdatesDir = "/srv/docker/gradustec/updates"
@@ -58,18 +58,22 @@ Write-Host ""
 # ── Localizar el instalador ───────────────────────────────────────────────────
 Write-Step "Buscando instalador para v$Version..."
 
-if ([string]::IsNullOrWhiteSpace($InstallerPath)) {
-    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-    $outputDir = Join-Path $scriptDir "Output"
-    $candidates = Get-ChildItem $outputDir -Filter "*$Version*.exe" -ErrorAction SilentlyContinue |
+# Si InstallerPath es un directorio (o está vacío), buscar el .exe dentro
+if ([string]::IsNullOrWhiteSpace($InstallerPath) -or (Test-Path $InstallerPath -PathType Container)) {
+    $searchDir = if ([string]::IsNullOrWhiteSpace($InstallerPath)) {
+        Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) "Output"
+    } else {
+        $InstallerPath
+    }
+    $candidates = Get-ChildItem $searchDir -Filter "*$Version*.exe" -ErrorAction SilentlyContinue |
                   Sort-Object LastWriteTime -Descending
     if ($candidates.Count -eq 0) {
-        Write-Fail "No se encontró ningún instalador con '$Version' en $outputDir`nEspecifica -InstallerPath 'C:\ruta\al\instalador.exe'"
+        Write-Fail "No se encontró ningún .exe con '$Version' en $searchDir`nEspecifica -InstallerPath 'C:\ruta\al\instalador.exe'"
     }
     $InstallerPath = $candidates[0].FullName
 }
 
-if (-not (Test-Path $InstallerPath)) {
+if (-not (Test-Path $InstallerPath -PathType Leaf)) {
     Write-Fail "El archivo no existe: $InstallerPath"
 }
 
@@ -79,7 +83,7 @@ Write-Ok "Instalador: $installerName ($installerSizeMB MB)"
 
 # ── Verificar SSH disponible ──────────────────────────────────────────────────
 Write-Step "Verificando conexión SSH con $VpsUser@$VpsHost..."
-ssh -o ConnectTimeout=10 -o BatchMode=yes "$VpsUser@$VpsHost" "echo ok" 2>&1 | Out-Null
+ssh -o ConnectTimeout=10 "$VpsUser@$VpsHost" "echo ok" 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) {
     Write-Fail "No se pudo conectar al VPS via SSH.`n  Asegúrate de tener tu clave SSH configurada:`n  ssh-copy-id $VpsUser@$VpsHost"
 }
@@ -121,7 +125,7 @@ Write-Ok "version.json actualizado"
 
 # ── Verificación final (vía HTTP) ─────────────────────────────────────────────
 Write-Step "Verificando endpoint público..."
-$checkUrl = "http://$VpsHost/updates/version.json"
+$checkUrl = "https://gradustec.com/updates/version.json"
 try {
     $response = Invoke-WebRequest -Uri $checkUrl -TimeoutSec 10 -UseBasicParsing
     $parsed = $response.Content | ConvertFrom-Json

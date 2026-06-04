@@ -167,8 +167,7 @@ namespace HostApp
             {
                 var confirm = MessageBox.Show(
                     "Descarga completada.\n\n" +
-                    "La aplicación se cerrará e instalará la nueva versión automáticamente.\n" +
-                    "Una vez finalizada la instalación podrá volver a abrir Control Panel.\n\n" +
+                    "La aplicación se cerrará, instalará la actualización y se reiniciará automáticamente.\n\n" +
                     "¿Continuar?",
                     "Instalar actualización",
                     MessageBoxButtons.YesNo,
@@ -176,6 +175,10 @@ namespace HostApp
 
                 if (confirm == DialogResult.Yes)
                 {
+                    // Marcar que ocurrió una actualización para que al reiniciar
+                    // la app limpie el cache del WebView2 automáticamente.
+                    AutoUpdater.MarkJustUpdated();
+
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                     {
                         FileName = downloadedPath,

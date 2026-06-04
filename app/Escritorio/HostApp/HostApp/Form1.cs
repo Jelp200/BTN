@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using System.Net.Http;
 using System.Threading;
@@ -39,6 +40,23 @@ namespace HostApp
             {
                 return true; // Si falla → puerto ya ocupado
             }
+        }
+
+        // Limpia el cache del WebView2 y recarga la página tras una actualización.
+        // Se ejecuta solo cuando existe el flag "just-updated" escrito por el auto-updater.
+        private async Task HardRefreshAfterUpdateAsync()
+        {
+            // Esperar a que la página cargue antes de limpiar el cache
+            await Task.Delay(3000);
+
+            if (_webView?.CoreWebView2 == null || IsDisposed) return;
+
+            await _webView.CoreWebView2.Profile.ClearBrowsingDataAsync(
+                CoreWebView2BrowsingDataKinds.DiskCache |
+                CoreWebView2BrowsingDataKinds.CacheStorage);
+
+            if (!IsDisposed && _webView?.CoreWebView2 != null)
+                _webView.CoreWebView2.Navigate("http://localhost:5000");
         }
 
         // Espera 4s y lanza la verificación de actualizaciones de forma silenciosa
@@ -144,6 +162,10 @@ namespace HostApp
                 {
                     Debug.WriteLine("✅ API iniciada y respondiendo.");
                     await InitializeWebViewAsync(); // Una vez lista, carga el frontend en WebView2
+
+                    // Si es el primer arranque tras una actualización, limpiar cache del WebView2
+                    if (AutoUpdater.ConsumeJustUpdatedFlag())
+                        _ = HardRefreshAfterUpdateAsync();
 
                     // Verificar actualizaciones 4s después del arranque (no bloquea la UI)
                     _ = CheckForUpdatesDelayedAsync();
