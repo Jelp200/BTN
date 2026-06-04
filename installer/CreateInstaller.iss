@@ -11,8 +11,8 @@
 ; ============================================================================
 AppId={{GITSE-PANELCONTROL-2025}}
 AppName=Control Panel
-AppVersion=2.0.3
-AppVerName=Control Panel v2.0.3
+AppVersion=2.0.4
+AppVerName=Control Panel v2.0.4
 AppPublisher=GRADUS TECHNOLOGIES
 AppPublisherURL=https://www.gradus.com
 AppSupportURL=https://www.gradus.com/soporte
@@ -23,11 +23,11 @@ AppComments=Sistema de control y monitoreo de cabinas de prueba ergonómica
 ; ============================================================================
 ; Configuración de Instalación
 ; ============================================================================
-DefaultDirName={localappdata}\PanelControlGITSE
+DefaultDirName={localappdata}\ControlPanel
 DefaultGroupName=GRADUS TECHNOLOGIES\Control Panel
 AllowNoIcons=yes
 OutputDir=Output
-OutputBaseFilename=PanelControlGITSE-v2.0.3-Instalador
+OutputBaseFilename=ControlPanel-v2.0.4-Instalador
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -35,7 +35,7 @@ WizardSizePercent=100
 PrivilegesRequired=lowest
 ArchitecturesInstallIn64BitMode=x64
 MinVersion=6.1
-VersionInfoVersion=2.0.3.0
+VersionInfoVersion=2.0.4.0
 VersionInfoCompany=GRADUS TECHNOLOGIES
 VersionInfoDescription=Sistema de Control de Cabinas GITSE
 VersionInfoCopyright=© 2025 GRADUS TECHNOLOGIES
@@ -85,19 +85,19 @@ Filename: "{app}\HostApp.exe"; \
 WorkingDir: "{app}"; \
 IconFilename: "{app}\HostApp.exe"; \
 IconIndex: 0; \
-Comment: "Panel de Control GITSE - Sistema de Monitoreo de Cabinas"
+Comment: "Control Panel - Sistema de Monitoreo de Cabinas"
 
 ; Acceso directo en Menú Inicio
 Name: "{group}\Control Panel"; \
 Filename: "{app}\HostApp.exe"; \
 WorkingDir: "{app}"; \
 IconFilename: "{app}\HostApp.exe"; \
-Comment: "Ejecutar Panel de Control GITSE"
+Comment: "Ejecutar Control Panel"
 
 ; Acceso directo para desinstalar
 Name: "{group}\Desinstalar Control Panel"; \
 Filename: "{uninstallexe}"; \
-Comment: "Desinstalar Panel de Control GITSE"
+Comment: "Desinstalar Control Panel"
 
 ; Acceso directo al directorio de instalación
 Name: "{group}\Carpeta de Instalación"; \
@@ -142,7 +142,7 @@ Type: dirifempty; Name: "{app}"
 ; ============================================================================
 [Messages]
 WelcomeLabel1=Bienvenido a la instalación de Control Panel
-WelcomeLabel2=Este programa instalará Control Panel v2.0.0 en su equipo.%n%nControl Panel es un sistema profesional de control y monitoreo de cabinas.%n%nLa aplicación se instalará en su carpeta de usuario para garantizar permisos de escritura completos.%n%nSe recomienda cerrar todas las aplicaciones antes de continuar.
+WelcomeLabel2=Este programa instalará Control Panel v2.0.4 en su equipo.%n%nControl Panel es un sistema profesional de control y monitoreo de cabinas.%n%nLa aplicación se instalará en su carpeta de usuario para garantizar permisos de escritura completos.%n%nSe recomienda cerrar todas las aplicaciones antes de continuar.
 FinishedHeadingLabel=Instalación completada
 FinishedLabelNoIcons=La instalación de Control Panel se ha completado correctamente.
 FinishedLabel=La instalación de Control Panel se ha completado correctamente. La aplicación se iniciará automáticamente.

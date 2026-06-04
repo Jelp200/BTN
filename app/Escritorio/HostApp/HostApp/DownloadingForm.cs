@@ -76,7 +76,7 @@ namespace HostApp
 
             var fileName = Path.GetFileName(uri.LocalPath);
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"PanelControlGITSE-v{_info.Version}-Instalador.exe";
+                fileName = $"ControlPanel-v{_info.Version}-Instalador.exe";
 
             var tempPath = Path.Combine(Path.GetTempPath(), fileName);
 
