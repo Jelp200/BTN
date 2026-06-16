@@ -28,10 +28,10 @@ const { title } = Astro.props;
 		<!-- Sistema de toasts (carga primero para interceptar window.alert) -->
 		<script is:inline src="/scripts/toast.js"></script>
 
-		<!-- Expone XLSX como global window.XLSX desde node_modules (sin CDN externo) -->
+		<!-- Expone XLSX como global window.XLSX (xlsx-js-style: misma API + soporte de estilos) -->
 		<script>
-			import * as XLSX from 'xlsx';
-			(window as any).XLSX = XLSX;
+			import XLSXStyle from 'xlsx-js-style';
+			(window as any).XLSX = XLSXStyle;
 		</script>
 
 		<!-- Loader/Splash Screen -->
