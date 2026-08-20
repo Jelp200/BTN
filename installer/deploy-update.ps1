@@ -26,7 +26,11 @@ param(
     [string]$VpsUser = "jorge",
 
     # Directorio en el HOST del VPS (montado en el contenedor nginx como /usr/share/nginx/html/updates)
-    [string]$VpsUpdatesDir = "/srv/docker/gradustec/updates"
+    [string]$VpsUpdatesDir = "/srv/docker/gradustec/updates",
+
+    # Dominio público desde el que los clientes descargan el instalador y version.json
+    # (cambia a "https://portal.test-gradus.tech" para publicar en TEST en vez de producción)
+    [string]$PublicBaseUrl = "https://gradustec.com"
 )
 
 # ========== COLORES ==========
@@ -106,7 +110,7 @@ Write-Step "Actualizando version.json en el VPS..."
 
 $today = Get-Date -Format "yyyy-MM-dd"
 # URL pública — el contenedor sirve /usr/share/nginx/html/updates → /updates/
-$installerUrl = "https://gradustec.com/updates/installers/$installerName"
+$installerUrl = "$PublicBaseUrl/updates/installers/$installerName"
 
 $notesJson = $Notes -replace '\\', '\\\\' -replace '"', '\"'
 
@@ -125,7 +129,7 @@ Write-Ok "version.json actualizado"
 
 # ── Verificación final (vía HTTP) ─────────────────────────────────────────────
 Write-Step "Verificando endpoint público..."
-$checkUrl = "https://gradustec.com/updates/version.json"
+$checkUrl = "$PublicBaseUrl/updates/version.json"
 try {
     $response = Invoke-WebRequest -Uri $checkUrl -TimeoutSec 10 -UseBasicParsing
     $parsed = $response.Content | ConvertFrom-Json
