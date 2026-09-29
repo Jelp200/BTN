@@ -1183,7 +1183,7 @@ async function createSheet3Data(cabinaCode) {
 
     add(["DATOS DE SENSORES"], 'title');
     add([],                    'empty');
-    add(["Hora", "Cabina", "X (m/s²)", "Y (m/s²)", "Z (m/s²)", "°C", "H%", "UV (W/m²)", "CO₂ (PPM)", "Lux (lm/m²)", "dB"], 'header');
+    add(["Hora", "Cabina", "X (g)", "Y (g)", "Z (g)", "°C", "H%", "UV (W/m²)", "CO₂ (PPM)", "Lux (lm/m²)", "dB"], 'header');
 
     try {
         const res = await fetch(`http://localhost:5000/api/serial/datos/${cabinaCode}`);
@@ -1409,13 +1409,13 @@ function mostrarNotificacion(
 function getUnidad(medicion) {
     switch (medicion) {
         case "X":
-            return "m";
+            return "g";
         case "T":
             return "°C";
         case "CO2":
             return "ppm";
         case "Y":
-            return "m";
+            return "g";
         case "H":
             return "%";
         case "UV":
@@ -1425,7 +1425,7 @@ function getUnidad(medicion) {
         case "dB":
             return "dB";
         case "Z":
-            return "m";
+            return "g";
         default:
             return "";
     }

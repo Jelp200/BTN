@@ -143,9 +143,9 @@ const sensorConfig = {
     O3: { frecuencia: 60, label: "Iluminancia (lm/m²)" },
     UV: { frecuencia: 60, label: "UV (W/m²)" },
     dB: { frecuencia: 60, label: "Ruido (dB)" },
-    X: { frecuencia: 1, label: "Aceleración X (m/s²)" },
-    Y: { frecuencia: 1, label: "Aceleración Y (m/s²)" },
-    Z: { frecuencia: 1, label: "Aceleración Z (m/s²)" },
+    X: { frecuencia: 1, label: "Aceleración X (g)" },
+    Y: { frecuencia: 1, label: "Aceleración Y (g)" },
+    Z: { frecuencia: 1, label: "Aceleración Z (g)" },
 };
 
 //! Descripcion de control
