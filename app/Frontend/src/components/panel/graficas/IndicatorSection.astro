@@ -6,75 +6,22 @@ import ControlButtonGraphic from "./ControlButtonGraphic.astro";
 ---
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-    <!-- Aceleración X -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-lg shadow-md text-center">
-        <ControlIndicador icon="X" medicion="N/A" data-medicion="X" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="X" />
-        </div>
-    </div>
 
-    <!-- Aceleración Y -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-lg shadow-md text-center">
-        <ControlIndicador icon="Y" medicion="N/A" data-medicion="Y" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="Y" />
+    {[
+        { icon: "X",   sensor: "X"   },
+        { icon: "Y",   sensor: "Y"   },
+        { icon: "Z",   sensor: "Z"   },
+        { icon: "T",   sensor: "T"   },
+        { icon: "H",   sensor: "H"   },
+        { icon: "UV",  sensor: "UV"  },
+        { icon: "CO2", sensor: "CO2" },
+        { icon: "O3",  sensor: "O3"  },
+        { icon: "dB",  sensor: "dB"  },
+    ].map(({ icon, sensor }) => (
+        <div class="flex flex-col gap-2 p-3 rounded-lg shadow-md w-full">
+            <ControlIndicador icon={icon} medicion="N/A" data-medicion={icon} />
+            <ControlButtonGraphic data-sensor={sensor} />
         </div>
-    </div>
+    ))}
 
-    <!-- Aceleración Z -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-lg shadow-md text-center">
-        <ControlIndicador icon="Z" medicion="N/A" data-medicion="Z" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="Z" />
-        </div>
-    </div>
-
-    <!-- Temperatura -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-lg shadow-md text-center">
-        <ControlIndicador icon="T" medicion="N/A" data-medicion="T" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="T" />
-        </div>
-    </div>
-
-    <!-- Humedad -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-lg shadow-md text-center">
-        <ControlIndicador icon="H" medicion="N/A" data-medicion="H" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="H" />
-        </div>
-    </div>
-
-    <!-- UV -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-lg shadow-md text-center">
-        <ControlIndicador icon="UV" medicion="N/A" data-medicion="UV" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="UV" />
-        </div>
-    </div>
-
-    <!-- CO2 -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-md shadow-sm text-center">
-        <ControlIndicador icon="CO2" medicion="N/A" data-medicion="CO2" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="CO2" />
-        </div>
-    </div>
-
-    <!-- O3 -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-md shadow-sm text-center">
-        <ControlIndicador icon="O3" medicion="N/A" data-medicion="O3" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="O3" />
-        </div>
-    </div>
-
-    <!-- dB -->
-    <div class="flex flex-col items-center justify-center p-3 rounded-md shadow-sm text-center">
-        <ControlIndicador icon="dB" medicion="N/A" data-medicion="dB" />
-        <div class="mt-2 w-full">
-            <ControlButtonGraphic data-sensor="dB" />
-        </div>
-    </div>
 </div>

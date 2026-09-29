@@ -121,6 +121,84 @@ if (typeof document !== 'undefined') {
     }
 
     // ===============================
+    // Cabinas: persistencia
+    // ===============================
+    function applyCabinCount(count) {
+        const slot2   = document.getElementById("cabin-2-slot");
+        const panels  = document.querySelectorAll(".panel-container");
+        const panel1  = panels[0];
+        const panel2  = panels[1];
+
+        // Siempre mostrar el segundo slot (en modo 1 seguimos mostrando ambos paneles)
+        if (slot2) slot2.classList.remove("hidden");
+
+        if (count === 1) {
+            // ── Modo un solo panel ──────────────────────────────────────────
+            // Panel izquierdo: solo Controles, sin pestañas
+            if (panel1) {
+                panel1.querySelector('[role="tablist"]')?.classList.add("hidden");
+                panel1.querySelector('[data-tab-content="controles"]')?.classList.remove("hidden");
+                panel1.querySelector('[data-tab-content="graficas"]')?.classList.add("hidden");
+                panel1.querySelector('[data-tab-content="biometria"]')?.classList.add("hidden");
+                const sel1 = panel1.querySelector('[data-select="cabina"]');
+                if (sel1) sel1.selectedIndex = 0;
+            }
+            // Panel derecho: pestañas Sensores y Biometría (ocultar Controles)
+            if (panel2) {
+                // Ocultar solo el botón de Controles; mantener tablist visible
+                panel2.querySelector('[data-tab="controles"]')?.classList.add("hidden");
+                // Activar pestaña Sensores por defecto
+                panel2.querySelectorAll("[data-tab]").forEach(btn => {
+                    const isGraficas = btn.getAttribute("data-tab") === "graficas";
+                    btn.classList.toggle("active",        isGraficas);
+                    btn.classList.toggle("bg-[#d9d9d9]",  isGraficas);
+                    btn.classList.toggle("bg-transparent", !isGraficas);
+                    btn.setAttribute("aria-selected", String(isGraficas));
+                    btn.setAttribute("tabindex", isGraficas ? "0" : "-1");
+                });
+                panel2.querySelector('[data-tab-content="controles"]')?.classList.add("hidden");
+                panel2.querySelector('[data-tab-content="graficas"]')?.classList.remove("hidden");
+                panel2.querySelector('[data-tab-content="biometria"]')?.classList.add("hidden");
+                const sel2 = panel2.querySelector('[data-select="cabina"]');
+                if (sel2) sel2.selectedIndex = 0;
+            }
+        } else {
+            // ── Modo dos paneles ────────────────────────────────────────────
+            [panel1, panel2].forEach((panel, i) => {
+                if (!panel) return;
+                // Restaurar todos los botones de pestaña (incluyendo Controles)
+                panel.querySelectorAll("[data-tab]").forEach(btn => {
+                    btn.classList.remove("hidden");
+                    const isControles = btn.getAttribute("data-tab") === "controles";
+                    btn.classList.toggle("active",        isControles);
+                    btn.classList.toggle("bg-[#d9d9d9]",  isControles);
+                    btn.classList.toggle("bg-transparent", !isControles);
+                    btn.setAttribute("aria-selected", String(isControles));
+                    btn.setAttribute("tabindex", isControles ? "0" : "-1");
+                });
+                // Restaurar tablist visible y activar Controles por defecto
+                panel.querySelector('[role="tablist"]')?.classList.remove("hidden");
+                panel.querySelector('[data-tab-content="controles"]')?.classList.remove("hidden");
+                panel.querySelector('[data-tab-content="graficas"]')?.classList.add("hidden");
+                panel.querySelector('[data-tab-content="biometria"]')?.classList.add("hidden");
+                // Panel 1 → Cabina 1 (index 0), Panel 2 → Cabina 2 (index 1)
+                const sel = panel.querySelector('[data-select="cabina"]');
+                if (sel) sel.selectedIndex = i;
+            });
+        }
+
+        // Resaltar el botón activo
+        document.querySelectorAll("[data-cabin-count]").forEach(btn => {
+            const active = parseInt(btn.getAttribute("data-cabin-count")) === count;
+            btn.classList.toggle("bg-[#6366f1]",      active);
+            btn.classList.toggle("text-white",         active);
+            btn.classList.toggle("border-[#6366f1]",   active);
+            btn.classList.toggle("bg-white",          !active);
+            btn.classList.toggle("text-gray-600",     !active);
+        });
+    }
+
+    // ===============================
     // Activar / desactivar dev mode
     // ===============================
     function activateDevMode() {
@@ -134,6 +212,10 @@ if (typeof document !== 'undefined') {
             selector.classList.remove("opacity-50", "cursor-not-allowed");
             selector.title = "";
         });
+
+        // Sincronizar botones de cabinas con el valor guardado
+        const saved = parseInt(localStorage.getItem("devCabinCount") || "2");
+        applyCabinCount(saved);
     }
 
     function deactivateDevMode() {
@@ -160,19 +242,26 @@ if (typeof document !== 'undefined') {
     });
     
     // ===============================
-    // Proteger tecla F12 y Ctrl+Shift+I (Developer Tools)
+    // Proteger tecla F12, F5, Ctrl+Shift+I (Developer Tools), Ctrl+Shift+C (Inspect Element)
+    // Ctrl+Shift+J (Console), Ctrl+Shift+R (Hard Reload) y Ctrl+Shift+M (Toggle Device Toolbar)
     // ===============================
     document.addEventListener("keydown", (e) => {
         // Si dev mode no está activo, prevenir F12 y Ctrl+Shift+I
         if (!window.isDevModeActive) {
             // F12
-            if (e.key === "F12") {
-                e.preventDefault();
-            }
+            if (e.key === "F12") { e.preventDefault(); }
+            // F5
+            if (e.key === "F5") { e.preventDefault(); }
             // Ctrl+Shift+I (Windows/Linux) o Cmd+Option+I (Mac)
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "i") {
-                e.preventDefault();
-            }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "i") { e.preventDefault(); }
+            // Ctrl+Shift+C (Windows/Linux) o Cmd+Option+C (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "c") { e.preventDefault(); }
+            // Ctrl+Shift+J (Windows/Linux) o Cmd+Option+J (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "j") { e.preventDefault(); }
+            // Ctrl+Shift+R (Windows/Linux) o Cmd+Option+R (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "r") { e.preventDefault(); }
+            // Ctrl+Shift+M (Windows/Linux) o Cmd+Option+M (Mac)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "m") { e.preventDefault(); }
         }
     });
 
@@ -186,6 +275,18 @@ if (typeof document !== 'undefined') {
             selector.disabled = true;
             selector.classList.add("opacity-50", "cursor-not-allowed");
             selector.title = "Modo desarrollador requerido (pcdev)";
+        });
+
+        // ── Cabinas: aplicar preferencia guardada ────────────────────────────
+        const savedCabinCount = parseInt(localStorage.getItem("devCabinCount") || "2");
+        applyCabinCount(savedCabinCount);
+
+        document.querySelectorAll("[data-cabin-count]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const count = parseInt(btn.getAttribute("data-cabin-count"));
+                localStorage.setItem("devCabinCount", String(count));
+                applyCabinCount(count);
+            });
         });
         
         const btnToggleSent = document.getElementById("btn-toggle-sent");

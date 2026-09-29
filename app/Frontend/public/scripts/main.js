@@ -398,7 +398,7 @@ async function initGrafica(panel, sensor = "X") {
 
         const datos = await response.json();
         if (!Array.isArray(datos) || datos.length === 0) {
-            alert(`Sin datos disponibles para ${cabina.toUpperCase()}`);
+            console.warn(`[Gráfica] Sin datos disponibles para ${cabina.toUpperCase()}. Usa el botón de refrescar cuando el uC esté enviando datos.`);
             return;
         }
 
@@ -461,7 +461,7 @@ async function initGrafica(panel, sensor = "X") {
                         data: valores,
                         borderColor: "#004aad",
                         backgroundColor: "rgba(0, 74, 173, 0.2)",
-                        tension: 0.3,
+                        tension: 0,
                         pointRadius: 0,
                         fill: false,
                     },
@@ -885,16 +885,28 @@ async function checkMonitoringStatus(cabin = "C1") {
             
             console.log(`[BiometricCharts] ✅ Medición de ${completedName} completada!`);
             biometricMeasurementCompletionNotifiedByCabin[normalizedCabin] = true;
-            
+
             // Mostrar notificación en el log de tramas
             mostrarNotificacion(
                 `Medición de ${completedName} completada en ${normalizedCabin}. Ahora puedes cambiar de métrica.`,
                 { tipo: "info" }
             );
-            
-            // TAMBIÉN mostrar alert para asegurar que el usuario lo vea
-            alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
-            
+
+            // En modo automático NO mostrar alert para no interrumpir el ciclo;
+            // en cualquier otro modo sí notificar al usuario.
+            if (biometricModeByCabin[normalizedCabin] !== 'auto') {
+                alert(`✅ Medición de ${completedName} completada!\n\nAhora puedes cambiar de métrica.`);
+            } else {
+                window.showToast?.(`✅ ${completedName} completado`, 'success');
+            }
+
+            // Re-poblar la gráfica con el historial real y sus timestamps correctos
+            try {
+                await window.seedBiometricHistory(null, normalizedCabin);
+            } catch (error) {
+                console.warn("[BiometricCharts] Error re-seeding gráfica después de medición:", error);
+            }
+
             // Actualizar TopMetricsGrid con los últimos datos medidos
             try {
                 const latestData = await fetchLatestBiometricData(normalizedCabin);
@@ -904,37 +916,37 @@ async function checkMonitoringStatus(cabin = "C1") {
             } catch (error) {
                 console.warn("[BiometricCharts] Error actualizando TopMetricsGrid después de medición:", error);
             }
+
+            // Registrar la última métrica completada para reanudar el ciclo auto desde el punto correcto
+            biometricLastCompletedMetricByCabin[normalizedCabin] = currentActive;
+
+            // Habilitar botones de modo tras la primera medición BPM completada
+            if (currentActive === 'bpm' && !biometricFirstMeasurementDoneByCabin[normalizedCabin]) {
+                biometricFirstMeasurementDoneByCabin[normalizedCabin] = true;
+                window.enableBiometricModeButtons?.(normalizedCabin);
+                window.showToast?.('✅ Primera medición lista. Puedes activar el modo Automático o Por Evento.', 'success');
+            }
+
+            // Si está en modo automático, encadenar la siguiente medición del ciclo
+            if (biometricModeByCabin[normalizedCabin] === 'auto') {
+                await window.runNextAutoStep?.(normalizedCabin, currentActive);
+            }
             
-            const panel = getPanelByCabin(normalizedCabin);
-            const selectors = panel ? panel.querySelectorAll(".biometric-metric-selector") : [];
-            selectors.forEach(selector => {
-                selector.disabled = false;
-                selector.classList.remove("opacity-50", "cursor-not-allowed");
-            });
+            setBiometricSelectorEnabled(normalizedCabin, true);
         }
-        
+
         // Actualizar estado actual (SIEMPRE)
         biometricPreviousActiveMeasurementByCabin[normalizedCabin] = currentActive;
         biometricCurrentActiveMeasurementByCabin[normalizedCabin] = activeMeasurementType;
-        
-        // Deshabilitar/habilitar selectores del panel asociado
-        const panel = getPanelByCabin(normalizedCabin);
-        const selectors = panel ? panel.querySelectorAll(".biometric-metric-selector") : [];
-        selectors.forEach(selector => {
-            if (activeMeasurementType) {
-                selector.disabled = true;
-                selector.classList.add("opacity-50", "cursor-not-allowed");
-            } else {
-                selector.disabled = false;
-                selector.classList.remove("opacity-50", "cursor-not-allowed");
-            }
-        });
+
+        // Deshabilitar selector mientras hay una medición activa, habilitar cuando termina
+        setBiometricSelectorEnabled(normalizedCabin, !activeMeasurementType);
     } catch (error) {
         console.warn("[BiometricCharts] Error al verificar estado de monitoreo:", error);
     }
 }
 
-async function seedBiometricHistory(labels, metricConfigs, cabin = "C1") {
+async function seedBiometricHistory(metricConfigs, cabin = "C1") {
     const normalizedCabin = normalizeCabin(cabin);
     const history = await fetchBiometricHistory(10, normalizedCabin);
     if (!history.length) return;
@@ -944,8 +956,14 @@ async function seedBiometricHistory(labels, metricConfigs, cabin = "C1") {
     biometricChartDataByCabin[normalizedCabin].temperature = history.map((item) => item.temperatureC ?? null);
     biometricChartDataByCabin[normalizedCabin].bloodPressure = history.map((item) => item.systolic ?? null);
 
+    // Usar timestamps reales del historial en lugar de labels ficticias
+    const realLabels = history.map((item) =>
+        item.timestampUtc ? new Date(item.timestampUtc).toLocaleTimeString() : '—'
+    );
+    biometricChartDataByCabin[normalizedCabin].labels = realLabels;
+    biometricLastTimestampByCabin[normalizedCabin] = history[history.length - 1]?.timestampUtc ?? null;
+
     // Actualizar TODAS las gráficas activas (una por canvas)
-    // Las keys son: pulse_0, oxygen_1, temperature_0, etc.
     Object.keys(biometricChartInstances).forEach(key => {
         const chart = biometricChartInstances[key];
         if (!chart) return;
@@ -957,18 +975,21 @@ async function seedBiometricHistory(labels, metricConfigs, cabin = "C1") {
         const panel = canvases[canvasIndex]?.closest(".panel-container");
         const panelCabin = getCabinFromPanel(panel);
         if (panelCabin !== normalizedCabin) return;
-        
-        if (!biometricChartDataByCabin[normalizedCabin][metric] || !metricConfigs[metric]) return;
-        
-        chart.data.labels = labels;
+
+        if (!biometricChartDataByCabin[normalizedCabin][metric]) return;
+
+        chart.data.labels = [...realLabels];
         chart.data.datasets[0].data = [...biometricChartDataByCabin[normalizedCabin][metric]];
 
-        const config = metricConfigs[metric];
-        chart.data.datasets[0].label = config.label;
-        chart.data.datasets[0].borderColor = config.borderColor;
-        chart.data.datasets[0].backgroundColor = config.bgColor;
-        chart.options.scales.y.min = config.yScale.min;
-        chart.options.scales.y.max = config.yScale.max;
+        // Actualizar estilos solo si se proveen metricConfigs (llamada de inicialización)
+        if (metricConfigs?.[metric]) {
+            const config = metricConfigs[metric];
+            chart.data.datasets[0].label = config.label;
+            chart.data.datasets[0].borderColor = config.borderColor;
+            chart.data.datasets[0].backgroundColor = config.bgColor;
+            chart.options.scales.y.min = config.yScale.min;
+            chart.options.scales.y.max = config.yScale.max;
+        }
 
         chart.update();
         console.log(`[BiometricCharts] Historial cargado para ${key}`);
@@ -986,6 +1007,88 @@ async function seedBiometricHistory(labels, metricConfigs, cabin = "C1") {
     }
 }
 
+// ── Excel: paleta de colores y estilos ───────────────────────────────────────
+const _XL_THIN_BORDER = { style: 'thin', color: { rgb: 'B0BEC5' } };
+const _XL_BD = { top: _XL_THIN_BORDER, bottom: _XL_THIN_BORDER, left: _XL_THIN_BORDER, right: _XL_THIN_BORDER };
+
+const _XL_S = {
+    title:   { font: { bold: true, sz: 13, color: { rgb: 'FFFFFF' }, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: '1F497D' } },
+               alignment: { horizontal: 'center', vertical: 'center' } },
+
+    section: { font: { bold: true, sz: 11, color: { rgb: 'FFFFFF' }, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: '2E75B6' } },
+               alignment: { horizontal: 'left', vertical: 'center' } },
+
+    header:  { font: { bold: true, sz: 10, color: { rgb: '1F3864' }, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'BDD7EE' } },
+               alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+               border: _XL_BD },
+
+    data:    { font: { sz: 10, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'FFFFFF' } },
+               alignment: { horizontal: 'left', vertical: 'center' },
+               border: _XL_BD },
+
+    dataalt: { font: { sz: 10, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'EEF4FB' } },
+               alignment: { horizontal: 'left', vertical: 'center' },
+               border: _XL_BD },
+
+    'kv-k':  { font: { bold: true, sz: 10, name: 'Calibri', color: { rgb: '1F3864' } },
+               fill: { patternType: 'solid', fgColor: { rgb: 'F0F4FA' } },
+               alignment: { horizontal: 'left', vertical: 'center' } },
+
+    'kv-v':  { font: { sz: 10, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'FFFFFF' } },
+               alignment: { horizontal: 'left', vertical: 'center' } },
+};
+
+/**
+ * Construye un worksheet XLSX con estilos aplicados.
+ * @param {any[][]} rows   - Datos crudos (array de arrays)
+ * @param {string[]} meta  - Tipo por fila: 'title'|'section'|'header'|'data'|'kv'|'empty'
+ * @param {number[]} colWidths - Anchos de columna en caracteres
+ */
+function xlBuildSheet(rows, meta, colWidths) {
+    const nCols = colWidths.length;
+    const padded = rows.map(r => { const p = [...r]; while (p.length < nCols) p.push(''); return p; });
+
+    const ws = XLSX.utils.aoa_to_sheet(padded);
+    ws['!cols'] = colWidths.map(w => ({ wch: w }));
+    ws['!rows'] = meta.map(t => {
+        if (t === 'title')   return { hpt: 28 };
+        if (t === 'section') return { hpt: 22 };
+        if (t === 'header')  return { hpt: 20 };
+        if (t === 'empty')   return { hpt: 6  };
+        return { hpt: 16 };
+    });
+
+    // Merges: title y section abarcan todas las columnas
+    const merges = [];
+    meta.forEach((t, ri) => {
+        if (t === 'title' || t === 'section')
+            merges.push({ s: { r: ri, c: 0 }, e: { r: ri, c: nCols - 1 } });
+    });
+    ws['!merges'] = merges;
+
+    // Estilos celda a celda
+    let dataRow = 0;
+    meta.forEach((t, ri) => {
+        if (t === 'empty') return;
+        for (let ci = 0; ci < nCols; ci++) {
+            const ref = XLSX.utils.encode_cell({ r: ri, c: ci });
+            if (!ws[ref]) ws[ref] = { v: '', t: 's' };
+            if      (t === 'data') ws[ref].s = _XL_S[dataRow % 2 === 0 ? 'data' : 'dataalt'];
+            else if (t === 'kv')   ws[ref].s = _XL_S[ci === 0 ? 'kv-k' : 'kv-v'];
+            else if (_XL_S[t])     ws[ref].s = _XL_S[t];
+        }
+        if (t === 'data') dataRow++;
+    });
+
+    return ws;
+}
+
 // Función principal para exportar datos a Excel
 async function exportToExcel(event) {
     if (typeof XLSX === 'undefined') {
@@ -994,362 +1097,176 @@ async function exportToExcel(event) {
     }
 
     try {
-        // Obtener el botón que fue clickeado y su panel contenedor
         const btnExport = event.currentTarget;
         const panelContainer = btnExport.closest(".panel-container");
-        
-        // Buscar el selector de cabina dentro del MISMO panel
         const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
         const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
         const cabinaCode = cabinaSeleccionada.includes("2") ? "C2" : "C1";
-        
-        console.log("[Excel Export] ✅ Iniciando exportación...");
-        console.log("[Excel Export] Cabina seleccionada: " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        
-        const workbook = XLSX.utils.book_new();
 
-        // Sheet 1: Información personal
-        console.log("[Excel Export] 📄 Creando Sheet 1: Información Personal");
-        const sheet1Data = await createSheet1Data();
-        const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
-        XLSX.utils.book_append_sheet(workbook, ws1, "Información Personal");
-        console.log("[Excel Export] ✅ Sheet 1 creado (" + sheet1Data.length + " filas)");
+        const wb = XLSX.utils.book_new();
 
-        // Sheet 2: Controles + Logs
-        console.log("[Excel Export] 📄 Creando Sheet 2: Controles y Logs");
-        const sheet2Data = await createSheet2Data();
-        const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
-        ws2['!cols'] = [
-            { wch: 25 },  // Columna A: Hora 
-            { wch: 20 },  // Columna B: Estado
-            { wch: 20 },  // Columna C: Trama
-            { wch: 20 },   // Columna D: Tipo
-            { wch: 40 }   // Columna E: Descripción
-        ];
-        XLSX.utils.book_append_sheet(workbook, ws2, "Controles y Logs");
-        console.log("[Excel Export] ✅ Sheet 2 creado (" + sheet2Data.length + " filas)");
+        const { rows: r1, meta: m1 } = await createSheet1Data();
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r1, m1, [24, 32]), "Información Personal");
 
-        // Sheet 3: Sensores (solo de la cabina seleccionada)
-        console.log("[Excel Export] 📄 Creando Sheet 3: Sensores de " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        const sheet3Data = await createSheet3Data(cabinaCode);
-        const ws3 = XLSX.utils.aoa_to_sheet(sheet3Data);
-        ws3['!cols'] = [
-            { wch: 20 },  // Columna A:  
-            { wch: 20 },  // Columna B: 
-            { wch: 20 },  // Columna C: 
-            { wch: 20 },  // Columna D: 
-            { wch: 20 },  // Columna E:
-            { wch: 20 },  // Columna F: 
-            { wch: 20 },  // Columna G: 
-            { wch: 20 },  // Columna H:
-            { wch: 20 },  // Columna I: 
-            { wch: 20 },  // Columna J:
-        ];
-        XLSX.utils.book_append_sheet(workbook, ws3, "Sensores");
-        console.log("[Excel Export] ✅ Sheet 3 creado (" + sheet3Data.length + " filas)");
+        const { rows: r2, meta: m2 } = await createSheet2Data(cabinaCode);
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r2, m2, [22, 54]), "Controles");
 
-        // Sheet 4: Biometría (solo de la cabina seleccionada)
-        console.log("[Excel Export] 📄 Creando Sheet 4: Biometría de " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        const sheet4Data = await createSheet4Data(cabinaCode);
-        const ws4 = XLSX.utils.aoa_to_sheet(sheet4Data);
-        ws4['!cols'] = [
-            { wch: 20 },  // Columna A:  
-            { wch: 15 },  // Columna B: 
-            { wch: 10 },  // Columna C: 
-            { wch: 20 },  // Columna D: 
-            { wch: 15 },  // Columna E:
-            { wch: 10 },  // Columna F: 
-            { wch: 20 },  // Columna G: 
-            { wch: 15 },  // Columna H:
-            { wch: 10 },  // Columna I: 
-            { wch: 20 },  // Columna J: 
-            { wch: 20 },  // Columna K:
-            { wch: 20 },  // Columna l: 
-        ];
-        XLSX.utils.book_append_sheet(workbook, ws4, "Biometría");
-        console.log("[Excel Export] ✅ Sheet 4 creado (" + sheet4Data.length + " filas)");
+        const { rows: r3, meta: m3 } = await createSheet3Data(cabinaCode);
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r3, m3, [18, 10, 10, 10, 10, 10, 10, 12, 12, 12, 10]), "Sensores");
 
-        // Escribir el archivo con nombre que incluya la cabina
+        const { rows: r4, meta: m4 } = await createSheet4Data(cabinaCode);
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r4, m4, [18, 16, 14]), "Biometría");
+
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
         const filename = `ControlPanel_${cabinaSeleccionada.replace(" ", "")}_${timestamp}.xlsx`;
-        
-        console.log("[Excel Export] 💾 Escribiendo archivo: " + filename);
-        XLSX.writeFile(workbook, filename);
+        XLSX.writeFile(wb, filename);
 
-        console.log("[Excel Export] ✅ ¡Archivo exportado exitosamente!");
-        alert(`✅ Archivo exportado: ${filename}\n\nCabina: ${cabinaSeleccionada}\nFecha: ${timestamp}`);
+        alert(`✅ Archivo exportado: ${filename}`);
     } catch (error) {
-        console.error("[Excel Export] ❌ Error detallado:", error);
-        console.error("[Excel Export] Stack:", error.stack);
-        alert("❌ Error al exportar:\n\n" + error.message + "\n\nRevisa la consola (F12) para más detalles");
+        console.error("[Excel Export] ❌ Error:", error);
+        alert("❌ Error al exportar:\n\n" + error.message);
     }
 }
 
 // Sheet 1: Información Personal
 async function createSheet1Data() {
-    const data = [];
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
 
-    // Encabezado
-    data.push(["INFORMACION PERSONAL"]);
-    data.push([]);
+    add(["INFORMACIÓN PERSONAL"], 'title');
+    add([],                       'empty');
+    add(["Edad:",        personalDataStored.edad    || "-"], 'kv');
+    add(["Altura (cm):", personalDataStored.altura  || "-"], 'kv');
+    add(["Peso (kg):",   personalDataStored.peso    || "-"], 'kv');
+    add(["Género:",      personalDataStored.genero  || "-"], 'kv');
 
-    // Usar datos guardados de Personal Data Form
-    data.push(["Edad:", personalDataStored.edad || "-"]);
-    data.push(["Altura (cm):", personalDataStored.altura || "-"]);
-    data.push(["Peso (kg):", personalDataStored.peso || "-"]);
-    data.push(["Genero:", personalDataStored.genero || "-"]);
-    data.push([]);
-
-    return data;
+    return { rows, meta };
 }
 
-// Sheet 2: Controles y Logs del sistema
-async function createSheet2Data() {
-    //Estado extraido del DOM
-    const elemento = document.getElementById('estado-cabina');
-    const textoEstado = elemento?.textContent?.trim() || '';
-    const estado = textoEstado === 'INACTIVA' ? 'PENDIENTE' : 'ENVIADA';
+// Sheet 2: Controles
+async function createSheet2Data(cabinaCode) {
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
 
-    const data = [];
+    add(["CONTROLES"],                  'title');
+    add([],                             'empty');
+    add(["TRAMAS DE CONTROL ENVIADAS"], 'section');
+    add(["Hora", "Descripción"],        'header');
 
-    // Obtener el botón que fue clickeado y su panel contenedor
-    const btnExport = event.currentTarget;
-    const panelContainer = btnExport.closest(".panel-container");
-    // Buscar el selector de cabina dentro del MISMO panel
-    const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
-    const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
-    const cabinaCode = cabinaSeleccionada.includes("2") ? "C2" : "C1";
-
-    // Encabezado
-    data.push(["CONTROLES Y LOGS DEL SISTEMA"]);
-    data.push([]);
-
-    // Sección de Controles
-    data.push(["TRAMAS DE CONTROL ENVIADAS"]);
-    data.push(["Hora", "Estado", "Trama", "Tipo", "Descripción"]);
-
-    // Obtener los logs enviados y filtrar por controles
     const sentLogs = getLogsSent();
-    // Procesar cada log para extraer informacion de control
-    sentLogs.map(log => {
-        const message = log.message;
-        // Verificamos inicio de trama (C1 O C2) y validamos cabina (C1 O C2)
-        if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C1') {
-            return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
-        }; 
-
-        if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C2') {
-            return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
-        };
-    
-    });
-
-    if (data.length === 3) {
-        data.push(["Sin registros de control", "", "", "", ""]);
-    }
-
-    data.push([]);
-    data.push([]);
-
-    // Seccion de Logs del Sistema
-    data.push(["LOGS DEL SISTEMA"]);
-    data.push(["Tipo", "Hora", "Mensaje"]);
-
-    // Obtener logs enviados
+    let count = 0;
     sentLogs.forEach(log => {
-        // Filtrar solo logs de sistema, no de controles (que no tengan codigo)
-        if (!log.message.match(/\d{3}/)) {
-            data.push(["ENVIADO", log.time, log.message]);
+        if (log.message.toUpperCase().startsWith(cabinaCode)) {
+            add([log.time, controlDescripcion[log.message] || log.message], 'data');
+            count++;
         }
     });
+    if (count === 0) add(["Sin registros de control", ""], 'data');
 
-    // Obtener logs recibidos
-    const receivedLogs = getLogsReceived();
-    receivedLogs.forEach(log => {
-        data.push(["RECIBIDO", log.time, log.message]);
-    });
-
-    return data;
+    return { rows, meta };
 }
 
 // Sheet 3: Sensores de cabina seleccionada
 async function createSheet3Data(cabinaCode) {
-    
-    const response = await fetch(
-        `http://localhost:5000/api/serial/datos/${cabinaCode}`,
-    );
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
 
-    if (!response.ok) {
-        console.error(
-            `❌ Error al obtener datos de ${cabinaCode}:`,
-            response.status,
-        );
-        return;
-    };
-
-    const dataSensores = await response.json();
-
-    const data = [];
-
-    const getTiempo = (ts) => {
-    
-    const d = new Date(ts);
-    let h = d.getHours();
-    const m = d.getMinutes().toString().padStart(2, '0');
-    const s = d.getSeconds().toString().padStart(2, '0');
-    const ampm = h >= 12 ? 'p.m.' : 'a.m.';
-    
-    h = h % 12 || 12;
-    const hStr = h.toString().padStart(2, '0');
-    
-    return `${hStr}:${m}:${s} ${ampm}`;
-};
-
-    data.push(["DATOS DE SENSORES"]);
-    data.push([]);
-    data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","O3 (PPB)","Db"]);
-    
-    // MAPEAR TODOS LOS OBJETOS DEL ARRAY
-    dataSensores.forEach((lectura) => {
-        // Verificar que la lectura existe
-        if (!lectura) return;
-        //Formateo de tiempo
-        const tiempo = getTiempo(lectura.timestamp);
-        // Crear una fila con todos los valores de esta lectura
-        const fila = [
-            tiempo,
-            lectura.cabina,
-            lectura.x,
-            lectura.y,
-            lectura.z,
-            lectura.t,
-            lectura.h,
-            lectura.uv,
-            lectura.cO2,
-            lectura.o3,
-            lectura.dB
-        ];
-        
-        data.push(fila);
-    });
-    
-    const sensorData = await getSensorData(cabinaCode);
-    Object.entries(sensorData).forEach(([sensor, value]) => {
-        const config = window.sensorConfig?.[sensor];
-        const label = config?.label || sensor;
-        const unit = extractUnit(label);
-        data.push([label, value || "-", unit]);
-    });
-
-    return data;
-}
-
-// Sheet 4: Datos biométricos históricos
-async function createSheet4Data(cabin = "C1") {
-    const normalizedCabin = normalizeCabin(cabin);
-    const data = [];
-
-    // Función para formatear timestamp a formato 12 horas
-    const getTiempo = (ts) => {
+    const fmtTime = ts => {
         const d = new Date(ts);
         let h = d.getHours();
-        const m = d.getMinutes().toString().padStart(2, '0');
-        const s = d.getSeconds().toString().padStart(2, '0');
+        const mm = d.getMinutes().toString().padStart(2, '0');
+        const ss = d.getSeconds().toString().padStart(2, '0');
         const ampm = h >= 12 ? 'p.m.' : 'a.m.';
-        
         h = h % 12 || 12;
-        const hStr = h.toString().padStart(2, '0');
-        
-        return `${hStr}:${m}:${s} ${ampm}`;
+        return `${h.toString().padStart(2, '0')}:${mm}:${ss} ${ampm}`;
     };
 
-    data.push(["DATOS BIOMÉTRICOS"]);
-    data.push([]);
-    data.push(["PPM (Pulsos Por Minuto)","","","SpO2 (Oxigenación)","","","°C (Temperatura)","","", "mmHg (Tensión Arterial)"]);
-    data.push(["Hora","Medición","", "Hora","Medición","", "Hora","Medición","", "Hora","Medición Alta","Medición Baja"]);
-    
+    add(["DATOS DE SENSORES"], 'title');
+    add([],                    'empty');
+    add(["Hora", "Cabina", "X (m/s²)", "Y (m/s²)", "Z (m/s²)", "°C", "H%", "UV (W/m²)", "CO₂ (PPM)", "Lux (lm/m²)", "dB"], 'header');
+
     try {
-        // Obtener historial biométrico del backend
-        const biometricHistory = await fetchBiometricHistory(50, normalizedCabin); // Últimas 50 mediciones
-        
-        if (!biometricHistory || biometricHistory.length === 0) {
-            data.push(["Sin datos biométricos disponibles"]);
-            return data;
-        }
-
-        console.log("[Excel Export] Datos biométricos recibidos:", biometricHistory.length, "registros");
-        console.log("[Excel Export] Primer registro:", biometricHistory[0]);
-
-        // Separar los datos por tipo de medición
-        const pulseData = [];
-        const oxygenData = [];
-        const temperatureData = [];
-        const bloodPressureData = [];
-
-        biometricHistory.forEach(record => {
-            // El campo correcto es timestampUtc, no timestamp
-            const timestamp = record.timestampUtc ? getTiempo(record.timestampUtc) : "-";
-            
-            if (record.pulseBpm !== null && record.pulseBpm !== undefined) {
-                pulseData.push({ time: timestamp, value: record.pulseBpm });
-            }
-            
-            if (record.spO2 !== null && record.spO2 !== undefined) {
-                oxygenData.push({ time: timestamp, value: record.spO2 });
-            }
-            
-            if (record.temperatureC !== null && record.temperatureC !== undefined) {
-                temperatureData.push({ time: timestamp, value: record.temperatureC });
-            }
-            
-            if (record.systolic !== null && record.systolic !== undefined) {
-                bloodPressureData.push({ 
-                    time: timestamp, 
-                    systolic: record.systolic,
-                    diastolic: record.diastolic || "-"
+        const res = await fetch(`http://localhost:5000/api/serial/datos/${cabinaCode}`);
+        if (res.ok) {
+            const datos = await res.json();
+            if (datos && datos.length > 0) {
+                datos.forEach(l => {
+                    if (!l) return;
+                    add([fmtTime(l.timestamp), l.cabina, l.x, l.y, l.z, l.t, l.h, l.uv, l.cO2, l.o3, l.dB], 'data');
                 });
+            } else {
+                add(["Sin datos de sensores disponibles", "", "", "", "", "", "", "", "", "", ""], 'data');
             }
-        });
-
-        // Encontrar el máximo número de filas necesarias
-        const maxRows = Math.max(
-            pulseData.length,
-            oxygenData.length,
-            temperatureData.length,
-            bloodPressureData.length
-        );
-
-        // Construir las filas con datos en columnas paralelas
-        for (let i = 0; i < maxRows; i++) {
-            const row = [
-                // Pulso
-                pulseData[i]?.time || "",
-                pulseData[i]?.value || "",
-                "", // Espacio vacío
-                // Oxigenación
-                oxygenData[i]?.time || "",
-                oxygenData[i]?.value || "",
-                "", // Espacio vacío
-                // Temperatura
-                temperatureData[i]?.time || "",
-                temperatureData[i]?.value || "",
-                "", // Espacio vacío
-                // Presión Arterial
-                bloodPressureData[i]?.time || "",
-                bloodPressureData[i]?.systolic || "",
-                bloodPressureData[i]?.diastolic || ""
-            ];
-            data.push(row);
+        } else {
+            add(["Error al obtener datos de sensores", "", "", "", "", "", "", "", "", "", ""], 'data');
         }
-
-        console.log(`[Excel Export] ✅ Datos biométricos cargados: ${biometricHistory.length} registros`);
-        
-    } catch (error) {
-        console.error("[Excel Export] ❌ Error al obtener datos biométricos:", error);
-        data.push(["Error al cargar datos biométricos"]);
+    } catch (e) {
+        add(["Error de conexión con el servidor", "", "", "", "", "", "", "", "", "", ""], 'data');
     }
 
-    return data;
+    return { rows, meta };
+}
+
+// Sheet 4: Biometría — secciones secuenciales por métrica
+async function createSheet4Data(cabin = "C1") {
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
+    const normalizedCabin = normalizeCabin(cabin);
+
+    const fmtTime = ts => {
+        const d = new Date(ts);
+        let h = d.getHours();
+        const mm = d.getMinutes().toString().padStart(2, '0');
+        const ss = d.getSeconds().toString().padStart(2, '0');
+        const ampm = h >= 12 ? 'p.m.' : 'a.m.';
+        h = h % 12 || 12;
+        return `${h.toString().padStart(2, '0')}:${mm}:${ss} ${ampm}`;
+    };
+
+    add(["DATOS BIOMÉTRICOS"], 'title');
+    add([],                    'empty');
+
+    try {
+        const history = await fetchBiometricHistory(50, normalizedCabin);
+
+        if (!history || history.length === 0) {
+            add(["Sin datos biométricos disponibles", "", ""], 'data');
+            return { rows, meta };
+        }
+
+        // Separar mediciones por tipo
+        const pulse = [], oxygen = [], temp = [], bp = [];
+        history.forEach(r => {
+            const ts = r.timestampUtc ? fmtTime(r.timestampUtc) : "-";
+            if (r.pulseBpm     != null) pulse.push({ t: ts, v: r.pulseBpm });
+            if (r.spO2         != null) oxygen.push({ t: ts, v: r.spO2 });
+            if (r.temperatureC != null) temp.push({ t: ts, v: r.temperatureC });
+            if (r.systolic     != null) bp.push({ t: ts, sys: r.systolic, dia: r.diastolic ?? "-" });
+        });
+
+        // Sección genérica: título de sección + encabezados + filas de datos
+        const addMetric = (title, hdr, entries, mapper) => {
+            add([title], 'section');
+            add(hdr,     'header');
+            if (entries.length === 0) {
+                add(["Sin registros", ...Array(hdr.length - 1).fill("")], 'data');
+            } else {
+                entries.forEach(e => add(mapper(e), 'data'));
+            }
+            add([], 'empty');
+        };
+
+        addMetric("PULSO (BPM)",              ["Hora", "BPM"],                   pulse,  e => [e.t, e.v]);
+        addMetric("OXIGENACIÓN (SpO₂)",       ["Hora", "%"],                     oxygen, e => [e.t, e.v]);
+        addMetric("TEMPERATURA",              ["Hora", "°C"],                    temp,   e => [e.t, e.v]);
+        addMetric("TENSIÓN ARTERIAL (mmHg)",  ["Hora", "Sistólica", "Diastólica"], bp,   e => [e.t, e.sys, e.dia]);
+
+    } catch (err) {
+        console.error("[Excel Export] ❌ Error al obtener datos biométricos:", err);
+        add(["Error al cargar datos biométricos", "", ""], 'data');
+    }
+
+    return { rows, meta };
 }
 
 // Función para actualizar los datos de las gráficas biométricas
@@ -1363,23 +1280,32 @@ async function updateBiometricCharts() {
         const newData = await fetchLatestBiometricData(normalizedCabin);
         if (!newData) continue;
 
+        // Saltar si es el mismo punto de dato que ya se graficó
+        if (newData.timestampUtc && newData.timestampUtc === biometricLastTimestampByCabin[normalizedCabin]) continue;
+        biometricLastTimestampByCabin[normalizedCabin] = newData.timestampUtc ?? null;
+
         const cabinData = biometricChartDataByCabin[normalizedCabin];
         if (newData.pulse !== null) cabinData.pulse.push(newData.pulse);
         if (newData.oxygen !== null) cabinData.oxygen.push(newData.oxygen);
         if (newData.temperature !== null) cabinData.temperature.push(parseFloat(newData.temperature));
         if (newData.bloodPressure !== null) cabinData.bloodPressure.push(newData.bloodPressure);
 
+        // Registrar el timestamp real como label de este punto
+        const newLabel = newData.timestampUtc
+            ? new Date(newData.timestampUtc).toLocaleTimeString()
+            : new Date().toLocaleTimeString();
+        if (!cabinData.labels) cabinData.labels = [];
+        cabinData.labels.push(newLabel);
+
         if (cabinData.pulse.length > 10) cabinData.pulse.shift();
         if (cabinData.oxygen.length > 10) cabinData.oxygen.shift();
         if (cabinData.temperature.length > 10) cabinData.temperature.shift();
         if (cabinData.bloodPressure.length > 10) cabinData.bloodPressure.shift();
+        if (cabinData.labels.length > 10) cabinData.labels.shift();
 
-        const now = new Date();
-        const newLabels = [];
-        for (let i = Math.min(9, cabinData.pulse.length - 1); i >= 0; i--) {
-            const time = new Date(now - i * 5000);
-            newLabels.push(time.toLocaleTimeString());
-        }
+        // Construir eje X con timestamps reales; rellenar con '—' si hay menos de 10
+        const chartLabels = [...cabinData.labels];
+        while (chartLabels.length < 10) chartLabels.unshift('—');
 
         Object.keys(biometricChartInstances).forEach(key => {
             const chart = biometricChartInstances[key];
@@ -1394,7 +1320,7 @@ async function updateBiometricCharts() {
             if (panelCabin !== normalizedCabin) return;
 
             if (!cabinData[metric]) return;
-            chart.data.labels = newLabels;
+            chart.data.labels = chartLabels;
             chart.data.datasets[0].data = [...cabinData[metric]];
             chart.update('none');
         });
@@ -1495,7 +1421,7 @@ function getUnidad(medicion) {
         case "UV":
             return "W/m²";
         case "O3":
-            return "ppb";
+            return "lm/m²";
         case "dB":
             return "dB";
         case "Z":
@@ -1678,7 +1604,9 @@ function initTwoColumnsSection(panel) {
     // Función para mostrar botones de sonidos/tonos
     function mostrarSeccion(seccion) {
         contenedor.innerHTML = "";
-        const datos = seccion === "sonidos" ? sonidosAmbientales : tinitus;
+        const datos = seccion === "sonidos" ? sonidosAmbientales
+                    : seccion === "tonos"   ? tonosPuros
+                    : tinitus;
         datos.forEach((item) => {
             const btn = document.createElement("button");
             btn.className =
@@ -1690,48 +1618,24 @@ function initTwoColumnsSection(panel) {
             btn.setAttribute("data-codigo", item.codigo);
             btn.setAttribute("data-seccion", seccion);
 
-            btn.addEventListener("click", async () => {
+            btn.addEventListener("click", () => {
                 const cabinaSeleccionada =
                     cabinaSelector.value || "Cabina 1";
                 const cabinaPrefijo =
                     cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
                 const codigo = btn.getAttribute("data-codigo");
 
-                const sonidoPrevio =
-                    sonidoActivoPorCabina[cabinaSeleccionada];
+                const sonidoPrevio = sonidoActivoPorCabina[cabinaSeleccionada];
 
-                // === Si había un sonido activo, enviamos STOP antes de cambiar ===
+                // Desactivar visualmente el sonido anterior (sin enviar STOP)
                 if (sonidoPrevio && sonidoPrevio !== btn) {
-                    const codigoPrevio =
-                        sonidoPrevio.getAttribute("data-codigo");
-
-                    // Detener el sonido anterior
-                    enviarTrama(
-                        cabinaPrefijo,
-                        codigoSonidoControl.STOP,
-                        true,
-                    );
-                    window.addSentLog(
-                        `[STOP] ${cabinaPrefijo}${codigoSonidoControl.STOP}F`,
-                    );
-
-                    // Desactivar visualmente el sonido anterior
-                    sonidoPrevio.classList.remove(
-                        "bg-[#00bf63]",
-                        "text-white",
-                    );
+                    sonidoPrevio.classList.remove("bg-[#00bf63]", "text-white");
                     sonidoPrevio.classList.add("bg-[#efefef]");
-                    const iconoPrevio =
-                        sonidoPrevio.querySelector(".text-green-800");
+                    const iconoPrevio = sonidoPrevio.querySelector(".text-green-800");
                     if (iconoPrevio) iconoPrevio.classList.add("hidden");
-
-                    // Esperar 0.5 s antes de continuar
-                    await new Promise((resolve) =>
-                        setTimeout(resolve, 500),
-                    );
                 }
 
-                // === Activar visualmente el nuevo sonido ===
+                // Activar visualmente el nuevo sonido
                 btn.classList.remove("bg-[#efefef]");
                 btn.classList.add("bg-[#00bf63]", "text-white");
                 const icono = btn.querySelector(".text-green-800");
@@ -1740,18 +1644,9 @@ function initTwoColumnsSection(panel) {
                 sonidoActivoPorCabina[cabinaSeleccionada] = btn;
                 reproduciendoPorCabina[cabinaSeleccionada] = true;
 
-                // === Enviar trama del nuevo sonido ===
+                // Enviar directamente la trama del sonido seleccionado
                 enviarTrama(cabinaPrefijo, codigo, true);
-                window.addSentLog(
-                    `[SELECCION SONIDO] ${cabinaPrefijo}${codigo}F`,
-                );
-
-                // Esperar 0.5 s y luego enviar PLAY
-                await new Promise((resolve) => setTimeout(resolve, 500));
-                enviarTrama(cabinaPrefijo, codigoSonidoControl.PLAY, true);
-                window.addSentLog(
-                    `[PLAY] ${cabinaPrefijo}${codigoSonidoControl.PLAY}F`,
-                );
+                window.addSentLog(`[SELECCION SONIDO] ${cabinaPrefijo}${codigo}F`);
 
                 // Habilitar controles de volumen
                 actualizarEstadoVolumen(panel, true);
@@ -1809,11 +1704,8 @@ function initTwoColumnsSection(panel) {
                 reproduciendoPorCabina[cabinaSeleccionada];
             actualizarEstadoVolumen(panel, reproduciendo);
 
-            const seccionActiva = botonesSeccion[0].classList.contains(
-                "bg-[#00bf63]",
-            )
-                ? "sonidos"
-                : "tinitus";
+            const btnActivo = Array.from(botonesSeccion).find(b => b.classList.contains("bg-[#00bf63]"));
+            const seccionActiva = btnActivo?.getAttribute("data-seccion") || "sonidos";
             mostrarSeccion(seccionActiva);
             restaurarSonidoActivo(panel);
         });
@@ -1925,72 +1817,262 @@ function initTwoColumnsSection(panel) {
     restaurarSonidoActivo(panel);
 }
 
-// Función para manejar el ciclo de calor
-function manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel) {
-    
-    const estadoActual = codigoBoton[cabinaPrefijo];
-    // Calcular siguiente estado para la cabina
-    const currentIndex = calorCycle.indexOf(estadoActual);
-    const nextIndex = (currentIndex + 1) % calorCycle.length;
-    const nuevoEstado = calorCycle[nextIndex];
+// =============================================================================
+//  GESTIÓN DE MODOS DE MEDICIÓN BIOMÉTRICA (Automático / Por Evento)
+// =============================================================================
 
-    codigoBoton[cabinaPrefijo] = nuevoEstado;
-    btn.classList.remove("bg-[#d9d9d9]", "bg-[#00bf63]");
-
-    if (nuevoEstado === '002') {
-        btn.classList.add("bg-[#d9d9d9]");
-        enviarTrama(
-            cabinaPrefijo,
-            nuevoEstado,
-            cabinaActiva
-        );
-        actualizarLedCalor(panel, '002');
-        return;
-    };
-
-    btn.classList.add("bg-[#00bf63]");
-    enviarTrama(
-        cabinaPrefijo,
-        nuevoEstado,
-        cabinaActiva
-    );
-    actualizarLedCalor(panel, nuevoEstado);
+const METRIC_NAMES = {
+    bpm: 'Pulso', spo2: 'Oxigenación',
+    temperature: 'Temperatura', bloodPressure: 'Presión Arterial',
 };
 
-// Función para actualizar el LED de calor según el estado
-function actualizarLedCalor(panel, estado) {
-    const btnCalor = panel.querySelector('button[data-codigo="CALOR"]');
-    if (!btnCalor) return;
+// Mapeo entre los valores del <select> y los identificadores internos de métrica
+const SELECTOR_TO_METRIC = {
+    pulse: 'bpm', oxygen: 'spo2', temperature: 'temperature', bloodPressure: 'bloodPressure',
+};
+const METRIC_TO_SELECTOR = {
+    bpm: 'pulse', spo2: 'oxygen', temperature: 'temperature', bloodPressure: 'bloodPressure',
+};
 
-    // Seleccionar LEDs por su posición
-    const ledSuperior = btnCalor.querySelector(".led-superior");    // Top-2
-    const ledMedio = btnCalor.querySelector(".led-medio");         // Top-7  
-    const ledInferior = btnCalor.querySelector(".led-inferior");   // Top-12
+function _getChartContainersForCabin(cabin) {
+    const containers = [];
+    document.querySelectorAll('.biometric-charts-container').forEach(c => {
+        const panel = c.closest('.panel-container');
+        if (panel && getCabinFromPanel(panel) === cabin) containers.push(c);
+    });
+    return containers;
+}
 
-    // Limpiar colores
-    [ledSuperior, ledMedio, ledInferior].forEach(led => {
-        if (led) {
-            led.classList.remove(
-                "bg-[#b4b4b4]", "bg-[#ffbd59]", 
-                "bg-[#ff914d]", "bg-[#ff3131]"
-            );
+// Actualiza la apariencia visual de los botones de modo
+function updateBiometricModeButtons(cabin, mode) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const autoBtn  = container.querySelector('[data-biometric-mode="auto"]');
+        const eventBtn = container.querySelector('[data-biometric-mode="event"]');
+
+        if (autoBtn) {
+            const on = mode === 'auto';
+            autoBtn.classList.toggle('bg-[#00bf63]', on);
+            autoBtn.classList.toggle('text-white', on);
+            autoBtn.classList.toggle('text-[#00bf63]', !on);
+            autoBtn.classList.toggle('bg-white', !on);
+        }
+        if (eventBtn) {
+            const on = mode === 'event';
+            eventBtn.classList.toggle('bg-[#ef4444]', on);
+            eventBtn.classList.toggle('text-white', on);
+            eventBtn.classList.toggle('text-[#ef4444]', !on);
+            eventBtn.classList.toggle('bg-white', !on);
         }
     });
+}
 
-    // Aplicar según estado
-    const colores = {
-        off:   { inferior: "#b4b4b4", medio: "#b4b4b4", superior: "#b4b4b4" },
-        '004':   { inferior: "#ffbd59", medio: "#b4b4b4", superior: "#b4b4b4" },
-        '005':{ inferior: "#ffbd59", medio: "#ff914d", superior: "#b4b4b4" },
-        '006':  { inferior: "#ffbd59", medio: "#ff914d", superior: "#ff3131" }
+// Actualiza la barra de estado debajo de los botones
+function updateBiometricModeStatus(cabin, text, colorClass) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const el = container.querySelector('.biometric-mode-status');
+        if (!el) return;
+        if (!text) {
+            el.classList.add('hidden');
+            return;
+        }
+        el.textContent = text;
+        el.className = `biometric-mode-status text-[11px] text-center py-1 px-3 mb-2 rounded-md font-medium ${colorClass || 'bg-gray-100 text-gray-500'}`;
+    });
+}
+
+// Sincroniza el <select> de métrica y actualiza la gráfica sin disparar el evento change
+function updateBiometricSelectorUI(cabin, metric) {
+    const selectorVal = METRIC_TO_SELECTOR[metric] || metric;
+    const cabinData   = biometricChartDataByCabin[cabin] || {};
+    const allCanvases = document.querySelectorAll('.biometric-chart');
+
+    const chartMetricConfigs = {
+        pulse:         { label: 'Pulso (bpm)',              yScale: { min: 50,  max: 120 }, borderColor: '#e74c3c', bgColor: 'rgba(231,76,60,0.2)'   },
+        oxygen:        { label: 'Oxigenación (%)',           yScale: { min: 90,  max: 100 }, borderColor: '#3498db', bgColor: 'rgba(52,152,219,0.2)'  },
+        temperature:   { label: 'Temperatura (°C)',          yScale: { min: 35,  max: 40  }, borderColor: '#f39c12', bgColor: 'rgba(243,156,18,0.2)'  },
+        bloodPressure: { label: 'Presión Arterial (mmHg)',   yScale: { min: 80,  max: 160 }, borderColor: '#9b59b6', bgColor: 'rgba(155,89,182,0.2)'  },
     };
-    
-    const config = colores[estado] || colores.off;
 
-    if (ledSuperior) ledSuperior.classList.add(`bg-[${config.superior}]`);
-    if (ledMedio) ledMedio.classList.add(`bg-[${config.medio}]`);
-    if (ledInferior) ledInferior.classList.add(`bg-[${config.inferior}]`);
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const sel = container.querySelector('.biometric-metric-selector');
+        if (sel && sel.value !== selectorVal) sel.value = selectorVal;
+
+        // Actualizar la gráfica para que refleje la nueva métrica
+        const canvas = container.querySelector('.biometric-chart');
+        if (!canvas) return;
+        const idx = Array.from(allCanvases).indexOf(canvas);
+        if (idx >= 0) {
+            window.updateBiometricChart(idx, selectorVal, cabinData.labels ?? [], chartMetricConfigs, cabinData);
+        }
+    });
+}
+
+// Habilita o deshabilita el selector de métrica de una cabina
+function setBiometricSelectorEnabled(cabin, enabled) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        const sel = container.querySelector('.biometric-metric-selector');
+        if (!sel) return;
+        sel.disabled = !enabled;
+        if (enabled) {
+            sel.classList.remove('opacity-50', 'cursor-not-allowed');
+            sel.title = '';
+        } else {
+            sel.classList.add('opacity-50', 'cursor-not-allowed');
+            sel.title = 'El selector está disponible solo en modo Por Evento';
+        }
+    });
+}
+
+// Habilita ambos botones de modo tras la primera medición BPM
+function enableBiometricModeButtons(cabin) {
+    _getChartContainersForCabin(cabin).forEach(container => {
+        container.querySelectorAll('[data-biometric-mode]').forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('opacity-35', 'cursor-not-allowed');
+            btn.classList.add('cursor-pointer', 'hover:opacity-80', 'active:scale-95');
+        });
+    });
+    // El selector permanece deshabilitado hasta que el usuario seleccione un modo
+    setBiometricSelectorEnabled(cabin, false);
+}
+
+// ── Desactiva el modo automático sin tocar la medición en curso ──────────────
+function deactivateAutoMode(cabin) {
+    if (biometricAutoTimerByCabin[cabin]) {
+        clearTimeout(biometricAutoTimerByCabin[cabin]);
+        biometricAutoTimerByCabin[cabin] = null;
+    }
+    if (biometricAutoCountdownByCabin[cabin]) {
+        clearInterval(biometricAutoCountdownByCabin[cabin]);
+        biometricAutoCountdownByCabin[cabin] = null;
+    }
+    biometricModeByCabin[cabin] = null;
+    updateBiometricModeButtons(cabin, null);
+    updateBiometricModeStatus(cabin, null);
+    setBiometricSelectorEnabled(cabin, false);
+}
+
+// ── Activa el modo automático ────────────────────────────────────────────────
+async function activateAutoMode(cabin) {
+    biometricModeByCabin[cabin] = 'auto';
+    updateBiometricModeButtons(cabin, 'auto');
+    setBiometricSelectorEnabled(cabin, false);
+    window.showToast?.('🔄 Modo automático activado: BPM → SpO2 → Temperatura → Presión → 5 min de descanso', 'info');
+
+    const currentActive = biometricCurrentActiveMeasurementByCabin[cabin];
+    if (currentActive) {
+        // Hay una medición en curso — esperar que termine, el encadenado lo continúa
+        const name = METRIC_NAMES[currentActive] || currentActive;
+        updateBiometricModeStatus(cabin, `⟳ Completando medición actual: ${name}...`, 'bg-green-50 text-green-700');
+        return;
+    }
+
+    // Determinar el siguiente paso según la última métrica completada.
+    // Esto evita repetir BPM justo después de que el hardware lo acaba de medir.
+    const lastCompleted = biometricLastCompletedMetricByCabin[cabin];
+    const lastIdx = lastCompleted ? BIOMETRIC_AUTO_CYCLE_ORDER.indexOf(lastCompleted) : -1;
+    const nextIdx  = lastIdx >= 0 ? (lastIdx + 1) % BIOMETRIC_AUTO_CYCLE_ORDER.length : 0;
+    const next     = BIOMETRIC_AUTO_CYCLE_ORDER[nextIdx];
+    const nextName = METRIC_NAMES[next] || next;
+
+    updateBiometricModeStatus(cabin, `⟳ Iniciando ciclo — midiendo ${nextName}...`, 'bg-green-50 text-green-700');
+    updateBiometricSelectorUI(cabin, next);
+
+    if      (next === 'bpm')          await window.requestBpmMeasurement('auto', cabin);
+    else if (next === 'spo2')         await window.requestSpo2Measurement('auto', cabin);
+    else if (next === 'temperature')  await window.requestTemperatureMeasurement('auto', cabin);
+    else if (next === 'bloodPressure') await window.requestBloodPressureMeasurement('auto', cabin);
+}
+
+// ── Activa el modo por evento ────────────────────────────────────────────────
+function activateEventMode(cabin) {
+    if (biometricModeByCabin[cabin] === 'auto') {
+        deactivateAutoMode(cabin);
+        window.showToast?.('⚡ Modo automático cancelado. La medición actual completará normalmente.', 'warning');
+    }
+    biometricModeByCabin[cabin] = 'event';
+    updateBiometricModeButtons(cabin, 'event');
+    updateBiometricModeStatus(cabin, '⚡ Por evento — cambia el selector para iniciar una medición', 'bg-red-50 text-red-600');
+    setBiometricSelectorEnabled(cabin, true);
+    window.showToast?.('⚡ Modo por evento activado. Selecciona una métrica para medir.', 'info');
+}
+
+// ── Callback para los botones de modo ────────────────────────────────────────
+window.onBiometricModeClick = async function(requestedMode, cabin) {
+    const cab = normalizeCabin(cabin);
+    const current = biometricModeByCabin[cab];
+
+    if (requestedMode === 'auto') {
+        if (current === 'auto') {
+            deactivateAutoMode(cab);
+            window.showToast?.('⏹ Modo automático desactivado', 'info');
+        } else {
+            await activateAutoMode(cab);
+        }
+    } else {
+        if (current === 'event') {
+            biometricModeByCabin[cab] = null;
+            updateBiometricModeButtons(cab, null);
+            updateBiometricModeStatus(cab, null);
+            setBiometricSelectorEnabled(cab, false);
+            window.showToast?.('⏹ Modo por evento desactivado', 'info');
+        } else {
+            activateEventMode(cab);
+        }
+    }
 };
+
+// ── Encadena la siguiente medición en el ciclo automático ────────────────────
+async function runNextAutoStep(cabin, completedMetric) {
+    if (biometricModeByCabin[cabin] !== 'auto') return;
+
+    const idx     = BIOMETRIC_AUTO_CYCLE_ORDER.indexOf(completedMetric);
+    const nextIdx = (idx + 1) % BIOMETRIC_AUTO_CYCLE_ORDER.length;
+    const next    = BIOMETRIC_AUTO_CYCLE_ORDER[nextIdx];
+
+    if (nextIdx === 0) {
+        // Ciclo completo — iniciar descanso de 5 minutos con cuenta regresiva
+        window.showToast?.('✅ Ciclo completo. Próximo ciclo en 5 minutos.', 'success');
+        const restStart = Date.now();
+
+        biometricAutoCountdownByCabin[cabin] = setInterval(() => {
+            if (biometricModeByCabin[cabin] !== 'auto') {
+                clearInterval(biometricAutoCountdownByCabin[cabin]);
+                biometricAutoCountdownByCabin[cabin] = null;
+                return;
+            }
+            const rem  = Math.max(0, BIOMETRIC_AUTO_REST_MS - (Date.now() - restStart));
+            const mins = Math.floor(rem / 60000);
+            const secs = Math.floor((rem % 60000) / 1000).toString().padStart(2, '0');
+            updateBiometricModeStatus(cabin, `⏳ Próximo ciclo en ${mins}:${secs}`, 'bg-yellow-50 text-yellow-700');
+        }, 1000);
+
+        biometricAutoTimerByCabin[cabin] = setTimeout(async () => {
+            clearInterval(biometricAutoCountdownByCabin[cabin]);
+            biometricAutoCountdownByCabin[cabin] = null;
+            if (biometricModeByCabin[cabin] !== 'auto') return;
+            updateBiometricModeStatus(cabin, '⟳ Reiniciando ciclo — midiendo Pulso...', 'bg-green-50 text-green-700');
+            await window.requestBpmMeasurement('auto', cabin);
+            updateBiometricSelectorUI(cabin, 'bpm');
+        }, BIOMETRIC_AUTO_REST_MS);
+
+    } else {
+        // Iniciar la siguiente métrica del ciclo
+        const nextName = METRIC_NAMES[next];
+        updateBiometricModeStatus(cabin, `⟳ Midiendo: ${nextName}...`, 'bg-green-50 text-green-700');
+        updateBiometricSelectorUI(cabin, next);
+
+        if (next === 'spo2')          await window.requestSpo2Measurement('auto', cabin);
+        else if (next === 'temperature') await window.requestTemperatureMeasurement('auto', cabin);
+        else if (next === 'bloodPressure') await window.requestBloodPressureMeasurement('auto', cabin);
+    }
+}
+
+window.enableBiometricModeButtons = enableBiometricModeButtons;
+window.runNextAutoStep             = runNextAutoStep;
+window.updateBiometricModeButtons  = updateBiometricModeButtons;
+
+// =============================================================================
 
 // Función para cambiar la métrica mostrada en la gráfica biométrica
 function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
@@ -2048,46 +2130,41 @@ function updateBiometricMetric(canvasIndex, metric, labels, metricConfigs) {
 function updateTopMetricsGrid(data, cabin = "C1") {
     if (!data) return;
     const normalizedCabin = normalizeCabin(cabin);
-    const panel = getPanelByCabin(normalizedCabin);
-    if (!panel) return;
-    
-    // Actualizar BPM (Pulso)
-    if (data.pulse !== null && data.pulse !== undefined) {
-        const pulseElements = panel.querySelectorAll(".metric-value-pulse");
-        pulseElements.forEach(el => {
-            el.textContent = Math.round(data.pulse);
-        });
-    }
-    
-    // Actualizar SpO2 (Oxigenación)
-    if (data.oxygen !== null && data.oxygen !== undefined) {
-        const oxygenElements = panel.querySelectorAll(".metric-value-oxygen");
-        oxygenElements.forEach(el => {
-            el.textContent = Math.round(data.oxygen);
-        });
-    }
-    
-    // Actualizar Temperatura
-    if (data.temperature !== null && data.temperature !== undefined) {
-        const temperatureElements = panel.querySelectorAll(".metric-value-temperature");
-        temperatureElements.forEach(el => {
-            el.textContent = parseFloat(data.temperature).toFixed(1);
-        });
-    }
-    
-    // Actualizar Presión Arterial
-    if (data.bloodPressure !== null && data.bloodPressure !== undefined) {
-        const bpElements = panel.querySelectorAll(".metric-value-bloodpressure");
-        bpElements.forEach(el => {
-            // Si es un objeto con systolic y diastolic, mostrar ambos
-            if (typeof data.bloodPressure === 'object' && data.bloodPressure.systolic) {
-                el.textContent = `${Math.round(data.bloodPressure.systolic)}/${Math.round(data.bloodPressure.diastolic)}`;
-            } else {
-                // Si es solo un número (systolic), mostrar ese valor
-                el.textContent = Math.round(data.bloodPressure);
-            }
-        });
-    }
+
+    // Actualizar en TODOS los paneles que muestren esta cabina
+    // (en modo un panel ambos paneles son C1, así que el panel de biometría también se actualiza)
+    const matchingPanels = Array.from(document.querySelectorAll(".panel-container"))
+        .filter(p => getCabinFromPanel(p) === normalizedCabin);
+
+    matchingPanels.forEach(panel => {
+        if (data.pulse !== null && data.pulse !== undefined) {
+            panel.querySelectorAll(".metric-value-pulse").forEach(el => {
+                el.textContent = Math.round(data.pulse);
+            });
+        }
+
+        if (data.oxygen !== null && data.oxygen !== undefined) {
+            panel.querySelectorAll(".metric-value-oxygen").forEach(el => {
+                el.textContent = Math.round(data.oxygen);
+            });
+        }
+
+        if (data.temperature !== null && data.temperature !== undefined) {
+            panel.querySelectorAll(".metric-value-temperature").forEach(el => {
+                el.textContent = parseFloat(data.temperature).toFixed(1);
+            });
+        }
+
+        if (data.bloodPressure !== null && data.bloodPressure !== undefined) {
+            panel.querySelectorAll(".metric-value-bloodpressure").forEach(el => {
+                if (typeof data.bloodPressure === 'object' && data.bloodPressure.systolic) {
+                    el.textContent = `${Math.round(data.bloodPressure.systolic)}/${Math.round(data.bloodPressure.diastolic)}`;
+                } else {
+                    el.textContent = Math.round(data.bloodPressure);
+                }
+            });
+        }
+    });
 }
 
 // Función para detener y limpiar las gráficas biométricas
@@ -2162,22 +2239,46 @@ function updateWatchButtonsState() {
         const cabin = getCabinFromPanel(panel);
         const isConnected = !!biometricWatchConnectedByCabin[cabin];
 
+        // LED y leyenda de estado del reloj
+        const led   = panel?.querySelector('.watch-status-led');
+        const label = panel?.querySelector('.watch-status-label');
+
         if (isConnected) {
             connectBtn.disabled = true;
             connectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
             connectBtn.style.filter = "grayscale(100%)";
-            
+
             disconnectBtn.disabled = false;
             disconnectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
             disconnectBtn.style.filter = "none";
+
+            if (led) {
+                led.classList.remove("bg-gray-400");
+                led.classList.add("bg-[#00bf63]", "animate-pulse");
+            }
+            if (label) {
+                label.textContent = "Conectado";
+                label.classList.remove("text-gray-500");
+                label.classList.add("text-[#00bf63]");
+            }
         } else {
             connectBtn.disabled = false;
             connectBtn.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
             connectBtn.style.filter = "none";
-            
+
             disconnectBtn.disabled = true;
             disconnectBtn.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
             disconnectBtn.style.filter = "grayscale(100%)";
+
+            if (led) {
+                led.classList.remove("bg-[#00bf63]", "animate-pulse");
+                led.classList.add("bg-gray-400");
+            }
+            if (label) {
+                label.textContent = "Desconectado";
+                label.classList.remove("text-[#00bf63]");
+                label.classList.add("text-gray-500");
+            }
         };
     };
 };
@@ -2226,6 +2327,7 @@ function updateBiometricChart(canvasIndex, metric, labels, metricConfigs, data) 
                 borderColor: config.borderColor,
                 backgroundColor: config.bgColor,
                 tension: 0.3,
+                cubicInterpolationMode: 'monotone',
                 pointRadius: 4,
                 pointBackgroundColor: config.borderColor,
                 fill: true,
@@ -2362,6 +2464,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // Leer el valor inicial del selector (puede ser "Cabina 1" o "Cabina 2" según el panel)
         let cabinaPrefijo = selectCabina?.value === "Cabina 2" ? "C2" : "C1";
 
+        function setColorCabina(color) {
+            document.querySelectorAll('.panel-container').forEach(p => {
+                const pSelect = p.querySelector("[data-select='cabina']");
+                const pCabin = pSelect?.value === "Cabina 2" ? "C2" : "C1";
+                if (pCabin === cabinaPrefijo) {
+                    const el = p.querySelector('#color-cabina');
+                    if (el) el.style.backgroundColor = color;
+                }
+            });
+        }
+
         let ledActivo = null;
 
         if (selectCabina) {
@@ -2463,11 +2576,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                if (codigo === "CALOR") {
-                    manejarCalor(btn, cabinaPrefijo, cabinaActiva, panel);
-                    return;
-                }
-
                 if (isActive) {
                     btn.classList.remove("bg-[#00bf63]");
                     btn.classList.add("bg-[#d9d9d9]");
@@ -2479,22 +2587,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                     }
                 } else {
-                    controlButtons.forEach((b) => {
-                        const cod = b.getAttribute("data-codigo");
-                        if (
-                            b.classList.contains("bg-[#00bf63]") &&
-                            cod &&
-                            codigoBoton[cod]
-                        ) {
-                            b.classList.remove("bg-[#00bf63]");
-                            b.classList.add("bg-[#d9d9d9]");
-                            enviarTrama(
-                                cabinaPrefijo,
-                                codigoBoton[cod].off,
-                                cabinaActiva,
-                            );
-                        }
-                    });
+                    // FRIO y CALOR son mutuamente exclusivos entre sí.
+                    // El resto de controles pueden estar activos simultáneamente.
+                    if (codigo === "FRIO") {
+                        // Desactivar cualquier nivel de calor que esté activo
+                        panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
+                            if (b.classList.contains('bg-[#00bf63]')) {
+                                b.classList.remove('bg-[#00bf63]');
+                                b.classList.add('bg-[#c8c8c8]');
+                                enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
+                            }
+                        });
+                    }
 
                     btn.classList.remove("bg-[#d9d9d9]");
                     btn.classList.add("bg-[#00bf63]");
@@ -2509,11 +2613,50 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        // Listeners para la matriz 2x2 de calor
+        panel.querySelectorAll('[data-calor-codigo]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const codigo = btn.getAttribute('data-calor-codigo');
+
+                // Si es un nivel activo (no Apagado), desactivar FRIO si estaba activo
+                if (codigo !== '002') {
+                    const btnFrio = panel.querySelector('button[data-codigo="FRIO"]');
+                    if (btnFrio && btnFrio.classList.contains('bg-[#00bf63]')) {
+                        btnFrio.classList.remove('bg-[#00bf63]');
+                        btnFrio.classList.add('bg-[#d9d9d9]');
+                        enviarTrama(cabinaPrefijo, codigoBoton['FRIO'].off, cabinaActiva);
+                    }
+                }
+
+                // Desactivar todos los sub-botones de calor
+                panel.querySelectorAll('[data-calor-codigo]').forEach(b => {
+                    b.classList.remove('bg-[#00bf63]');
+                    b.classList.add('bg-[#c8c8c8]');
+                });
+
+                // Marcar como activo si no es Apagado
+                if (codigo !== '002') {
+                    btn.classList.remove('bg-[#c8c8c8]');
+                    btn.classList.add('bg-[#00bf63]');
+                }
+
+                enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+            });
+        });
+
         sensorButtons.forEach((btn) => {
             btn.addEventListener("click", () => {
                 const sensorSeleccionado = btn.dataset.sensor;
                 console.log(`[Gráfica] Click en botón de sensor: ${sensorSeleccionado}`);
-                
+
+                // Actualizar estado visual: solo el botón activo queda en verde
+                sensorButtons.forEach(b => {
+                    b.classList.remove("bg-[#00bf63]", "hover:bg-[#00a152]");
+                    b.classList.add("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                });
+                btn.classList.remove("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                btn.classList.add("bg-[#00bf63]", "hover:bg-[#00a152]");
+
                 // Obtener el canvas de la gráfica para actualizar su sensor
                 const graficaCanvas = panel.querySelector("#graficaPanel");
                 if (graficaCanvas) {
@@ -2525,10 +2668,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Actualizar el sensor actual en el canvas
                     graficaCanvas.sensor = sensorSeleccionado;
                 }
-                
+
                 // Volver a inicializar la gráfica con el nuevo sensor
                 initGrafica(panel, sensorSeleccionado);
             });
+        });
+
+        // Botón de refrescar gráfica
+        const refreshBtn = panel.querySelector('[data-action="refresh-grafica"]');
+        refreshBtn?.addEventListener("click", () => {
+            const graficaCanvas = panel.querySelector("#graficaPanel");
+            const sensorActual = graficaCanvas?.sensor || "X";
+            console.log(`[Gráfica] Refrescando gráfica para sensor: ${sensorActual}`);
+            initGrafica(panel, sensorActual);
         });
 
         // Lógica de control de botones de sonido
@@ -2638,23 +2790,76 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        const BRIGHTNESS_LED_CODES = new Set(["101", "102", "103", "104", "109", "114"]);
+
+        function actualizarBotonesBrillo() {
+            const btnUp   = panel.querySelector('.led-button[data-codigo="121"]');
+            const btnDown = panel.querySelector('.led-button[data-codigo="122"]');
+            if (!btnUp || !btnDown) return;
+
+            const codigoActivo = ledActivo ? ledActivo.getAttribute("data-codigo") : null;
+            const habilitado   = codigoActivo !== null && BRIGHTNESS_LED_CODES.has(codigoActivo);
+
+            [btnUp, btnDown].forEach((btn) => {
+                btn.disabled          = !habilitado;
+                btn.style.opacity     = habilitado ? "1"           : "0.35";
+                btn.style.cursor      = habilitado ? "pointer"     : "not-allowed";
+            });
+        }
+
+        actualizarBotonesBrillo();
+
         // Solo un led puede estar activo a la vez
         ledButtons.forEach((button) => {
-            button.addEventListener("click", () => {
+            button.addEventListener("click", (e) => {
                 const codigo = button.getAttribute("data-codigo");
                 const isActive = button.classList.contains("active-led");
 
                 if (!codigo) return;
+
+                if (codigo === "121" || codigo === "122") {
+                    e.stopPropagation();
+
+                    enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
+
+                    const ledActivoSnapshot = ledActivo;
+                    const botonBrillo = button;
+
+                    setTimeout(() => {
+                        botonBrillo.classList.remove("active-led");
+                        botonBrillo.style.backgroundColor =
+                            botonBrillo.getAttribute("data-inactive-color");
+
+                        if (ledActivoSnapshot) {
+                            ledActivoSnapshot.classList.add("active-led");
+                            ledActivoSnapshot.style.backgroundColor =
+                                ledActivoSnapshot.getAttribute("data-active-color");
+                            setColorCabina(ledActivoSnapshot.getAttribute("data-active-color"));
+                        }
+
+                        botonBrillo.animate(
+                            [
+                                { backgroundColor: botonBrillo.getAttribute("data-inactive-color") },
+                                { backgroundColor: botonBrillo.getAttribute("data-active-color"), offset: 0.35 },
+                                { backgroundColor: botonBrillo.getAttribute("data-inactive-color") },
+                            ],
+                            { duration: 380, easing: "ease-in-out", fill: "none" }
+                        );
+                    }, 0);
+
+                    return;
+                }
 
                 if (isActive) {
                     button.classList.remove("active-led");
                     button.style.backgroundColor = button.getAttribute(
                         "data-inactive-color",
                     );
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    setColorCabina("#d9d9d9");
 
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
                     ledActivo = null;
+                    actualizarBotonesBrillo();
                 } else {
                     if (ledActivo) {
                         const codAnterior =
@@ -2672,11 +2877,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.classList.add("active-led");
                     button.style.backgroundColor =
                         button.getAttribute("data-active-color");
-                    colorCabina.style.backgroundColor =
-                        button.getAttribute("data-active-color");
+                    setColorCabina(button.getAttribute("data-active-color"));
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
 
                     ledActivo = button;
+                    actualizarBotonesBrillo();
                 }
             });
         });
@@ -2773,6 +2978,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+                // UX-02: Confirmación antes de acción destructiva
+                const confirmado = await window.showConfirm(
+                    "¿Finalizar la sesión actual?\n\nEsto apagará todos los actuadores y borrará el historial de sensores del backend.\n\nAsegúrate de haber exportado los datos del participante antes de continuar.",
+                    { confirmText: "Finalizar sesión", cancelText: "Cancelar", type: "warning" }
+                );
+                if (!confirmado) return;
+
+                // FUNC-03: Limpiar historial de sensores en el backend para la nueva sesión
+                try {
+                    await fetch("http://localhost:5000/api/serial/limpiar", { method: "POST" });
+                    console.log("[Session] ✓ Historial del backend limpiado.");
+                } catch (e) {
+                    console.warn("[Session] No se pudo limpiar el historial del backend:", e);
+                }
+
+                // FUNC-03: Limpiar datos del participante (DOM + estado en memoria)
+                if (typeof window.limpiarDatosPersonales === "function") {
+                    window.limpiarDatosPersonales();
+                }
+
                 estadoCabina.classList.remove("bg-[#00bf63]");
                 estadoCabina.classList.add("bg-[#ff4d4d]");
                 
@@ -2792,41 +3017,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     estadoHumo.style.backgroundColor = "#ff4d4d";
                 }
 
-                // Enviar tramas de apagado para todos los LEDs activos
+                // ── Preparar envío secuencial de tramas de paro (500ms entre cada una) ──
+                const esperar = (ms) => new Promise(r => setTimeout(r, ms));
+                const tramasParaEnviar = [];
+
+                // LED activo → reset visual inmediato + encolar trama OFF
                 if (ledActivo) {
-                    const codAnterior =
-                        ledActivo.getAttribute("data-codigo");
+                    const codAnterior = ledActivo.getAttribute("data-codigo");
                     if (codAnterior) {
-                        await enviarTrama(cabinaPrefijo, codAnterior, true); // Envío real
+                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, codAnterior, true));
                     }
                     ledActivo.classList.remove("active-led");
-                    ledActivo.style.backgroundColor =
-                        ledActivo.getAttribute("data-inactive-color");
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    ledActivo.style.backgroundColor = ledActivo.getAttribute("data-inactive-color");
+                    setColorCabina("#d9d9d9");
                     ledActivo = null;
+                    actualizarBotonesBrillo();
                 }
 
-                // Enviar trama OFF para cada botón activo
+                // Botones de control activos → reset visual inmediato + encolar trama OFF
                 controlButtons.forEach((btn) => {
                     const codigo = btn.getAttribute("data-codigo");
-                    if (
-                        btn.classList.contains("bg-[#00bf63]") &&
-                        codigo &&
-                        codigoBoton[codigo]
-                    ) {
+                    if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
                         btn.classList.remove("bg-[#00bf63]");
                         btn.classList.add("bg-[#d9d9d9]");
-                        enviarTrama(
-                            cabinaPrefijo,
-                            codigoBoton[codigo].off,
-                            true,
-                        );
+                        const off = codigoBoton[codigo].off;
+                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
                     }
                 });
 
-                // Reiniciar estado de calor
-                estadoCalor = "off";
-                actualizarLedCalor(panel, "off");
+                // Sub-botones de calor → reset visual inmediato + encolar trama OFF si había calor activo
+                let calorActivo = false;
+                panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
+                    if (b.classList.contains('bg-[#00bf63]')) calorActivo = true;
+                    b.classList.remove('bg-[#00bf63]');
+                    b.classList.add('bg-[#c8c8c8]');
+                });
+                if (calorActivo) {
+                    tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, true));
+                }
 
                 // Resetear temporizador de humo
                 if (intervalo) {
@@ -2856,34 +3084,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     botonDisparo.classList.add("bg-[#d9d9d9]");
                 }
 
-                // Enviar trama STOP (038) a ambos paneles
-                const panels =
-                    document.querySelectorAll(".panel-container");
-                panels.forEach(async (panel) => {
-                    const selectCabina = panel.querySelector(
-                        "[data-select='cabina']",
-                    );
-                    const cabinaSeleccionada =
-                        selectCabina?.value || "Cabina 1";
-                    const cabinaPrefijo =
-                        cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
-
-                    // Enviar trama STOP
-                    const tramaStop = `${cabinaPrefijo}${TRAMA_STOP}F`;
-                    enviarTrama("", "", false, tramaStop);
-                    window.addSentLog(`[STOP] ${tramaStop}`);
-
-                    // Desactivar visualmente sonidos en este panel
-                    const btnActivo =
-                        sonidoActivoPorCabina[cabinaSeleccionada];
+                // Trama STOP a todos los paneles → reset visual de sonidos inmediato + encolar trama
+                const allPanelsStop = document.querySelectorAll(".panel-container");
+                allPanelsStop.forEach((p) => {
+                    const pSelect = p.querySelector("[data-select='cabina']");
+                    const pCabinaSeleccionada = pSelect?.value || "Cabina 1";
+                    const pCabinaPrefijo = pCabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                    const tramaStop = `${pCabinaPrefijo}${TRAMA_STOP}F`;
+                    tramasParaEnviar.push(() => {
+                        enviarTrama("", "", false, tramaStop);
+                        window.addSentLog(`[STOP] ${tramaStop}`);
+                    });
+                    // Reset visual de sonido inmediato (sin esperar al delay)
+                    const btnActivo = sonidoActivoPorCabina[pCabinaSeleccionada];
                     if (btnActivo) {
-                        btnActivo.classList.remove(
-                            "bg-[#00bf63]",
-                            "text-white",
-                        );
+                        btnActivo.classList.remove("bg-[#00bf63]", "text-white");
                         btnActivo.classList.add("bg-[#efefef]");
                     }
                 });
+
+                // ── Enviar secuencialmente con 500ms entre cada trama ──
+                for (const enviar of tramasParaEnviar) {
+                    enviar();
+                    await esperar(500);
+                }
 
                 // Limpiar gráfica de sensores y su intervalo de actualización
                 const graficaCanvas = panel.querySelector("#graficaPanel");
@@ -2918,8 +3142,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (ledActivo) {
                     ledActivo = null;
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    setColorCabina("#d9d9d9");
                 }
+
+                // Resetear botones de selección de gráfica de sensores a gris
+                sensorButtons.forEach(b => {
+                    b.classList.remove("bg-[#00bf63]", "hover:bg-[#00a152]");
+                    b.classList.add("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                });
 
                 // Limpiar estado de sonido
                 const cabinaSeleccionada = selectCabina.value;
@@ -2948,10 +3178,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
+                // Desconectar reloj biométrico si está conectado
+                if (biometricWatchConnectedByCabin[cabinaPrefijo]) {
+                    try {
+                        await fetch(`http://localhost:5000/api/smartwatch/disconnect?cabin=${cabinaPrefijo}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                        });
+                        console.log(`[Reset] Reloj ${cabinaPrefijo} desconectado`);
+                        window.addSentLog?.(`[SMARTWATCH][${cabinaPrefijo}] POST /api/smartwatch/disconnect (reset)`);
+                    } catch (e) {
+                        console.warn("[Reset] No se pudo desconectar el reloj:", e);
+                    }
+                    biometricWatchConnectedByCabin[cabinaPrefijo] = false;
+                    biometricWatchConnected = Object.values(biometricWatchConnectedByCabin).some(Boolean);
+                    biometricMeasurementCompletionNotifiedByCabin[cabinaPrefijo] = false;
+                    biometricCurrentActiveMeasurementByCabin[cabinaPrefijo] = null;
+                    biometricPreviousActiveMeasurementByCabin[cabinaPrefijo] = null;
+                    if (biometricModeByCabin) biometricModeByCabin[cabinaPrefijo] = null;
+                    window.updateWatchButtonsState?.();
+                }
+
                 // Detener gráficas biométricas si existen
                 if (typeof window.stopBiometricCharts === "function") {
                     window.stopBiometricCharts(cabinaPrefijo);
                 }
+
+                // Resetear selector de métrica biométrica
+                setBiometricSelectorEnabled(cabinaPrefijo, false);
 
                 // Limpiar datos biométricos acumulados
                 if (window.biometricChartDataByCabin) {
@@ -2966,7 +3220,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Actualizar estado de botones
                 actualizarEstadoBotones();
 
-                alert("Sistema detenido. Todo ha sido reiniciado.");
+                alert("✅ Sesión finalizada. Sistema listo para el siguiente participante.");
             });
         }
 

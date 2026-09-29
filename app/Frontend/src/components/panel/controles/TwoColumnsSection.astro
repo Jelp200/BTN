@@ -76,7 +76,7 @@ import SoundControlButtons from "./SoundControlButtons.astro";
         <div class="flex justify-center gap-2" role="tablist">
             <button
                 id="btn-sonidos"
-                class="seccion-btn bg-[#d9d9d9] hover:bg-[#a6a6a6] px-2 py-2 rounded-lg transition-colors"
+                class="seccion-btn bg-[#d9d9d9] hover:bg-[#a6a6a6] px-4 py-2 rounded-lg transition-colors"
                 data-seccion="sonidos"
                 aria-selected="false"
                 role="tab"
@@ -86,7 +86,7 @@ import SoundControlButtons from "./SoundControlButtons.astro";
             </button>
             <button
                 id="btn-tinitus"
-                class="seccion-btn bg-[#d9d9d9] hover:bg-[#a6a6a6] px-2 py-2 rounded-lg transition-colors"
+                class="seccion-btn bg-[#d9d9d9] hover:bg-[#a6a6a6] px-4 py-2 rounded-lg transition-colors"
                 data-seccion="tinitus"
                 aria-selected="false"
                 role="tab"
@@ -94,11 +94,21 @@ import SoundControlButtons from "./SoundControlButtons.astro";
             >
                 Tinitus
             </button>
+            <button
+                id="btn-tonos"
+                class="seccion-btn bg-[#d9d9d9] hover:bg-[#a6a6a6] px-4 py-2 rounded-lg transition-colors"
+                data-seccion="tonos"
+                aria-selected="false"
+                role="tab"
+                tabindex="0"
+            >
+                Tonos
+            </button>
         </div>
 
         <!-- Contenedor de opciones con scroll -->
         <div
-            class="seccion-contenido max-h-20 overflow-y-auto bg-white border border-[#ccc] rounded-lg p-2"
+            class="seccion-contenido max-h-25 overflow-y-auto bg-white border border-[#ccc] rounded-lg p-2"
             role="tabpanel"
         >
             <!-- Los botones se inyectan desde el script principal -->
@@ -112,13 +122,13 @@ import SoundControlButtons from "./SoundControlButtons.astro";
 
         <!-- Botones de control de audio -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <SoundControlButtons icon="vmas" data-sound-codigo="VMAS" />
             <SoundControlButtons icon="vmen" data-sound-codigo="VMEN" />
+            <SoundControlButtons icon="vmas" data-sound-codigo="VMAS" />
             <SoundControlButtons icon="stop" data-sound-codigo="STOP" />
         </div>
 
-        <!-- Barra de volumen estilizada -->
-        <div class="volume-control space-y-2">
+        <!-- Barra de volumen estilizada (deshabilitada temporalmente) -->
+        <div class="volume-control space-y-2 hidden">
             <div class="flex items-center gap-2">
                 <!-- Icono de volumen bajo -->
                 <svg

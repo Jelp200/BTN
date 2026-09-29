@@ -1,0 +1,35 @@
+{
+  "name": "btn",
+  "version": "1.0.0",
+  "description": "![Header](imgs/header.png)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "dev":         "concurrently --kill-others-on-fail --prefix-colors \"blue.bold,magenta.bold\" --names \"API,FRONT\" \"npm run dev:api\" \"npm run dev:front\"",
+    "prod":        "npm run build:front && npm run start:api",
+
+    "dev:api":     "dotnet run --project app/Backend/ControlPanel.API/ControlPanel.API --launch-profile Development",
+    "dev:front":   "npm run dev --prefix app/Frontend",
+
+    "build:front": "npm run build --prefix app/Frontend",
+    "start:api":   "dotnet run --project app/Backend/ControlPanel.API/ControlPanel.API --launch-profile Production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jelp200/BTN.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Jelp200/BTN/issues"
+  },
+  "homepage": "https://github.com/Jelp200/BTN#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

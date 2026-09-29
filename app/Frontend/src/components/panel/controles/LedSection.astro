@@ -3,12 +3,21 @@
 
 //* IMPORTS
 import LedButton from "./LedButton.astro";
+import DivisorLine from "../DivisorLine.astro";
 ---
 
 <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-3">
     <!-- Grupo A - Luz cálida -->
     <div class="space-y-1">
         <div class="flex flex-col gap-2">
+            <LedButton
+                label="Encendido luz cálida"
+                colIndex="6"
+                rowIndex="1"
+                inactiveColor="#fff"
+                activeColor="#a6a6a6"
+                data-codigo="101"
+            />
             <LedButton
                 label="C1"
                 colIndex="1"
@@ -18,6 +27,7 @@ import LedButton from "./LedButton.astro";
                 data-codigo="104"
                 showLabel={false}
             />
+            <DivisorLine />
             <LedButton
                 label="C2"
                 colIndex="2"
@@ -54,20 +64,20 @@ import LedButton from "./LedButton.astro";
                 data-codigo="108"
                 showLabel={false}
             />
-            <LedButton
-                label="Encendido luz cálida"
-                colIndex="6"
-                rowIndex="1"
-                inactiveColor="#fff"
-                activeColor="#FF1306"
-                data-codigo="101"
-            />
         </div>
     </div>
 
     <!-- Grupo B - Luz fría -->
     <div class="space-y-2">
         <div class="flex flex-col gap-2">
+            <LedButton
+                label="Encendido luz fría"
+                colIndex="6"
+                rowIndex="2"
+                inactiveColor="#fff"
+                activeColor="#a6a6a6"
+                data-codigo="102"
+            />
             <LedButton
                 label="F1"
                 colIndex="1"
@@ -77,6 +87,7 @@ import LedButton from "./LedButton.astro";
                 data-codigo="109"
                 showLabel={false}
             />
+            <DivisorLine />
             <LedButton
                 label="F2"
                 colIndex="2"
@@ -113,20 +124,20 @@ import LedButton from "./LedButton.astro";
                 data-codigo="113"
                 showLabel={false}
             />
-            <LedButton
-                label="Encendido luz fría"
-                colIndex="6"
-                rowIndex="2"
-                inactiveColor="#fff"
-                activeColor="#0243D3"
-                data-codigo="102"
-            />
         </div>
     </div>
 
     <!-- Grupo C - Luz neutra -->
     <div class="space-y-2">
         <div class="flex flex-col gap-2">
+            <LedButton
+                label="Encendido luz neutra"
+                colIndex="6"
+                rowIndex="3"
+                inactiveColor="#fff"
+                activeColor="#a6a6a6"
+                data-codigo="103"
+            />
             <LedButton
                 label="N1"
                 colIndex="1"
@@ -136,6 +147,7 @@ import LedButton from "./LedButton.astro";
                 data-codigo="114"
                 showLabel={false}
             />
+            <DivisorLine />
             <LedButton
                 label="N2"
                 colIndex="2"
@@ -172,36 +184,12 @@ import LedButton from "./LedButton.astro";
                 data-codigo="118"
                 showLabel={false}
             />
-            <LedButton
-                label="Encendido luz neutra"
-                colIndex="6"
-                rowIndex="3"
-                inactiveColor="#fff"
-                activeColor="#029705"
-                data-codigo="103"
-            />
         </div>
     </div>
 
     <!-- Grupo D - Otros -->
     <div class="space-y-2">
         <div class="flex flex-col gap-2">
-            <LedButton
-                label="Strobo"
-                colIndex="1"
-                rowIndex="4"
-                inactiveColor="#fff"
-                activeColor="#e84e0e"
-                data-codigo="119"
-            />
-            <LedButton
-                label="Flash"
-                colIndex="2"
-                rowIndex="4"
-                inactiveColor="#fff"
-                activeColor="#e84e0e"
-                data-codigo="120"
-            />
             <LedButton
                 label="B+"
                 colIndex="3"
@@ -217,6 +205,23 @@ import LedButton from "./LedButton.astro";
                 inactiveColor="#fff"
                 activeColor="#e84e0e"
                 data-codigo="122"
+            />
+            <DivisorLine />
+            <LedButton
+                label="Strobo"
+                colIndex="1"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+                data-codigo="119"
+            />
+            <LedButton
+                label="Flash"
+                colIndex="2"
+                rowIndex="4"
+                inactiveColor="#fff"
+                activeColor="#e84e0e"
+                data-codigo="120"
             />
             <LedButton
                 label="Apagado total"
