@@ -47,6 +47,11 @@ public interface ISerialService
     // Devuelve todos los datos de sensores parseados desde las tramas.
     Task<List<SensorData>> GetAllDatosAsync();
 
+    // Devuelve los datos de sensores de una cabina específica, opcionalmente
+    // limitados a los últimos "limit" registros (null = historial completo de
+    // esa cabina, usado por la exportación a Excel).
+    Task<List<SensorData>> GetDatosPorCabinaAsync(string cabina, int? limit = null);
+
     // Devuelve el último dato válido recibido.
     Task<SensorData?> GetUltimoDatoAsync();
 

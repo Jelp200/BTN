@@ -12,7 +12,6 @@ let volumenPorCabina = { "Cabina 1": 0, "Cabina 2": 0 };
 let reproduciendoPorCabina = { "Cabina 1": false, "Cabina 2": false };
 let botonPlayActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
 let sonidoActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
-let estadoCalor = "off";
 
 /* ==================== ESTADOS BIOMÉTRICOS ==================== */
 let biometricChartsEnabled = false;
@@ -69,8 +68,8 @@ const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 // Códigos de botones de control
 const codigoBoton = {
     FRIO: { off: "000", on: "001" },
-    CALOR_C1: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
-    CALOR_C2: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
+    // Calor ahora es on/off simple: "on" manda directamente el nivel bajo (004).
+    CALOR: { off: "002", on: "004" },
     HUMEDAD: { off: "007", on: "008" },
     VIBRACION: { off: "009", on: "010" },
     VENTILADOR: { off: "011", on: "012" },
@@ -157,10 +156,7 @@ const controlDescripcion = {
   'C1001F': 'Encendido aire acondicionado',
   //? CALOR
   'C1002F': 'Apagado calefactor',
-  'C1003F': 'Encendido calefactor',
-  'C1004F': 'Nivel bajo calefactor',
-  'C1005F': 'Nivel medio calefactor',
-  'C1006F': 'Nivel alto calefactor',
+  'C1004F': 'Encendido calefactor',
   //? HUMEDAD
   'C1007F': 'Apagado humedad',
   'C1008F': 'Encendido humedad',
@@ -249,10 +245,7 @@ const controlDescripcion = {
   'C2001F': 'Encendido aire acondicionado',
   //? CALOR
   'C2002F': 'Apagado calefactor',
-  'C2003F': 'Encendido calefactor',
-  'C2004F': 'Nivel bajo calefactor',
-  'C2005F': 'Nivel medio calefactor',
-  'C2006F': 'Nivel alto calefactor',
+  'C2004F': 'Encendido calefactor',
   //? HUMEDAD
   'C2007F': 'Apagado humedad',
   'C2008F': 'Encendido humedad',

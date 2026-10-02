@@ -215,54 +215,42 @@ public class SerialController : ControllerBase
         return dato == null ? NotFound(new { mensaje = "VACIO" }) : Ok(dato);
     }
 
-    // GET: api/serial/datos/c1
-    // Devuelve todos los datos de la cabina C1
-    [HttpGet("datos/c1")]
-    public async Task<IActionResult> GetDatosCabina1()
+    // Proyecta un SensorData al shape (minúsculas) que espera el frontend
+    private static object ProyectarDato(ControlPanel.API.Models.SensorData d) => new
     {
-        var datos = await _serialService.GetAllDatosAsync();
-        var resultado = datos.Where(d => d.Cabina == "C1").Select(d => new
-        {
-            cabina = d.Cabina,
-            timestamp = d.Timestamp,
-            x = d.X,
-            y = d.Y,
-            z = d.Z,
-            t = d.T,
-            h = d.H,
-            uv = d.UV,
-            cO2 = d.CO2,
-            o3 = d.O3,
-            dB = d.dB
-        }).ToList();
-        return Ok(resultado);
+        cabina = d.Cabina,
+        timestamp = d.Timestamp,
+        x = d.X,
+        y = d.Y,
+        z = d.Z,
+        t = d.T,
+        h = d.H,
+        uv = d.UV,
+        cO2 = d.CO2,
+        o3 = d.O3,
+        dB = d.dB
+    };
+
+    // GET: api/serial/datos/c1?limit=10
+    // Devuelve los datos de la cabina C1 (opcionalmente solo los últimos "limit")
+    [HttpGet("datos/c1")]
+    public async Task<IActionResult> GetDatosCabina1([FromQuery] int? limit = null)
+    {
+        var datos = await _serialService.GetDatosPorCabinaAsync("C1", limit);
+        return Ok(datos.Select(ProyectarDato).ToList());
     }
 
-    // GET: api/serial/datos/c2
-    // Devuelve todos los datos de la cabina C2
+    // GET: api/serial/datos/c2?limit=10
+    // Devuelve los datos de la cabina C2 (opcionalmente solo los últimos "limit")
     [HttpGet("datos/c2")]
-    public async Task<IActionResult> GetDatosCabina2()
+    public async Task<IActionResult> GetDatosCabina2([FromQuery] int? limit = null)
     {
-        var datos = await _serialService.GetAllDatosAsync();
-        var resultado = datos.Where(d => d.Cabina == "C2").Select(d => new
-        {
-            cabina = d.Cabina,
-            timestamp = d.Timestamp,
-            x = d.X,
-            y = d.Y,
-            z = d.Z,
-            t = d.T,
-            h = d.H,
-            uv = d.UV,
-            cO2 = d.CO2,
-            o3 = d.O3,
-            dB = d.dB
-        }).ToList();
-        return Ok(resultado);
+        var datos = await _serialService.GetDatosPorCabinaAsync("C2", limit);
+        return Ok(datos.Select(ProyectarDato).ToList());
     }
 
     // GET: api/serial/ultimo-dato/c1
-    // Devuelve el último dato recibido de la cabina C1
+    // Devuelve el último dato recibido de la cabina C1 (sin transferir todo el historial)
     [HttpGet("ultimo-dato/c1")]
     public async Task<IActionResult> GetUltimoDatoCabina1()
     {
@@ -270,11 +258,11 @@ public class SerialController : ControllerBase
         if (dato == null)
             return NotFound(new { success = "false", message = "No hay datos válidos para la cabina C1." });
 
-        return Ok(dato);
+        return Ok(ProyectarDato(dato));
     }
 
     // GET: api/serial/ultimo-dato/c2
-    // Devuelve el último dato recibido de la cabina C2
+    // Devuelve el último dato recibido de la cabina C2 (sin transferir todo el historial)
     [HttpGet("ultimo-dato/c2")]
     public async Task<IActionResult> GetUltimoDatoCabina2()
     {
@@ -282,7 +270,7 @@ public class SerialController : ControllerBase
         if (dato == null)
             return NotFound(new { success = "false", message = "No hay datos válidos para la cabina C2." });
 
-        return Ok(dato);
+        return Ok(ProyectarDato(dato));
     }
 
     // =============================================

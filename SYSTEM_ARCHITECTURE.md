@@ -182,7 +182,7 @@ Puntos clave:
 | `AutoUpdater` | `HostApp/AutoUpdater.cs` | Chequeo de versión remota, descarga y lanzamiento del instalador |
 | `Program` (API) | `ControlPanel.API/Program.cs` | Composición de DI, middleware pipeline, hosting estático |
 | `SerialController` | `Controllers/SerialController.cs` | Endpoints REST de puertos COM, conexión, envío/recepción de tramas |
-| `SerialService` | `Services/SerialService.cs` | Gestión de `SerialPort`, buffers en memoria (`HistorialTramas`, `HistorialDatos`) |
+| `SerialService` | `Services/SerialService.cs` | Gestión de `SerialPort`, buffers en memoria (`HistorialTramas` combinado, `HistorialDatosPorCabina` — un `Queue<SensorData>` independiente por cabina desde 2026-10) |
 | `TramaParser` | `Services/TramaParser.cs` | Parseo de tramas de sensores `C1\|X:..\|...` → `SensorData` |
 | `SmartwatchController` | `Controllers/SmartwatchController.cs` | Endpoints REST de conexión BLE, mediciones, exportación |
 | `SmartwatchServiceFactory` | `Services/SmartwatchServiceFactory.cs` | Provee una instancia de `SmartwatchService` dedicada por cabina (C1/C2) |
@@ -246,7 +246,7 @@ Tabla de comandos documentada (manual de usuario, autoridad sobre el protocolo c
 | Rango de código | Función |
 |---|---|
 | 000-001 | Frío (aire acondicionado) off/on |
-| 002-006 | Calor — 5 estados (off, on, bajo, medio, alto) |
+| 002, 004 | Calor off/on — la UI solo envía estos dos (on = nivel bajo); 003/005/006 (on genérico, medio, alto) existen en el firmware pero ya no se usan desde el panel (desde 2026-10, antes era un selector de 4 niveles) |
 | 007-008 | Humedad off/on |
 | 009-010 | Vibración off/on |
 | 011-012 | Ventilador off/on |
@@ -344,8 +344,8 @@ Base URL hardcodeada: `http://localhost:5000` (sin TLS, tráfico solo loopback).
 | `/api/serial/latest` | GET | — | Última trama cruda |
 | `/api/serial/historial` | GET | `?page&size` | Historial paginado (máx 500/página) |
 | `/api/serial/count`, `/count/c1`, `/count/c2`, `/count/{cabina}` | GET | — | Conteos de tramas |
-| `/api/serial/datos`, `/datos/c1`, `/datos/c2` | GET | — | Datos de sensores parseados |
-| `/api/serial/ultimo-dato`, `/ultimo-dato/c1`, `/ultimo-dato/c2` | GET | — | Última lectura válida |
+| `/api/serial/datos`, `/datos/c1`, `/datos/c2` | GET | `?limit` (desde 2026-10) | Datos de sensores parseados de esa cabina; sin `limit` devuelve el historial completo de la sesión (usado por export a Excel), con `limit` devuelve solo los últimos N (usado por polling de gráfica para no transferir miles de filas en cada tick) |
+| `/api/serial/ultimo-dato`, `/ultimo-dato/c1`, `/ultimo-dato/c2` | GET | — | Última lectura válida de una sola cabina (una fila, no el arreglo completo) — usado por el polling de indicadores cada 10s |
 | `/api/serial/datos/{c1|c2}/{sensor}` | GET | — | Serie histórica de un sensor específico |
 | `/api/serial/limpiar` | POST | — | Vacía todo el historial en memoria |
 | `/api/serial/procesar-trama-real` | GET | — | Últimas tramas C1/C2 enriquecidas |
@@ -399,7 +399,7 @@ Ver tabla completa de códigos de comando de cabina en la sección 9. Comandos d
 
 | Fuente | Variables | Frecuencia de llegada | Almacenamiento |
 |---|---|---|---|
-| Cabina (serial) | X, Y, Z, T, H, UV, CO2, O3, dB | Dirigida por el firmware (evento `DataReceived` del puerto, sin intervalo fijo del lado PC) | En memoria, cola circular (`Queue<SensorData>`, tope 7200 registros) |
+| Cabina (serial) | X, Y, Z, T, H, UV, CO2, O3, dB | Dirigida por el firmware (evento `DataReceived` del puerto, sin intervalo fijo del lado PC) | En memoria, una cola circular independiente por cabina (`Queue<SensorData>` por `Cabina`, tope 7200 registros cada una — desde 2026-10; antes era una sola cola compartida entre C1/C2) |
 | Smartwatch (BLE) | BPM, SpO2, TemperaturaC, Sistólica, Diastólica | 1 lectura cada ~6s durante una medición activa de 60s (10 lecturas) | En memoria, lista acotada a 300 registros por cabina |
 
 El frontend hace **polling** (no hay WebSockets/SSE) para refrescar: cada 2-10s según el componente (ver tabla detallada en sección 16 y hallazgo de polling redundante).
@@ -429,8 +429,8 @@ El frontend hace **polling** (no hay WebSockets/SSE) para refrescar: cada 2-10s 
 ```mermaid
 flowchart LR
     MCU["Microcontrolador cabina"] -->|"Serial 9600 baud\nC1|X:..|Y:.."| SerialService
-    SerialService --> TramaParser --> SensorDataQueue["Queue&lt;SensorData&gt; (memoria, máx 7200)"]
-    SensorDataQueue -->|"GET /api/serial/datos/*"| FrontendJS["main.js (fetch, polling 2-10s)"]
+    SerialService --> TramaParser --> SensorDataQueue["Queue&lt;SensorData&gt; por cabina (memoria, máx 7200 c/u)"]
+    SensorDataQueue -->|"GET /api/serial/ultimo-dato/*, /datos/*?limit="| FrontendJS["main.js (fetch, polling 2-10s)"]
     FrontendJS --> ChartJS["Gráficas Chart.js"]
 
     Watch["Smartwatch BLE"] -->|"Notify GATT"| BleConnector
@@ -450,7 +450,8 @@ No existe persistencia intermedia (base de datos, cola de mensajes) en ningún p
 
 - **Backend:** estado mínimo y disperso — diccionario de puertos abiertos (`ConcurrentDictionary<string, SerialPort>`), colas de historial (`Queue<string>`/`Queue<SensorData>`), banderas booleanas de "monitoreo activo" por vital signo dentro de cada `SmartwatchService`. No hay una máquina de estados formal ni un "Session"/"UserSession" modelado.
 - **Frontend:** todo el estado de sesión de operador (cabina seleccionada por panel, reloj conectado por cabina, modo Auto/Evento de biometría, datos de perfil personal) vive en variables JS en memoria (`globals.js`) y `localStorage` puntual (conexión recordada, contador de cabinas en modo dev) — se pierde al recargar la página salvo lo persistido en `localStorage`.
-- **Polling identificado (redundante) [VERIFIED]:** `fetchDatosPorCabina` se ejecuta en **dos** intervalos independientes y solapados: cada 3000ms (`main.js:41`) y cada 10000ms (`initialization.js:54`) — mismo endpoint, mismo propósito, doble carga de red sin coordinación.
+- **Polling identificado (redundante) [VERIFIED]:** `fetchDatosPorCabina` se ejecuta en **dos** intervalos independientes y solapados: cada 3000ms (`main.js:32-39`) y cada 10000ms (`initialization.js:54`) — mismo endpoint, mismo propósito, doble carga de red sin coordinación. **Sigue sin resolverse** (no era el alcance del fix de 2026-10 de abajo), pero su impacto se redujo drásticamente porque ahora cada llamada trae una sola lectura en vez del historial completo.
+- **Fix de 2026-10 — saturación progresiva por re-fetch del historial completo [RESUELTO]:** antes, tanto `fetchDatosPorCabina` (cada 3-10s) como el loop de actualización de la gráfica (`initGrafica`, cada 2s cuando hay datos nuevos) volvían a traer el arreglo **completo** de `HistorialDatos` de la cabina en cada tick — en una sesión de varias horas esto significaba transferir y parsear miles de filas repetidamente solo para leer el último valor o los últimos 10 puntos, lo cual degradaba progresivamente el WebView2 hasta trabar el panel. Se agregó soporte de `?limit=` en `GET /api/serial/datos/{cabina}` (la gráfica ahora solo pide los últimos 10) y se cambió `fetchDatosPorCabina` para usar `GET /api/serial/ultimo-dato/{cabina}` (una sola fila) en vez de `/datos/{cabina}`. El conteo real total (`/count/{cabina}`) se sigue usando para detectar datos nuevos y numerar las muestras, así que el comportamiento visible no cambia — solo el volumen de datos transferido en cada poll, que ahora es constante sin importar cuánto dure la sesión.
 
 ---
 
@@ -476,7 +477,7 @@ No existe persistencia intermedia (base de datos, cola de mensajes) en ningún p
 ## 18. Storage
 
 **No hay base de datos.** Toda la "persistencia" de datos de sensores/biométricos es:
-1. **En memoria de proceso** — `Queue<string>`, `Queue<SensorData>` (tope 7200), `List<SmartwatchVitals>` (tope 300 por cabina). Se pierde al reiniciar `ControlPanel.API.exe` o al hacer crash.
+1. **En memoria de proceso** — `Queue<string>` (tramas crudas, tope 7200 combinado), `Queue<SensorData>` por cabina (tope 7200 **cada una**, desde 2026-10), `List<SmartwatchVitals>` (tope 300 por cabina). Se pierde al reiniciar `ControlPanel.API.exe` o al hacer crash, o explícitamente vía `POST /api/serial/limpiar` al finalizar una sesión ("Parar y Reset").
 2. **Archivos de log** — `%BaseDirectory%/Logs/*.log` (`FileLogger`) y `%BaseDirectory%/Logs/smartwatch-session-*.txt` (`SessionLogger`, tee completo de `Console.Out`).
 3. **Archivos Excel bajo demanda** — `%BaseDirectory%/Exports/*.xlsx` (`BiometricExportService`), generados solo cuando el operador exporta explícitamente.
 4. **`localStorage` del navegador (WebView2)** — preferencias de sesión del frontend (conexión de puerto recordada, contador de cabinas en modo dev).
@@ -638,13 +639,13 @@ sequenceDiagram
     loop Evento DataReceived (asíncrono, en background)
         MCU-->>Svc: "C1|X:0.23|Y:0.42|...\n"
         Svc->>Svc: TramaParser.Parse() → SensorData
-        Svc->>Svc: encola en HistorialDatos (lock)
+        Svc->>Svc: encola en HistorialDatosPorCabina["C1"] (lock)
     end
     UI->>API: POST /api/serial/send {portName:"COM4", trama:"C1035F"}
     API->>Svc: SendTramaAsync("COM4","C1035F")
     Svc->>MCU: SerialPort.Write("C1035F")
-    UI->>API: GET /api/serial/datos/c1 (polling)
-    API-->>UI: [SensorData...]
+    UI->>API: GET /api/serial/ultimo-dato/c1 (polling indicadores)
+    API-->>UI: SensorData (una fila)
 ```
 
 ---
@@ -750,7 +751,7 @@ Ver también: sección 12 (tabla de comandos ampliada con `0xC1`/`0xAE`) y secci
 - El concepto "WPAN" (glosario del manual de usuario) como red inalámbrica entre módulos de cabina — **UNKNOWN** si tiene correlato de implementación o es terminología de diseño de hardware no reflejada en software.
 - Contenido de `test/cases/TestingCases_1.xlsx` (binario, no parseado).
 - Si el smartwatch soporta más de un modelo además de "ET570" en la práctica (el código lo permite vía parámetro, pero no hay evidencia de haberse probado con otro modelo) — **UNKNOWN**.
-- Estado real de la copia de `version.json` en el VPS de producción (la copia local en el repo dice `2.0.0`, desactualizada respecto a `2.0.6` de csproj/iss) — **UNKNOWN** cuál es la versión realmente publicada en `gradustec.com` al momento de esta auditoría.
+- Estado real de la copia de `version.json` en el VPS de producción (la copia local en el repo dice `2.0.0`, desactualizada respecto a `2.0.8` de csproj/iss) — **UNKNOWN** cuál es la versión realmente publicada en `gradustec.com` al momento de esta auditoría.
 - Si existe algún proceso de firma de código (Authenticode) aplicado fuera de este repositorio (ej. manualmente antes de publicar) — **UNKNOWN**, no hay evidencia en los scripts de build.
 
 ---
