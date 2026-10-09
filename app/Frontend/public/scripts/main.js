@@ -292,47 +292,48 @@ async function desconectarPuertoSerial() {
 }
 
 // Función para obtener datos desde el backend
+// Nota: usa /ultimo-dato/{cabina} (una sola lectura) en vez de /datos/{cabina}
+// (historial completo) — este poll corre cada 10s indefinidamente mientras la
+// app esté abierta, así que traer todo el historial de la sesión en cada tick
+// es lo que hacía que, tras varias horas, el panel empezara a trabarse.
 async function fetchDatosPorCabina(cabina) {
     try {
         const response = await fetch(
-            `http://localhost:5000/api/serial/datos/${cabina.toLowerCase()}`,
+            `http://localhost:5000/api/serial/ultimo-dato/${cabina.toLowerCase()}`,
         );
 
         if (!response.ok) {
-            console.error(
-                `❌ Error al obtener datos de ${cabina}:`,
-                response.status,
-            );
+            // 404 = aún no hay datos válidos para esta cabina (normal al inicio de sesión)
+            if (response.status !== 404) {
+                console.error(
+                    `❌ Error al obtener datos de ${cabina}:`,
+                    response.status,
+                );
+            }
             return;
         }
 
-        const data = await response.json();
+        const ultimaLectura = await response.json();
+        if (!ultimaLectura) return;
 
-        if (data.success == "false") return;
+        // Mapear claves del backend a identificadores de sensores
+        const datos = {
+            X: ultimaLectura.x,
+            Y: ultimaLectura.y,
+            Z: ultimaLectura.z,
+            T: ultimaLectura.t,
+            H: ultimaLectura.h,
+            UV: ultimaLectura.uv,
+            CO2: ultimaLectura.cO2,
+            O3: ultimaLectura.o3,
+            dB: ultimaLectura.dB
+        };
 
-        if (data && Array.isArray(data) && data.length > 0) {
-            // Tomar última lectura (la más reciente)
-            const ultimaLectura = data[data.length - 1];
-
-            // Mapear claves del backend a identificadores de sensores
-            const datos = {
-                X: ultimaLectura.x,
-                Y: ultimaLectura.y,
-                Z: ultimaLectura.z,
-                T: ultimaLectura.t,
-                H: ultimaLectura.h,
-                UV: ultimaLectura.uv,
-                CO2: ultimaLectura.cO2,
-                O3: ultimaLectura.o3,
-                dB: ultimaLectura.dB
-            };
-
-            Object.entries(datos).forEach(([clave, valor]) => {
-                if (valor !== undefined && valor !== null) {
-                    updateIndicador(clave, valor, cabina);
-                }
-            });
-        }
+        Object.entries(datos).forEach(([clave, valor]) => {
+            if (valor !== undefined && valor !== null) {
+                updateIndicador(clave, valor, cabina);
+            }
+        });
     } catch (error) {
         console.error(`❌ Error en fetchDatosPorCabina(${cabina}):`, error);
     }
@@ -390,26 +391,30 @@ async function initGrafica(panel, sensor = "X") {
     console.log(`[Gráfica] Cabina seleccionada: ${cabina}`);
 
     try {
-        // Obtener datos iniciales
-        const response = await fetch(
-            `http://localhost:5000/api/serial/datos/${cabina}`,
-        );
+        const maxPuntos = 10;
+
+        // Pedimos solo los últimos "maxPuntos" registros (?limit=) en vez de todo el
+        // historial de la sesión — con sesiones de varias horas, traer miles de filas
+        // solo para graficar los últimos 10 puntos era lo que iba saturando el panel.
+        const [response, countResponse] = await Promise.all([
+            fetch(`http://localhost:5000/api/serial/datos/${cabina}?limit=${maxPuntos}`),
+            fetch(`http://localhost:5000/api/serial/count/${cabina}`),
+        ]);
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
-        const datos = await response.json();
-        if (!Array.isArray(datos) || datos.length === 0) {
+        const datosLimitados = await response.json();
+        if (!Array.isArray(datosLimitados) || datosLimitados.length === 0) {
             console.warn(`[Gráfica] Sin datos disponibles para ${cabina.toUpperCase()}. Usa el botón de refrescar cuando el uC esté enviando datos.`);
             return;
         }
 
-        const maxPuntos = 10;
-        const datosLimitados = datos.length > maxPuntos 
-            ? datos.slice(datos.length - maxPuntos) 
-            : datos;
-        
-        const indiceInicio = datos.length > maxPuntos 
-            ? datos.length - maxPuntos 
-            : 0;
+        // Conteo real (no limitado) del total de lecturas de esta cabina — se usa
+        // para numerar las muestras correctamente y para detectar datos nuevos
+        // en el intervalo de actualización, sin depender de volver a traer todo.
+        const totalCount = countResponse.ok
+            ? (await countResponse.json()).count ?? datosLimitados.length
+            : datosLimitados.length;
+        const indiceInicio = Math.max(0, totalCount - datosLimitados.length);
 
         const labels = datosLimitados.map((_, i) => `${indiceInicio + i + 1}`);
         const valores = datosLimitados.map((d) => {
@@ -499,7 +504,7 @@ async function initGrafica(panel, sensor = "X") {
 
         // Guardar referencia
         graficaCanvas.chartInstance = chart;
-        graficaCanvas.lastDataCount = datos.length; // Rastrear cantidad de datos
+        graficaCanvas.lastDataCount = totalCount; // Rastrear cantidad total de datos (no solo los traídos)
         graficaCanvas.sensor = sensor; // Guardar sensor actual
 
         // Limpiar intervalo anterior si existe para evitar múltiples intervalos simultáneos
@@ -530,9 +535,13 @@ async function initGrafica(panel, sensor = "X") {
 
                 // Si hay nuevos datos
                 if (data_size.count > countActual) {
-                    // Traer todos los datos (para asegurar que tenemos la secuencia correcta)
+                    const maxPuntos = 10;
+
+                    // Solo pedimos los últimos "maxPuntos" (?limit=), no el historial
+                    // completo — es lo único que la gráfica va a mostrar de todas formas,
+                    // y este fetch corre cada 2s durante toda la sesión.
                     const nuevosResponse = await fetch(
-                        `http://localhost:5000/api/serial/datos/${cabina}`,
+                        `http://localhost:5000/api/serial/datos/${cabina}?limit=${maxPuntos}`,
                     );
                     if (!nuevosResponse.ok)
                         throw new Error(
@@ -542,7 +551,7 @@ async function initGrafica(panel, sensor = "X") {
                     const todosDatos = await nuevosResponse.json();
 
                     // Extraer solo los valores del sensor seleccionado
-                    const nuevosSensorValores = todosDatos.map((d) => {
+                    const valoresFinales = todosDatos.map((d) => {
                         switch (sensor) {
                             case "T":
                                 return d.t;
@@ -567,17 +576,9 @@ async function initGrafica(panel, sensor = "X") {
                         }
                     });
 
-                    // Limitar a últimos 10 puntos para evitar sobrecarga
-                    const maxPuntos = 10;
-                    let valoresFinales = nuevosSensorValores;
-                    let indiceInicio = 0;
-
-                    if (valoresFinales.length > maxPuntos) {
-                        indiceInicio = valoresFinales.length - maxPuntos;
-                        valoresFinales = valoresFinales.slice(indiceInicio);
-                    }
-
-                    // Crear labels para los datos finales
+                    // Numerar las muestras usando el conteo REAL (data_size.count), no
+                    // la cantidad traída (que ya viene acotada a maxPuntos por el backend)
+                    const indiceInicio = Math.max(0, data_size.count - valoresFinales.length);
                     const nuevasLabels = valoresFinales.map(
                         (_, i) => `${indiceInicio + i + 1}`,
                     );
@@ -586,10 +587,10 @@ async function initGrafica(panel, sensor = "X") {
                     chart.data.labels = nuevasLabels;
                     chart.data.datasets[0].data = valoresFinales;
 
-                    console.log(`[Gráfica] Actualización: mostrando ${valoresFinales.length}/${todosDatos.length} puntos (sensor: ${sensor})`);
+                    console.log(`[Gráfica] Actualización: mostrando ${valoresFinales.length} puntos de ${data_size.count} totales (sensor: ${sensor})`);
 
-                    // 🔹 Actualizar contador
-                    graficaCanvas.lastDataCount = todosDatos.length;
+                    // 🔹 Actualizar contador (conteo real total, no la cantidad traída)
+                    graficaCanvas.lastDataCount = data_size.count;
 
                     // 🔹 Actualizar visualmente
                     chart.update("none"); // "none" evita animaciones
@@ -1007,6 +1008,88 @@ async function seedBiometricHistory(metricConfigs, cabin = "C1") {
     }
 }
 
+// ── Excel: paleta de colores y estilos ───────────────────────────────────────
+const _XL_THIN_BORDER = { style: 'thin', color: { rgb: 'B0BEC5' } };
+const _XL_BD = { top: _XL_THIN_BORDER, bottom: _XL_THIN_BORDER, left: _XL_THIN_BORDER, right: _XL_THIN_BORDER };
+
+const _XL_S = {
+    title:   { font: { bold: true, sz: 13, color: { rgb: 'FFFFFF' }, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: '1F497D' } },
+               alignment: { horizontal: 'center', vertical: 'center' } },
+
+    section: { font: { bold: true, sz: 11, color: { rgb: 'FFFFFF' }, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: '2E75B6' } },
+               alignment: { horizontal: 'left', vertical: 'center' } },
+
+    header:  { font: { bold: true, sz: 10, color: { rgb: '1F3864' }, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'BDD7EE' } },
+               alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+               border: _XL_BD },
+
+    data:    { font: { sz: 10, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'FFFFFF' } },
+               alignment: { horizontal: 'left', vertical: 'center' },
+               border: _XL_BD },
+
+    dataalt: { font: { sz: 10, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'EEF4FB' } },
+               alignment: { horizontal: 'left', vertical: 'center' },
+               border: _XL_BD },
+
+    'kv-k':  { font: { bold: true, sz: 10, name: 'Calibri', color: { rgb: '1F3864' } },
+               fill: { patternType: 'solid', fgColor: { rgb: 'F0F4FA' } },
+               alignment: { horizontal: 'left', vertical: 'center' } },
+
+    'kv-v':  { font: { sz: 10, name: 'Calibri' },
+               fill: { patternType: 'solid', fgColor: { rgb: 'FFFFFF' } },
+               alignment: { horizontal: 'left', vertical: 'center' } },
+};
+
+/**
+ * Construye un worksheet XLSX con estilos aplicados.
+ * @param {any[][]} rows   - Datos crudos (array de arrays)
+ * @param {string[]} meta  - Tipo por fila: 'title'|'section'|'header'|'data'|'kv'|'empty'
+ * @param {number[]} colWidths - Anchos de columna en caracteres
+ */
+function xlBuildSheet(rows, meta, colWidths) {
+    const nCols = colWidths.length;
+    const padded = rows.map(r => { const p = [...r]; while (p.length < nCols) p.push(''); return p; });
+
+    const ws = XLSX.utils.aoa_to_sheet(padded);
+    ws['!cols'] = colWidths.map(w => ({ wch: w }));
+    ws['!rows'] = meta.map(t => {
+        if (t === 'title')   return { hpt: 28 };
+        if (t === 'section') return { hpt: 22 };
+        if (t === 'header')  return { hpt: 20 };
+        if (t === 'empty')   return { hpt: 6  };
+        return { hpt: 16 };
+    });
+
+    // Merges: title y section abarcan todas las columnas
+    const merges = [];
+    meta.forEach((t, ri) => {
+        if (t === 'title' || t === 'section')
+            merges.push({ s: { r: ri, c: 0 }, e: { r: ri, c: nCols - 1 } });
+    });
+    ws['!merges'] = merges;
+
+    // Estilos celda a celda
+    let dataRow = 0;
+    meta.forEach((t, ri) => {
+        if (t === 'empty') return;
+        for (let ci = 0; ci < nCols; ci++) {
+            const ref = XLSX.utils.encode_cell({ r: ri, c: ci });
+            if (!ws[ref]) ws[ref] = { v: '', t: 's' };
+            if      (t === 'data') ws[ref].s = _XL_S[dataRow % 2 === 0 ? 'data' : 'dataalt'];
+            else if (t === 'kv')   ws[ref].s = _XL_S[ci === 0 ? 'kv-k' : 'kv-v'];
+            else if (_XL_S[t])     ws[ref].s = _XL_S[t];
+        }
+        if (t === 'data') dataRow++;
+    });
+
+    return ws;
+}
+
 // Función principal para exportar datos a Excel
 async function exportToExcel(event) {
     if (typeof XLSX === 'undefined') {
@@ -1015,362 +1098,176 @@ async function exportToExcel(event) {
     }
 
     try {
-        // Obtener el botón que fue clickeado y su panel contenedor
         const btnExport = event.currentTarget;
         const panelContainer = btnExport.closest(".panel-container");
-        
-        // Buscar el selector de cabina dentro del MISMO panel
         const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
         const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
         const cabinaCode = cabinaSeleccionada.includes("2") ? "C2" : "C1";
-        
-        console.log("[Excel Export] ✅ Iniciando exportación...");
-        console.log("[Excel Export] Cabina seleccionada: " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        
-        const workbook = XLSX.utils.book_new();
 
-        // Sheet 1: Información personal
-        console.log("[Excel Export] 📄 Creando Sheet 1: Información Personal");
-        const sheet1Data = await createSheet1Data();
-        const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
-        XLSX.utils.book_append_sheet(workbook, ws1, "Información Personal");
-        console.log("[Excel Export] ✅ Sheet 1 creado (" + sheet1Data.length + " filas)");
+        const wb = XLSX.utils.book_new();
 
-        // Sheet 2: Controles + Logs
-        console.log("[Excel Export] 📄 Creando Sheet 2: Controles y Logs");
-        const sheet2Data = await createSheet2Data();
-        const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
-        ws2['!cols'] = [
-            { wch: 25 },  // Columna A: Hora 
-            { wch: 20 },  // Columna B: Estado
-            { wch: 20 },  // Columna C: Trama
-            { wch: 20 },   // Columna D: Tipo
-            { wch: 40 }   // Columna E: Descripción
-        ];
-        XLSX.utils.book_append_sheet(workbook, ws2, "Controles y Logs");
-        console.log("[Excel Export] ✅ Sheet 2 creado (" + sheet2Data.length + " filas)");
+        const { rows: r1, meta: m1 } = await createSheet1Data();
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r1, m1, [24, 32]), "Información Personal");
 
-        // Sheet 3: Sensores (solo de la cabina seleccionada)
-        console.log("[Excel Export] 📄 Creando Sheet 3: Sensores de " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        const sheet3Data = await createSheet3Data(cabinaCode);
-        const ws3 = XLSX.utils.aoa_to_sheet(sheet3Data);
-        ws3['!cols'] = [
-            { wch: 20 },  // Columna A:  
-            { wch: 20 },  // Columna B: 
-            { wch: 20 },  // Columna C: 
-            { wch: 20 },  // Columna D: 
-            { wch: 20 },  // Columna E:
-            { wch: 20 },  // Columna F: 
-            { wch: 20 },  // Columna G: 
-            { wch: 20 },  // Columna H:
-            { wch: 20 },  // Columna I: 
-            { wch: 20 },  // Columna J:
-        ];
-        XLSX.utils.book_append_sheet(workbook, ws3, "Sensores");
-        console.log("[Excel Export] ✅ Sheet 3 creado (" + sheet3Data.length + " filas)");
+        const { rows: r2, meta: m2 } = await createSheet2Data(cabinaCode);
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r2, m2, [22, 54]), "Controles");
 
-        // Sheet 4: Biometría (solo de la cabina seleccionada)
-        console.log("[Excel Export] 📄 Creando Sheet 4: Biometría de " + cabinaSeleccionada + " (" + cabinaCode + ")");
-        const sheet4Data = await createSheet4Data(cabinaCode);
-        const ws4 = XLSX.utils.aoa_to_sheet(sheet4Data);
-        ws4['!cols'] = [
-            { wch: 20 },  // Columna A:  
-            { wch: 15 },  // Columna B: 
-            { wch: 10 },  // Columna C: 
-            { wch: 20 },  // Columna D: 
-            { wch: 15 },  // Columna E:
-            { wch: 10 },  // Columna F: 
-            { wch: 20 },  // Columna G: 
-            { wch: 15 },  // Columna H:
-            { wch: 10 },  // Columna I: 
-            { wch: 20 },  // Columna J: 
-            { wch: 20 },  // Columna K:
-            { wch: 20 },  // Columna l: 
-        ];
-        XLSX.utils.book_append_sheet(workbook, ws4, "Biometría");
-        console.log("[Excel Export] ✅ Sheet 4 creado (" + sheet4Data.length + " filas)");
+        const { rows: r3, meta: m3 } = await createSheet3Data(cabinaCode);
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r3, m3, [18, 10, 10, 10, 10, 10, 10, 12, 12, 12, 10]), "Sensores");
 
-        // Escribir el archivo con nombre que incluya la cabina
+        const { rows: r4, meta: m4 } = await createSheet4Data(cabinaCode);
+        XLSX.utils.book_append_sheet(wb, xlBuildSheet(r4, m4, [18, 16, 14]), "Biometría");
+
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
         const filename = `ControlPanel_${cabinaSeleccionada.replace(" ", "")}_${timestamp}.xlsx`;
-        
-        console.log("[Excel Export] 💾 Escribiendo archivo: " + filename);
-        XLSX.writeFile(workbook, filename);
+        XLSX.writeFile(wb, filename);
 
-        console.log("[Excel Export] ✅ ¡Archivo exportado exitosamente!");
-        alert(`✅ Archivo exportado: ${filename}\n\nCabina: ${cabinaSeleccionada}\nFecha: ${timestamp}`);
+        alert(`✅ Archivo exportado: ${filename}`);
     } catch (error) {
-        console.error("[Excel Export] ❌ Error detallado:", error);
-        console.error("[Excel Export] Stack:", error.stack);
-        alert("❌ Error al exportar:\n\n" + error.message + "\n\nRevisa la consola (F12) para más detalles");
+        console.error("[Excel Export] ❌ Error:", error);
+        alert("❌ Error al exportar:\n\n" + error.message);
     }
 }
 
 // Sheet 1: Información Personal
 async function createSheet1Data() {
-    const data = [];
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
 
-    // Encabezado
-    data.push(["INFORMACION PERSONAL"]);
-    data.push([]);
+    add(["INFORMACIÓN PERSONAL"], 'title');
+    add([],                       'empty');
+    add(["Edad:",        personalDataStored.edad    || "-"], 'kv');
+    add(["Altura (cm):", personalDataStored.altura  || "-"], 'kv');
+    add(["Peso (kg):",   personalDataStored.peso    || "-"], 'kv');
+    add(["Género:",      personalDataStored.genero  || "-"], 'kv');
 
-    // Usar datos guardados de Personal Data Form
-    data.push(["Edad:", personalDataStored.edad || "-"]);
-    data.push(["Altura (cm):", personalDataStored.altura || "-"]);
-    data.push(["Peso (kg):", personalDataStored.peso || "-"]);
-    data.push(["Genero:", personalDataStored.genero || "-"]);
-    data.push([]);
-
-    return data;
+    return { rows, meta };
 }
 
-// Sheet 2: Controles y Logs del sistema
-async function createSheet2Data() {
-    //Estado extraido del DOM
-    const elemento = document.getElementById('estado-cabina');
-    const textoEstado = elemento?.textContent?.trim() || '';
-    const estado = textoEstado === 'INACTIVA' ? 'PENDIENTE' : 'ENVIADA';
+// Sheet 2: Controles
+async function createSheet2Data(cabinaCode) {
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
 
-    const data = [];
+    add(["CONTROLES"],                  'title');
+    add([],                             'empty');
+    add(["TRAMAS DE CONTROL ENVIADAS"], 'section');
+    add(["Hora", "Descripción"],        'header');
 
-    // Obtener el botón que fue clickeado y su panel contenedor
-    const btnExport = event.currentTarget;
-    const panelContainer = btnExport.closest(".panel-container");
-    // Buscar el selector de cabina dentro del MISMO panel
-    const cabinaSelector = panelContainer?.querySelector('[data-select="cabina"]');
-    const cabinaSeleccionada = cabinaSelector?.value || "Cabina 1";
-    const cabinaCode = cabinaSeleccionada.includes("2") ? "C2" : "C1";
-
-    // Encabezado
-    data.push(["CONTROLES Y LOGS DEL SISTEMA"]);
-    data.push([]);
-
-    // Sección de Controles
-    data.push(["TRAMAS DE CONTROL ENVIADAS"]);
-    data.push(["Hora", "Estado", "Trama", "Tipo", "Descripción"]);
-
-    // Obtener los logs enviados y filtrar por controles
     const sentLogs = getLogsSent();
-    // Procesar cada log para extraer informacion de control
-    sentLogs.map(log => {
-        const message = log.message;
-        // Verificamos inicio de trama (C1 O C2) y validamos cabina (C1 O C2)
-        if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C1') {
-            return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
-        }; 
-
-        if (message.toUpperCase().startsWith(cabinaCode) && cabinaCode === 'C2') {
-            return data.push([log.time, estado, message, "Control", controlDescripcion[message]]);
-        };
-    
-    });
-
-    if (data.length === 3) {
-        data.push(["Sin registros de control", "", "", "", ""]);
-    }
-
-    data.push([]);
-    data.push([]);
-
-    // Seccion de Logs del Sistema
-    data.push(["LOGS DEL SISTEMA"]);
-    data.push(["Tipo", "Hora", "Mensaje"]);
-
-    // Obtener logs enviados
+    let count = 0;
     sentLogs.forEach(log => {
-        // Filtrar solo logs de sistema, no de controles (que no tengan codigo)
-        if (!log.message.match(/\d{3}/)) {
-            data.push(["ENVIADO", log.time, log.message]);
+        if (log.message.toUpperCase().startsWith(cabinaCode)) {
+            add([log.time, controlDescripcion[log.message] || log.message], 'data');
+            count++;
         }
     });
+    if (count === 0) add(["Sin registros de control", ""], 'data');
 
-    // Obtener logs recibidos
-    const receivedLogs = getLogsReceived();
-    receivedLogs.forEach(log => {
-        data.push(["RECIBIDO", log.time, log.message]);
-    });
-
-    return data;
+    return { rows, meta };
 }
 
 // Sheet 3: Sensores de cabina seleccionada
 async function createSheet3Data(cabinaCode) {
-    
-    const response = await fetch(
-        `http://localhost:5000/api/serial/datos/${cabinaCode}`,
-    );
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
 
-    if (!response.ok) {
-        console.error(
-            `❌ Error al obtener datos de ${cabinaCode}:`,
-            response.status,
-        );
-        return;
-    };
-
-    const dataSensores = await response.json();
-
-    const data = [];
-
-    const getTiempo = (ts) => {
-    
-    const d = new Date(ts);
-    let h = d.getHours();
-    const m = d.getMinutes().toString().padStart(2, '0');
-    const s = d.getSeconds().toString().padStart(2, '0');
-    const ampm = h >= 12 ? 'p.m.' : 'a.m.';
-    
-    h = h % 12 || 12;
-    const hStr = h.toString().padStart(2, '0');
-    
-    return `${hStr}:${m}:${s} ${ampm}`;
-};
-
-    data.push(["DATOS DE SENSORES"]);
-    data.push([]);
-    data.push(["Hora", "Cabina", "X (m/s2)","Y (m/s2)","Z (m/s2)","°C","H%","UV (W/m2)","CO2 (PPM)","Lux (lm/m2)","Db"]);
-    
-    // MAPEAR TODOS LOS OBJETOS DEL ARRAY
-    dataSensores.forEach((lectura) => {
-        // Verificar que la lectura existe
-        if (!lectura) return;
-        //Formateo de tiempo
-        const tiempo = getTiempo(lectura.timestamp);
-        // Crear una fila con todos los valores de esta lectura
-        const fila = [
-            tiempo,
-            lectura.cabina,
-            lectura.x,
-            lectura.y,
-            lectura.z,
-            lectura.t,
-            lectura.h,
-            lectura.uv,
-            lectura.cO2,
-            lectura.o3,
-            lectura.dB
-        ];
-        
-        data.push(fila);
-    });
-    
-    const sensorData = await getSensorData(cabinaCode);
-    Object.entries(sensorData).forEach(([sensor, value]) => {
-        const config = window.sensorConfig?.[sensor];
-        const label = config?.label || sensor;
-        const unit = extractUnit(label);
-        data.push([label, value || "-", unit]);
-    });
-
-    return data;
-}
-
-// Sheet 4: Datos biométricos históricos
-async function createSheet4Data(cabin = "C1") {
-    const normalizedCabin = normalizeCabin(cabin);
-    const data = [];
-
-    // Función para formatear timestamp a formato 12 horas
-    const getTiempo = (ts) => {
+    const fmtTime = ts => {
         const d = new Date(ts);
         let h = d.getHours();
-        const m = d.getMinutes().toString().padStart(2, '0');
-        const s = d.getSeconds().toString().padStart(2, '0');
+        const mm = d.getMinutes().toString().padStart(2, '0');
+        const ss = d.getSeconds().toString().padStart(2, '0');
         const ampm = h >= 12 ? 'p.m.' : 'a.m.';
-        
         h = h % 12 || 12;
-        const hStr = h.toString().padStart(2, '0');
-        
-        return `${hStr}:${m}:${s} ${ampm}`;
+        return `${h.toString().padStart(2, '0')}:${mm}:${ss} ${ampm}`;
     };
 
-    data.push(["DATOS BIOMÉTRICOS"]);
-    data.push([]);
-    data.push(["PPM (Pulsos Por Minuto)","","","SpO2 (Oxigenación)","","","°C (Temperatura)","","", "mmHg (Tensión Arterial)"]);
-    data.push(["Hora","Medición","", "Hora","Medición","", "Hora","Medición","", "Hora","Medición Alta","Medición Baja"]);
-    
+    add(["DATOS DE SENSORES"], 'title');
+    add([],                    'empty');
+    add(["Hora", "Cabina", "X (g)", "Y (g)", "Z (g)", "°C", "H%", "UV (W/m²)", "CO₂ (PPM)", "Lux (lm/m²)", "dB"], 'header');
+
     try {
-        // Obtener historial biométrico del backend
-        const biometricHistory = await fetchBiometricHistory(50, normalizedCabin); // Últimas 50 mediciones
-        
-        if (!biometricHistory || biometricHistory.length === 0) {
-            data.push(["Sin datos biométricos disponibles"]);
-            return data;
-        }
-
-        console.log("[Excel Export] Datos biométricos recibidos:", biometricHistory.length, "registros");
-        console.log("[Excel Export] Primer registro:", biometricHistory[0]);
-
-        // Separar los datos por tipo de medición
-        const pulseData = [];
-        const oxygenData = [];
-        const temperatureData = [];
-        const bloodPressureData = [];
-
-        biometricHistory.forEach(record => {
-            // El campo correcto es timestampUtc, no timestamp
-            const timestamp = record.timestampUtc ? getTiempo(record.timestampUtc) : "-";
-            
-            if (record.pulseBpm !== null && record.pulseBpm !== undefined) {
-                pulseData.push({ time: timestamp, value: record.pulseBpm });
-            }
-            
-            if (record.spO2 !== null && record.spO2 !== undefined) {
-                oxygenData.push({ time: timestamp, value: record.spO2 });
-            }
-            
-            if (record.temperatureC !== null && record.temperatureC !== undefined) {
-                temperatureData.push({ time: timestamp, value: record.temperatureC });
-            }
-            
-            if (record.systolic !== null && record.systolic !== undefined) {
-                bloodPressureData.push({ 
-                    time: timestamp, 
-                    systolic: record.systolic,
-                    diastolic: record.diastolic || "-"
+        const res = await fetch(`http://localhost:5000/api/serial/datos/${cabinaCode}`);
+        if (res.ok) {
+            const datos = await res.json();
+            if (datos && datos.length > 0) {
+                datos.forEach(l => {
+                    if (!l) return;
+                    add([fmtTime(l.timestamp), l.cabina, l.x, l.y, l.z, l.t, l.h, l.uv, l.cO2, l.o3, l.dB], 'data');
                 });
+            } else {
+                add(["Sin datos de sensores disponibles", "", "", "", "", "", "", "", "", "", ""], 'data');
             }
-        });
-
-        // Encontrar el máximo número de filas necesarias
-        const maxRows = Math.max(
-            pulseData.length,
-            oxygenData.length,
-            temperatureData.length,
-            bloodPressureData.length
-        );
-
-        // Construir las filas con datos en columnas paralelas
-        for (let i = 0; i < maxRows; i++) {
-            const row = [
-                // Pulso
-                pulseData[i]?.time || "",
-                pulseData[i]?.value || "",
-                "", // Espacio vacío
-                // Oxigenación
-                oxygenData[i]?.time || "",
-                oxygenData[i]?.value || "",
-                "", // Espacio vacío
-                // Temperatura
-                temperatureData[i]?.time || "",
-                temperatureData[i]?.value || "",
-                "", // Espacio vacío
-                // Presión Arterial
-                bloodPressureData[i]?.time || "",
-                bloodPressureData[i]?.systolic || "",
-                bloodPressureData[i]?.diastolic || ""
-            ];
-            data.push(row);
+        } else {
+            add(["Error al obtener datos de sensores", "", "", "", "", "", "", "", "", "", ""], 'data');
         }
-
-        console.log(`[Excel Export] ✅ Datos biométricos cargados: ${biometricHistory.length} registros`);
-        
-    } catch (error) {
-        console.error("[Excel Export] ❌ Error al obtener datos biométricos:", error);
-        data.push(["Error al cargar datos biométricos"]);
+    } catch (e) {
+        add(["Error de conexión con el servidor", "", "", "", "", "", "", "", "", "", ""], 'data');
     }
 
-    return data;
+    return { rows, meta };
+}
+
+// Sheet 4: Biometría — secciones secuenciales por métrica
+async function createSheet4Data(cabin = "C1") {
+    const rows = [], meta = [];
+    const add = (r, m) => { rows.push(r); meta.push(m); };
+    const normalizedCabin = normalizeCabin(cabin);
+
+    const fmtTime = ts => {
+        const d = new Date(ts);
+        let h = d.getHours();
+        const mm = d.getMinutes().toString().padStart(2, '0');
+        const ss = d.getSeconds().toString().padStart(2, '0');
+        const ampm = h >= 12 ? 'p.m.' : 'a.m.';
+        h = h % 12 || 12;
+        return `${h.toString().padStart(2, '0')}:${mm}:${ss} ${ampm}`;
+    };
+
+    add(["DATOS BIOMÉTRICOS"], 'title');
+    add([],                    'empty');
+
+    try {
+        const history = await fetchBiometricHistory(50, normalizedCabin);
+
+        if (!history || history.length === 0) {
+            add(["Sin datos biométricos disponibles", "", ""], 'data');
+            return { rows, meta };
+        }
+
+        // Separar mediciones por tipo
+        const pulse = [], oxygen = [], temp = [], bp = [];
+        history.forEach(r => {
+            const ts = r.timestampUtc ? fmtTime(r.timestampUtc) : "-";
+            if (r.pulseBpm     != null) pulse.push({ t: ts, v: r.pulseBpm });
+            if (r.spO2         != null) oxygen.push({ t: ts, v: r.spO2 });
+            if (r.temperatureC != null) temp.push({ t: ts, v: r.temperatureC });
+            if (r.systolic     != null) bp.push({ t: ts, sys: r.systolic, dia: r.diastolic ?? "-" });
+        });
+
+        // Sección genérica: título de sección + encabezados + filas de datos
+        const addMetric = (title, hdr, entries, mapper) => {
+            add([title], 'section');
+            add(hdr,     'header');
+            if (entries.length === 0) {
+                add(["Sin registros", ...Array(hdr.length - 1).fill("")], 'data');
+            } else {
+                entries.forEach(e => add(mapper(e), 'data'));
+            }
+            add([], 'empty');
+        };
+
+        addMetric("PULSO (BPM)",              ["Hora", "BPM"],                   pulse,  e => [e.t, e.v]);
+        addMetric("OXIGENACIÓN (SpO₂)",       ["Hora", "%"],                     oxygen, e => [e.t, e.v]);
+        addMetric("TEMPERATURA",              ["Hora", "°C"],                    temp,   e => [e.t, e.v]);
+        addMetric("TENSIÓN ARTERIAL (mmHg)",  ["Hora", "Sistólica", "Diastólica"], bp,   e => [e.t, e.sys, e.dia]);
+
+    } catch (err) {
+        console.error("[Excel Export] ❌ Error al obtener datos biométricos:", err);
+        add(["Error al cargar datos biométricos", "", ""], 'data');
+    }
+
+    return { rows, meta };
 }
 
 // Función para actualizar los datos de las gráficas biométricas
@@ -1513,13 +1410,13 @@ function mostrarNotificacion(
 function getUnidad(medicion) {
     switch (medicion) {
         case "X":
-            return "m";
+            return "g";
         case "T":
             return "°C";
         case "CO2":
             return "ppm";
         case "Y":
-            return "m";
+            return "g";
         case "H":
             return "%";
         case "UV":
@@ -1529,7 +1426,7 @@ function getUnidad(medicion) {
         case "dB":
             return "dB";
         case "Z":
-            return "m";
+            return "g";
         default:
             return "";
     }
@@ -2568,6 +2465,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // Leer el valor inicial del selector (puede ser "Cabina 1" o "Cabina 2" según el panel)
         let cabinaPrefijo = selectCabina?.value === "Cabina 2" ? "C2" : "C1";
 
+        function setColorCabina(color) {
+            document.querySelectorAll('.panel-container').forEach(p => {
+                const pSelect = p.querySelector("[data-select='cabina']");
+                const pCabin = pSelect?.value === "Cabina 2" ? "C2" : "C1";
+                if (pCabin === cabinaPrefijo) {
+                    const el = p.querySelector('#color-cabina');
+                    if (el) el.style.backgroundColor = color;
+                }
+            });
+        }
+
         let ledActivo = null;
 
         if (selectCabina) {
@@ -2672,7 +2580,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (isActive) {
                     btn.classList.remove("bg-[#00bf63]");
                     btn.classList.add("bg-[#d9d9d9]");
-                    if (codigo && codigoBoton[codigo]) {
+                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].off,
@@ -2682,20 +2590,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     // FRIO y CALOR son mutuamente exclusivos entre sí.
                     // El resto de controles pueden estar activos simultáneamente.
-                    if (codigo === "FRIO") {
-                        // Desactivar cualquier nivel de calor que esté activo
-                        panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
-                            if (b.classList.contains('bg-[#00bf63]')) {
-                                b.classList.remove('bg-[#00bf63]');
-                                b.classList.add('bg-[#c8c8c8]');
-                                enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
+                    if (codigo === "FRIO" || codigo === "CALOR") {
+                        const codigoOpuesto = codigo === "FRIO" ? "CALOR" : "FRIO";
+                        const btnOpuesto = panel.querySelector(`button[data-codigo="${codigoOpuesto}"]`);
+                        if (btnOpuesto && btnOpuesto.classList.contains('bg-[#00bf63]')) {
+                            btnOpuesto.classList.remove('bg-[#00bf63]');
+                            btnOpuesto.classList.add('bg-[#d9d9d9]');
+                            if (!actuadoresSinTrama.includes(codigoOpuesto)) {
+                                enviarTrama(cabinaPrefijo, codigoBoton[codigoOpuesto].off, cabinaActiva);
                             }
-                        });
+                        }
                     }
 
                     btn.classList.remove("bg-[#d9d9d9]");
                     btn.classList.add("bg-[#00bf63]");
-                    if (codigo && codigoBoton[codigo]) {
+                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].on,
@@ -2703,37 +2612,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                     }
                 }
-            });
-        });
-
-        // Listeners para la matriz 2x2 de calor
-        panel.querySelectorAll('[data-calor-codigo]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const codigo = btn.getAttribute('data-calor-codigo');
-
-                // Si es un nivel activo (no Apagado), desactivar FRIO si estaba activo
-                if (codigo !== '002') {
-                    const btnFrio = panel.querySelector('button[data-codigo="FRIO"]');
-                    if (btnFrio && btnFrio.classList.contains('bg-[#00bf63]')) {
-                        btnFrio.classList.remove('bg-[#00bf63]');
-                        btnFrio.classList.add('bg-[#d9d9d9]');
-                        enviarTrama(cabinaPrefijo, codigoBoton['FRIO'].off, cabinaActiva);
-                    }
-                }
-
-                // Desactivar todos los sub-botones de calor
-                panel.querySelectorAll('[data-calor-codigo]').forEach(b => {
-                    b.classList.remove('bg-[#00bf63]');
-                    b.classList.add('bg-[#c8c8c8]');
-                });
-
-                // Marcar como activo si no es Apagado
-                if (codigo !== '002') {
-                    btn.classList.remove('bg-[#c8c8c8]');
-                    btn.classList.add('bg-[#00bf63]');
-                }
-
-                enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
             });
         });
 
@@ -2927,8 +2805,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             ledActivoSnapshot.classList.add("active-led");
                             ledActivoSnapshot.style.backgroundColor =
                                 ledActivoSnapshot.getAttribute("data-active-color");
-                            colorCabina.style.backgroundColor =
-                                ledActivoSnapshot.getAttribute("data-active-color");
+                            setColorCabina(ledActivoSnapshot.getAttribute("data-active-color"));
                         }
 
                         botonBrillo.animate(
@@ -2949,7 +2826,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.style.backgroundColor = button.getAttribute(
                         "data-inactive-color",
                     );
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    setColorCabina("#d9d9d9");
 
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
                     ledActivo = null;
@@ -2971,8 +2848,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     button.classList.add("active-led");
                     button.style.backgroundColor =
                         button.getAttribute("data-active-color");
-                    colorCabina.style.backgroundColor =
-                        button.getAttribute("data-active-color");
+                    setColorCabina(button.getAttribute("data-active-color"));
                     enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
 
                     ledActivo = button;
@@ -3112,49 +2988,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     estadoHumo.style.backgroundColor = "#ff4d4d";
                 }
 
-                // Enviar tramas de apagado para todos los LEDs activos
+                // ── Preparar envío secuencial de tramas de paro (500ms entre cada una) ──
+                const esperar = (ms) => new Promise(r => setTimeout(r, ms));
+                const tramasParaEnviar = [];
+
+                // LED activo → reset visual inmediato + encolar trama OFF
                 if (ledActivo) {
-                    const codAnterior =
-                        ledActivo.getAttribute("data-codigo");
+                    const codAnterior = ledActivo.getAttribute("data-codigo");
                     if (codAnterior) {
-                        await enviarTrama(cabinaPrefijo, codAnterior, true); // Envío real
+                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, codAnterior, true));
                     }
                     ledActivo.classList.remove("active-led");
-                    ledActivo.style.backgroundColor =
-                        ledActivo.getAttribute("data-inactive-color");
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    ledActivo.style.backgroundColor = ledActivo.getAttribute("data-inactive-color");
+                    setColorCabina("#d9d9d9");
                     ledActivo = null;
                     actualizarBotonesBrillo();
                 }
 
-                // Enviar trama OFF para cada botón activo
+                // Botones de control activos → reset visual inmediato + encolar trama OFF
                 controlButtons.forEach((btn) => {
                     const codigo = btn.getAttribute("data-codigo");
-                    if (
-                        btn.classList.contains("bg-[#00bf63]") &&
-                        codigo &&
-                        codigoBoton[codigo]
-                    ) {
+                    if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
                         btn.classList.remove("bg-[#00bf63]");
                         btn.classList.add("bg-[#d9d9d9]");
-                        enviarTrama(
-                            cabinaPrefijo,
-                            codigoBoton[codigo].off,
-                            true,
-                        );
+                        if (!actuadoresSinTrama.includes(codigo)) {
+                            const off = codigoBoton[codigo].off;
+                            tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
+                        }
                     }
                 });
-
-                // Reiniciar sub-botones de calor
-                let calorActivo = false;
-                panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
-                    if (b.classList.contains('bg-[#00bf63]')) calorActivo = true;
-                    b.classList.remove('bg-[#00bf63]');
-                    b.classList.add('bg-[#c8c8c8]');
-                });
-                if (calorActivo) {
-                    enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, true);
-                }
 
                 // Resetear temporizador de humo
                 if (intervalo) {
@@ -3184,34 +3046,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     botonDisparo.classList.add("bg-[#d9d9d9]");
                 }
 
-                // Enviar trama STOP (038) a ambos paneles
-                const panels =
-                    document.querySelectorAll(".panel-container");
-                panels.forEach(async (panel) => {
-                    const selectCabina = panel.querySelector(
-                        "[data-select='cabina']",
-                    );
-                    const cabinaSeleccionada =
-                        selectCabina?.value || "Cabina 1";
-                    const cabinaPrefijo =
-                        cabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
-
-                    // Enviar trama STOP
-                    const tramaStop = `${cabinaPrefijo}${TRAMA_STOP}F`;
-                    enviarTrama("", "", false, tramaStop);
-                    window.addSentLog(`[STOP] ${tramaStop}`);
-
-                    // Desactivar visualmente sonidos en este panel
-                    const btnActivo =
-                        sonidoActivoPorCabina[cabinaSeleccionada];
+                // Trama STOP a todos los paneles → reset visual de sonidos inmediato + encolar trama
+                const allPanelsStop = document.querySelectorAll(".panel-container");
+                allPanelsStop.forEach((p) => {
+                    const pSelect = p.querySelector("[data-select='cabina']");
+                    const pCabinaSeleccionada = pSelect?.value || "Cabina 1";
+                    const pCabinaPrefijo = pCabinaSeleccionada === "Cabina 1" ? "C1" : "C2";
+                    const tramaStop = `${pCabinaPrefijo}${TRAMA_STOP}F`;
+                    tramasParaEnviar.push(() => {
+                        enviarTrama("", "", false, tramaStop);
+                        window.addSentLog(`[STOP] ${tramaStop}`);
+                    });
+                    // Reset visual de sonido inmediato (sin esperar al delay)
+                    const btnActivo = sonidoActivoPorCabina[pCabinaSeleccionada];
                     if (btnActivo) {
-                        btnActivo.classList.remove(
-                            "bg-[#00bf63]",
-                            "text-white",
-                        );
+                        btnActivo.classList.remove("bg-[#00bf63]", "text-white");
                         btnActivo.classList.add("bg-[#efefef]");
                     }
                 });
+
+                // ── Enviar secuencialmente con 500ms entre cada trama ──
+                for (const enviar of tramasParaEnviar) {
+                    enviar();
+                    await esperar(500);
+                }
 
                 // Limpiar gráfica de sensores y su intervalo de actualización
                 const graficaCanvas = panel.querySelector("#graficaPanel");
@@ -3246,8 +3104,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (ledActivo) {
                     ledActivo = null;
-                    colorCabina.style.backgroundColor = "#d9d9d9";
+                    setColorCabina("#d9d9d9");
                 }
+
+                // Resetear botones de selección de gráfica de sensores a gris
+                sensorButtons.forEach(b => {
+                    b.classList.remove("bg-[#00bf63]", "hover:bg-[#00a152]");
+                    b.classList.add("bg-[#d9d9d9]", "hover:bg-[#a6a6a6]");
+                });
 
                 // Limpiar estado de sonido
                 const cabinaSeleccionada = selectCabina.value;
@@ -3276,10 +3140,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
+                // Desconectar reloj biométrico si está conectado
+                if (biometricWatchConnectedByCabin[cabinaPrefijo]) {
+                    try {
+                        await fetch(`http://localhost:5000/api/smartwatch/disconnect?cabin=${cabinaPrefijo}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                        });
+                        console.log(`[Reset] Reloj ${cabinaPrefijo} desconectado`);
+                        window.addSentLog?.(`[SMARTWATCH][${cabinaPrefijo}] POST /api/smartwatch/disconnect (reset)`);
+                    } catch (e) {
+                        console.warn("[Reset] No se pudo desconectar el reloj:", e);
+                    }
+                    biometricWatchConnectedByCabin[cabinaPrefijo] = false;
+                    biometricWatchConnected = Object.values(biometricWatchConnectedByCabin).some(Boolean);
+                    biometricMeasurementCompletionNotifiedByCabin[cabinaPrefijo] = false;
+                    biometricCurrentActiveMeasurementByCabin[cabinaPrefijo] = null;
+                    biometricPreviousActiveMeasurementByCabin[cabinaPrefijo] = null;
+                    if (biometricModeByCabin) biometricModeByCabin[cabinaPrefijo] = null;
+                    window.updateWatchButtonsState?.();
+                }
+
                 // Detener gráficas biométricas si existen
                 if (typeof window.stopBiometricCharts === "function") {
                     window.stopBiometricCharts(cabinaPrefijo);
                 }
+
+                // Resetear selector de métrica biométrica
+                setBiometricSelectorEnabled(cabinaPrefijo, false);
 
                 // Limpiar datos biométricos acumulados
                 if (window.biometricChartDataByCabin) {

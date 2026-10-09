@@ -42,6 +42,17 @@ const defaultCabin = panelNumber === 2 ? 2 : 1;
 
         <!-- Acciones y selector a la derecha -->
         <div class="flex items-center gap-2">
+            <!-- Botón de información (abre modal contextual según pestaña activa) -->
+            <button
+                data-action="open-info"
+                class="flex items-center justify-center w-9 h-9 bg-transparent border border-black rounded hover:bg-[#dadada] transition-colors text-black"
+                title="Información de la pestaña actual"
+                aria-label="Información"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
             <button
                 id="btn-export-csv"
                 class="bg-[#00bf63] hover:bg-[#00a152] text-white text-sm px-3 py-2 rounded flex items-center gap-2"

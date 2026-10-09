@@ -1,0 +1,16 @@
+# ============================================================
+# Workflow de release (cada nueva versión)
+# ============================================================
+#
+# 1. Bumear versión en 3 lugares:
+#    - app/Escritorio/HostApp/HostApp/HostApp.csproj  → <Version>X.Y.Z</Version>
+#    - app/Escritorio/HostApp/HostApp/AutoUpdater.cs   → const AppVersion = "X.Y.Z"
+#    - installer/CreateInstaller.iss                   → AppVersion, AppVerName,
+#                                                        OutputBaseFilename, VersionInfoVersion
+#
+# 2. Compilar + Inno Setup:
+#    cd installer && .\build-installer.ps1
+#    (abrir CreateInstaller.iss en Inno Setup y compilar)
+#
+# 3. Deploy al VPS (desde PowerShell):
+#    .\deploy-update.ps1 -Version "X.Y.Z" -Notes "- Cambio 1`n- Cambio 2"
