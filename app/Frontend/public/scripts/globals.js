@@ -79,6 +79,14 @@ const codigoBoton = {
     DISPARO: { off: "019", on: "020" },
 };
 
+// Actuadores deshabilitados TEMPORALMENTE a nivel de trama: el botón sigue
+// funcionando con normalidad en el panel (toggle visual, exclusión mutua
+// Frío/Calor, reset, etc.) pero NO se envía ningún comando al microcontrolador.
+// Pedido por electrónica mientras resuelven un problema de hardware en el
+// circuito de calor (2026-10). Para reactivar el envío real: quitar "CALOR"
+// de este arreglo.
+const actuadoresSinTrama = ["CALOR"];
+
 // Códigos de control de sonido
 const codigoSonidoControl = {
     PLAY: "035",

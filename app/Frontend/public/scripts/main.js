@@ -2580,7 +2580,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (isActive) {
                     btn.classList.remove("bg-[#00bf63]");
                     btn.classList.add("bg-[#d9d9d9]");
-                    if (codigo && codigoBoton[codigo]) {
+                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].off,
@@ -2596,13 +2596,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (btnOpuesto && btnOpuesto.classList.contains('bg-[#00bf63]')) {
                             btnOpuesto.classList.remove('bg-[#00bf63]');
                             btnOpuesto.classList.add('bg-[#d9d9d9]');
-                            enviarTrama(cabinaPrefijo, codigoBoton[codigoOpuesto].off, cabinaActiva);
+                            if (!actuadoresSinTrama.includes(codigoOpuesto)) {
+                                enviarTrama(cabinaPrefijo, codigoBoton[codigoOpuesto].off, cabinaActiva);
+                            }
                         }
                     }
 
                     btn.classList.remove("bg-[#d9d9d9]");
                     btn.classList.add("bg-[#00bf63]");
-                    if (codigo && codigoBoton[codigo]) {
+                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].on,
@@ -3009,8 +3011,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
                         btn.classList.remove("bg-[#00bf63]");
                         btn.classList.add("bg-[#d9d9d9]");
-                        const off = codigoBoton[codigo].off;
-                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
+                        if (!actuadoresSinTrama.includes(codigo)) {
+                            const off = codigoBoton[codigo].off;
+                            tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
+                        }
                     }
                 });
 
