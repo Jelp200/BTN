@@ -22,15 +22,18 @@ namespace HostApp
                 ? $"{v.Major}.{v.Minor}.{v.Build}"
                 : "0.0.0";
 
-        private const string VersionJsonUrl = "https://gradustec.com/updates/version.json";
+        // Build UAT: apunta al dominio de pruebas, no a producción.
+        private const string VersionJsonUrl = "https://portal.test-gradus.tech/updates/version.json";
 
+        // Carpeta propia ("ControlPanelUAT", no "ControlPanel") para que esta instalación no
+        // comparta skip/flag con una instalación PROD coexistiendo en la misma PC.
         private static readonly string SkipFilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ControlPanel", "skipped-version.txt");
+            "ControlPanelUAT", "skipped-version.txt");
 
         private static readonly string JustUpdatedFlagPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ControlPanel", "just-updated.flag");
+            "ControlPanelUAT", "just-updated.flag");
 
         /// <summary>
         /// Consulta el VPS, compara versiones y muestra el diálogo si hay actualización.

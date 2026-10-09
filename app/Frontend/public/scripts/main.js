@@ -2580,7 +2580,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (isActive) {
                     btn.classList.remove("bg-[#00bf63]");
                     btn.classList.add("bg-[#d9d9d9]");
-                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
+                    if (codigo && codigoBoton[codigo]) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].off,
@@ -2590,21 +2590,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     // FRIO y CALOR son mutuamente exclusivos entre sí.
                     // El resto de controles pueden estar activos simultáneamente.
-                    if (codigo === "FRIO" || codigo === "CALOR") {
-                        const codigoOpuesto = codigo === "FRIO" ? "CALOR" : "FRIO";
-                        const btnOpuesto = panel.querySelector(`button[data-codigo="${codigoOpuesto}"]`);
-                        if (btnOpuesto && btnOpuesto.classList.contains('bg-[#00bf63]')) {
-                            btnOpuesto.classList.remove('bg-[#00bf63]');
-                            btnOpuesto.classList.add('bg-[#d9d9d9]');
-                            if (!actuadoresSinTrama.includes(codigoOpuesto)) {
-                                enviarTrama(cabinaPrefijo, codigoBoton[codigoOpuesto].off, cabinaActiva);
+                    if (codigo === "FRIO") {
+                        // Desactivar cualquier nivel de calor que esté activo
+                        panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
+                            if (b.classList.contains('bg-[#00bf63]')) {
+                                b.classList.remove('bg-[#00bf63]');
+                                b.classList.add('bg-[#c8c8c8]');
+                                enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
                             }
-                        }
+                        });
                     }
 
                     btn.classList.remove("bg-[#d9d9d9]");
                     btn.classList.add("bg-[#00bf63]");
-                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
+                    if (codigo && codigoBoton[codigo]) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].on,
@@ -2612,6 +2611,37 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                     }
                 }
+            });
+        });
+
+        // Listeners para la matriz 2x2 de calor
+        panel.querySelectorAll('[data-calor-codigo]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const codigo = btn.getAttribute('data-calor-codigo');
+
+                // Si es un nivel activo (no Apagado), desactivar FRIO si estaba activo
+                if (codigo !== '002') {
+                    const btnFrio = panel.querySelector('button[data-codigo="FRIO"]');
+                    if (btnFrio && btnFrio.classList.contains('bg-[#00bf63]')) {
+                        btnFrio.classList.remove('bg-[#00bf63]');
+                        btnFrio.classList.add('bg-[#d9d9d9]');
+                        enviarTrama(cabinaPrefijo, codigoBoton['FRIO'].off, cabinaActiva);
+                    }
+                }
+
+                // Desactivar todos los sub-botones de calor
+                panel.querySelectorAll('[data-calor-codigo]').forEach(b => {
+                    b.classList.remove('bg-[#00bf63]');
+                    b.classList.add('bg-[#c8c8c8]');
+                });
+
+                // Marcar como activo si no es Apagado
+                if (codigo !== '002') {
+                    btn.classList.remove('bg-[#c8c8c8]');
+                    btn.classList.add('bg-[#00bf63]');
+                }
+
+                enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
             });
         });
 
@@ -3011,12 +3041,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
                         btn.classList.remove("bg-[#00bf63]");
                         btn.classList.add("bg-[#d9d9d9]");
-                        if (!actuadoresSinTrama.includes(codigo)) {
-                            const off = codigoBoton[codigo].off;
-                            tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
-                        }
+                        const off = codigoBoton[codigo].off;
+                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
                     }
                 });
+
+                // Sub-botones de calor → reset visual inmediato + encolar trama OFF si había calor activo
+                let calorActivo = false;
+                panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
+                    if (b.classList.contains('bg-[#00bf63]')) calorActivo = true;
+                    b.classList.remove('bg-[#00bf63]');
+                    b.classList.add('bg-[#c8c8c8]');
+                });
+                if (calorActivo) {
+                    tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, true));
+                }
 
                 // Resetear temporizador de humo
                 if (intervalo) {

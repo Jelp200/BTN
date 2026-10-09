@@ -74,10 +74,13 @@ namespace HostApp
                 Dock = DockStyle.Fill, // Ocupar todo el formulario
                 CreationProperties = new CoreWebView2CreationProperties
                 {
-                    // Carpeta donde WebView2 guardará datos temporales y cache
+                    // Carpeta donde WebView2 guardará datos temporales y cache.
+                    // "ControlPanelUAT" (no "ControlPanel"): WebView2 bloquea su UserDataFolder
+                    // en exclusiva mientras corre — si PROD y UAT coexisten en la misma PC y
+                    // compartieran esta carpeta, uno de los dos fallaría al iniciar WebView2.
                     UserDataFolder = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
-                        "ControlPanel")
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "ControlPanelUAT")
                 }
             };
 

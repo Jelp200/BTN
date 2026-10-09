@@ -14,23 +14,30 @@
 # **    .\deploy-update.ps1 -Version "2.1.0" -InstallerPath "C:\...\installer.exe"
 # ** =====================================================================
 
+# NOTA (build UAT): este script publica en el entorno de PRUEBAS por defecto
+# (portal.test-gradus.tech), no en producción. $VpsUpdatesDir es un supuesto
+# razonable sin verificar contra el volume real del contenedor de ese dominio
+# en el VPS — si el paso de "Verificando endpoint público" al final falla o
+# muestra una versión inesperada, revisar/ajustar ese directorio igual que se
+# diagnosticó para gradustec.com (ver SYSTEM_ARCHITECTURE.md / memoria del
+# auto-updater).
 param(
     [Parameter(Mandatory=$true)]
     [string]$Version,
 
     [string]$Notes = "",
 
-    [string]$InstallerPath = "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN\installer\Output",
+    [string]$InstallerPath = "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN-uat\installer\Output",
 
     [string]$VpsHost = "187.77.27.8",
     [string]$VpsUser = "jorge",
 
-    # Directorio en el HOST del VPS (montado en el contenedor nginx como /usr/share/nginx/html/updates)
-    [string]$VpsUpdatesDir = "/srv/docker/gradustec/updates",
+    # Directorio en el HOST del VPS — SIN VERIFICAR, ajustar si el deploy falla al final
+    [string]$VpsUpdatesDir = "/srv/docker/test/updates",
 
-    # Dominio público desde el que los clientes descargan el instalador y version.json
-    # (cambia a "https://portal.test-gradus.tech" para publicar en TEST en vez de producción)
-    [string]$PublicBaseUrl = "https://gradustec.com"
+    # Dominio de PRUEBAS por defecto en esta copia UAT del script (en la copia de
+    # PROD el default es "https://gradustec.com")
+    [string]$PublicBaseUrl = "https://portal.test-gradus.tech"
 )
 
 # ========== COLORES ==========

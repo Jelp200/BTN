@@ -12,6 +12,7 @@ let volumenPorCabina = { "Cabina 1": 0, "Cabina 2": 0 };
 let reproduciendoPorCabina = { "Cabina 1": false, "Cabina 2": false };
 let botonPlayActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
 let sonidoActivoPorCabina = { "Cabina 1": null, "Cabina 2": null };
+let estadoCalor = "off";
 
 /* ==================== ESTADOS BIOMÉTRICOS ==================== */
 let biometricChartsEnabled = false;
@@ -68,8 +69,8 @@ const BIOMETRIC_REQUEST_COOLDOWN_MS = 15000;
 // Códigos de botones de control
 const codigoBoton = {
     FRIO: { off: "000", on: "001" },
-    // Calor ahora es on/off simple: "on" manda directamente el nivel bajo (004).
-    CALOR: { off: "002", on: "004" },
+    CALOR_C1: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
+    CALOR_C2: { off: "002", on: "003", low: "004", medium: "005", high: "006" },
     HUMEDAD: { off: "007", on: "008" },
     VIBRACION: { off: "009", on: "010" },
     VENTILADOR: { off: "011", on: "012" },
@@ -79,13 +80,9 @@ const codigoBoton = {
     DISPARO: { off: "019", on: "020" },
 };
 
-// Actuadores deshabilitados TEMPORALMENTE a nivel de trama: el botón sigue
-// funcionando con normalidad en el panel (toggle visual, exclusión mutua
-// Frío/Calor, reset, etc.) pero NO se envía ningún comando al microcontrolador.
-// Pedido por electrónica mientras resuelven un problema de hardware en el
-// circuito de calor (2026-10). Para reactivar el envío real: quitar "CALOR"
-// de este arreglo.
-const actuadoresSinTrama = ["CALOR"];
+// Build UAT: a diferencia de PROD, aquí el calor SÍ debe enviar tramas reales
+// (es precisamente lo que electrónica necesita probar), así que no existe aquí
+// el arreglo "actuadoresSinTrama" de PROD.
 
 // Códigos de control de sonido
 const codigoSonidoControl = {
@@ -164,7 +161,10 @@ const controlDescripcion = {
   'C1001F': 'Encendido aire acondicionado',
   //? CALOR
   'C1002F': 'Apagado calefactor',
-  'C1004F': 'Encendido calefactor',
+  'C1003F': 'Encendido calefactor',
+  'C1004F': 'Nivel bajo calefactor',
+  'C1005F': 'Nivel medio calefactor',
+  'C1006F': 'Nivel alto calefactor',
   //? HUMEDAD
   'C1007F': 'Apagado humedad',
   'C1008F': 'Encendido humedad',
@@ -253,7 +253,10 @@ const controlDescripcion = {
   'C2001F': 'Encendido aire acondicionado',
   //? CALOR
   'C2002F': 'Apagado calefactor',
-  'C2004F': 'Encendido calefactor',
+  'C2003F': 'Encendido calefactor',
+  'C2004F': 'Nivel bajo calefactor',
+  'C2005F': 'Nivel medio calefactor',
+  'C2006F': 'Nivel alto calefactor',
   //? HUMEDAD
   'C2007F': 'Apagado humedad',
   'C2008F': 'Encendido humedad',

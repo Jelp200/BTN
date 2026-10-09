@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1920, 1080);
-            this.Text = "Control Panel";
+            this.Text = "Control Panel UAT";
         }
 
         #endregion
