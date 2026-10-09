@@ -14,13 +14,11 @@
 # **    .\deploy-update.ps1 -Version "2.1.0" -InstallerPath "C:\...\installer.exe"
 # ** =====================================================================
 
-# NOTA (build UAT): este script publica en el entorno de PRUEBAS por defecto
-# (portal.test-gradus.tech), no en producción. $VpsUpdatesDir es un supuesto
-# razonable sin verificar contra el volume real del contenedor de ese dominio
-# en el VPS — si el paso de "Verificando endpoint público" al final falla o
-# muestra una versión inesperada, revisar/ajustar ese directorio igual que se
-# diagnosticó para gradustec.com (ver SYSTEM_ARCHITECTURE.md / memoria del
-# auto-updater).
+# NOTA (build UAT): portal.test-gradus.tech vive en un servidor DISTINTO al de
+# PROD (2.24.205.175, hostname vps-test-gradustec — no 187.77.27.8). Verificado
+# 2026-10-09: el stack real es /srv/docker/test/portal (docker-compose "portal-uat",
+# contenedor portal_uat_web), que ya monta ./updates:/usr/share/nginx/html/updates
+# correctamente — solo había que apuntar al host/ruta correctos.
 param(
     [Parameter(Mandatory=$true)]
     [string]$Version,
@@ -29,11 +27,10 @@ param(
 
     [string]$InstallerPath = "C:\Users\nikob\OneDrive\Escritorio\GRADUS_T_LOCAL\DPTO_COMPUTO\2025-02\GITSe\BTN-uat\installer\Output",
 
-    [string]$VpsHost = "187.77.27.8",
+    [string]$VpsHost = "2.24.205.175",
     [string]$VpsUser = "jorge",
 
-    # Directorio en el HOST del VPS — SIN VERIFICAR, ajustar si el deploy falla al final
-    [string]$VpsUpdatesDir = "/srv/docker/test/updates",
+    [string]$VpsUpdatesDir = "/srv/docker/test/portal/updates",
 
     # Dominio de PRUEBAS por defecto en esta copia UAT del script (en la copia de
     # PROD el default es "https://gradustec.com")
