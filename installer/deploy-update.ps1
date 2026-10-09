@@ -112,16 +112,17 @@ $today = Get-Date -Format "yyyy-MM-dd"
 # URL pública — el contenedor sirve /usr/share/nginx/html/updates → /updates/
 $installerUrl = "$PublicBaseUrl/updates/installers/$installerName"
 
-$notesJson = $Notes -replace '\\', '\\\\' -replace '"', '\"'
-
-$versionJson = @"
-{
-    "version": "$Version",
-    "url": "$installerUrl",
-    "notes": "$notesJson",
-    "date": "$today"
+# Se usa ConvertTo-Json (en vez de interpolar el string a mano) para que cualquier
+# carácter especial en $Notes quede correctamente escapado — en particular saltos
+# de línea (`n/`r), que antes se insertaban crudos y producían JSON inválido
+# (el cliente fallaba en silencio al parsearlo y nunca mostraba el diálogo de update).
+$versionObj = [ordered]@{
+    version = $Version
+    url     = $installerUrl
+    notes   = $Notes
+    date    = $today
 }
-"@
+$versionJson = $versionObj | ConvertTo-Json
 
 $versionJson | ssh "$VpsUser@$VpsHost" "cat > $VpsUpdatesDir/version.json && chmod 644 $VpsUpdatesDir/version.json"
 if ($LASTEXITCODE -ne 0) { Write-Fail "Error al actualizar version.json." }

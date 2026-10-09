@@ -246,7 +246,7 @@ Tabla de comandos documentada (manual de usuario, autoridad sobre el protocolo c
 | Rango de código | Función |
 |---|---|
 | 000-001 | Frío (aire acondicionado) off/on |
-| 002, 004 | Calor off/on — la UI solo envía estos dos (on = nivel bajo); 003/005/006 (on genérico, medio, alto) existen en el firmware pero ya no se usan desde el panel (desde 2026-10, antes era un selector de 4 niveles) |
+| 002, 004 | Calor off/on — la UI solo envía estos dos (on = nivel bajo); 003/005/006 (on genérico, medio, alto) existen en el firmware pero ya no se usan desde el panel (desde 2026-10, antes era un selector de 4 niveles). **Deshabilitado a nivel de trama desde 2026-10-09**: el botón sigue funcionando visualmente en el panel (toggle, exclusión mutua con Frío, reset) pero NO envía ningún comando al microcontrolador (`actuadoresSinTrama` en `globals.js`) — pedido por electrónica mientras resuelven un problema de hardware en el circuito de calor. Revertir quitando `"CALOR"` de ese arreglo cuando se confirme la corrección. |
 | 007-008 | Humedad off/on |
 | 009-010 | Vibración off/on |
 | 011-012 | Ventilador off/on |
@@ -751,7 +751,7 @@ Ver también: sección 12 (tabla de comandos ampliada con `0xC1`/`0xAE`) y secci
 - El concepto "WPAN" (glosario del manual de usuario) como red inalámbrica entre módulos de cabina — **UNKNOWN** si tiene correlato de implementación o es terminología de diseño de hardware no reflejada en software.
 - Contenido de `test/cases/TestingCases_1.xlsx` (binario, no parseado).
 - Si el smartwatch soporta más de un modelo además de "ET570" en la práctica (el código lo permite vía parámetro, pero no hay evidencia de haberse probado con otro modelo) — **UNKNOWN**.
-- Estado real de la copia de `version.json` en el VPS de producción (la copia local en el repo dice `2.0.0`, desactualizada respecto a `2.0.8` de csproj/iss) — **UNKNOWN** cuál es la versión realmente publicada en `gradustec.com` al momento de esta auditoría.
+- Estado real de la copia de `version.json` en el VPS de producción (la copia local en el repo dice `2.0.0`, desactualizada respecto a `2.0.9` de csproj/iss) — **UNKNOWN** cuál es la versión realmente publicada en `gradustec.com` al momento de esta auditoría.
 - Si existe algún proceso de firma de código (Authenticode) aplicado fuera de este repositorio (ej. manualmente antes de publicar) — **UNKNOWN**, no hay evidencia en los scripts de build.
 
 ---
