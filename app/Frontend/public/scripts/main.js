@@ -292,47 +292,48 @@ async function desconectarPuertoSerial() {
 }
 
 // Función para obtener datos desde el backend
+// Nota: usa /ultimo-dato/{cabina} (una sola lectura) en vez de /datos/{cabina}
+// (historial completo) — este poll corre cada 10s indefinidamente mientras la
+// app esté abierta, así que traer todo el historial de la sesión en cada tick
+// es lo que hacía que, tras varias horas, el panel empezara a trabarse.
 async function fetchDatosPorCabina(cabina) {
     try {
         const response = await fetch(
-            `http://localhost:5000/api/serial/datos/${cabina.toLowerCase()}`,
+            `http://localhost:5000/api/serial/ultimo-dato/${cabina.toLowerCase()}`,
         );
 
         if (!response.ok) {
-            console.error(
-                `❌ Error al obtener datos de ${cabina}:`,
-                response.status,
-            );
+            // 404 = aún no hay datos válidos para esta cabina (normal al inicio de sesión)
+            if (response.status !== 404) {
+                console.error(
+                    `❌ Error al obtener datos de ${cabina}:`,
+                    response.status,
+                );
+            }
             return;
         }
 
-        const data = await response.json();
+        const ultimaLectura = await response.json();
+        if (!ultimaLectura) return;
 
-        if (data.success == "false") return;
+        // Mapear claves del backend a identificadores de sensores
+        const datos = {
+            X: ultimaLectura.x,
+            Y: ultimaLectura.y,
+            Z: ultimaLectura.z,
+            T: ultimaLectura.t,
+            H: ultimaLectura.h,
+            UV: ultimaLectura.uv,
+            CO2: ultimaLectura.cO2,
+            O3: ultimaLectura.o3,
+            dB: ultimaLectura.dB
+        };
 
-        if (data && Array.isArray(data) && data.length > 0) {
-            // Tomar última lectura (la más reciente)
-            const ultimaLectura = data[data.length - 1];
-
-            // Mapear claves del backend a identificadores de sensores
-            const datos = {
-                X: ultimaLectura.x,
-                Y: ultimaLectura.y,
-                Z: ultimaLectura.z,
-                T: ultimaLectura.t,
-                H: ultimaLectura.h,
-                UV: ultimaLectura.uv,
-                CO2: ultimaLectura.cO2,
-                O3: ultimaLectura.o3,
-                dB: ultimaLectura.dB
-            };
-
-            Object.entries(datos).forEach(([clave, valor]) => {
-                if (valor !== undefined && valor !== null) {
-                    updateIndicador(clave, valor, cabina);
-                }
-            });
-        }
+        Object.entries(datos).forEach(([clave, valor]) => {
+            if (valor !== undefined && valor !== null) {
+                updateIndicador(clave, valor, cabina);
+            }
+        });
     } catch (error) {
         console.error(`❌ Error en fetchDatosPorCabina(${cabina}):`, error);
     }
@@ -390,26 +391,30 @@ async function initGrafica(panel, sensor = "X") {
     console.log(`[Gráfica] Cabina seleccionada: ${cabina}`);
 
     try {
-        // Obtener datos iniciales
-        const response = await fetch(
-            `http://localhost:5000/api/serial/datos/${cabina}`,
-        );
+        const maxPuntos = 10;
+
+        // Pedimos solo los últimos "maxPuntos" registros (?limit=) en vez de todo el
+        // historial de la sesión — con sesiones de varias horas, traer miles de filas
+        // solo para graficar los últimos 10 puntos era lo que iba saturando el panel.
+        const [response, countResponse] = await Promise.all([
+            fetch(`http://localhost:5000/api/serial/datos/${cabina}?limit=${maxPuntos}`),
+            fetch(`http://localhost:5000/api/serial/count/${cabina}`),
+        ]);
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
-        const datos = await response.json();
-        if (!Array.isArray(datos) || datos.length === 0) {
+        const datosLimitados = await response.json();
+        if (!Array.isArray(datosLimitados) || datosLimitados.length === 0) {
             console.warn(`[Gráfica] Sin datos disponibles para ${cabina.toUpperCase()}. Usa el botón de refrescar cuando el uC esté enviando datos.`);
             return;
         }
 
-        const maxPuntos = 10;
-        const datosLimitados = datos.length > maxPuntos 
-            ? datos.slice(datos.length - maxPuntos) 
-            : datos;
-        
-        const indiceInicio = datos.length > maxPuntos 
-            ? datos.length - maxPuntos 
-            : 0;
+        // Conteo real (no limitado) del total de lecturas de esta cabina — se usa
+        // para numerar las muestras correctamente y para detectar datos nuevos
+        // en el intervalo de actualización, sin depender de volver a traer todo.
+        const totalCount = countResponse.ok
+            ? (await countResponse.json()).count ?? datosLimitados.length
+            : datosLimitados.length;
+        const indiceInicio = Math.max(0, totalCount - datosLimitados.length);
 
         const labels = datosLimitados.map((_, i) => `${indiceInicio + i + 1}`);
         const valores = datosLimitados.map((d) => {
@@ -499,7 +504,7 @@ async function initGrafica(panel, sensor = "X") {
 
         // Guardar referencia
         graficaCanvas.chartInstance = chart;
-        graficaCanvas.lastDataCount = datos.length; // Rastrear cantidad de datos
+        graficaCanvas.lastDataCount = totalCount; // Rastrear cantidad total de datos (no solo los traídos)
         graficaCanvas.sensor = sensor; // Guardar sensor actual
 
         // Limpiar intervalo anterior si existe para evitar múltiples intervalos simultáneos
@@ -530,9 +535,13 @@ async function initGrafica(panel, sensor = "X") {
 
                 // Si hay nuevos datos
                 if (data_size.count > countActual) {
-                    // Traer todos los datos (para asegurar que tenemos la secuencia correcta)
+                    const maxPuntos = 10;
+
+                    // Solo pedimos los últimos "maxPuntos" (?limit=), no el historial
+                    // completo — es lo único que la gráfica va a mostrar de todas formas,
+                    // y este fetch corre cada 2s durante toda la sesión.
                     const nuevosResponse = await fetch(
-                        `http://localhost:5000/api/serial/datos/${cabina}`,
+                        `http://localhost:5000/api/serial/datos/${cabina}?limit=${maxPuntos}`,
                     );
                     if (!nuevosResponse.ok)
                         throw new Error(
@@ -542,7 +551,7 @@ async function initGrafica(panel, sensor = "X") {
                     const todosDatos = await nuevosResponse.json();
 
                     // Extraer solo los valores del sensor seleccionado
-                    const nuevosSensorValores = todosDatos.map((d) => {
+                    const valoresFinales = todosDatos.map((d) => {
                         switch (sensor) {
                             case "T":
                                 return d.t;
@@ -567,17 +576,9 @@ async function initGrafica(panel, sensor = "X") {
                         }
                     });
 
-                    // Limitar a últimos 10 puntos para evitar sobrecarga
-                    const maxPuntos = 10;
-                    let valoresFinales = nuevosSensorValores;
-                    let indiceInicio = 0;
-
-                    if (valoresFinales.length > maxPuntos) {
-                        indiceInicio = valoresFinales.length - maxPuntos;
-                        valoresFinales = valoresFinales.slice(indiceInicio);
-                    }
-
-                    // Crear labels para los datos finales
+                    // Numerar las muestras usando el conteo REAL (data_size.count), no
+                    // la cantidad traída (que ya viene acotada a maxPuntos por el backend)
+                    const indiceInicio = Math.max(0, data_size.count - valoresFinales.length);
                     const nuevasLabels = valoresFinales.map(
                         (_, i) => `${indiceInicio + i + 1}`,
                     );
@@ -586,10 +587,10 @@ async function initGrafica(panel, sensor = "X") {
                     chart.data.labels = nuevasLabels;
                     chart.data.datasets[0].data = valoresFinales;
 
-                    console.log(`[Gráfica] Actualización: mostrando ${valoresFinales.length}/${todosDatos.length} puntos (sensor: ${sensor})`);
+                    console.log(`[Gráfica] Actualización: mostrando ${valoresFinales.length} puntos de ${data_size.count} totales (sensor: ${sensor})`);
 
-                    // 🔹 Actualizar contador
-                    graficaCanvas.lastDataCount = todosDatos.length;
+                    // 🔹 Actualizar contador (conteo real total, no la cantidad traída)
+                    graficaCanvas.lastDataCount = data_size.count;
 
                     // 🔹 Actualizar visualmente
                     chart.update("none"); // "none" evita animaciones
@@ -1183,7 +1184,7 @@ async function createSheet3Data(cabinaCode) {
 
     add(["DATOS DE SENSORES"], 'title');
     add([],                    'empty');
-    add(["Hora", "Cabina", "X (m/s²)", "Y (m/s²)", "Z (m/s²)", "°C", "H%", "UV (W/m²)", "CO₂ (PPM)", "Lux (lm/m²)", "dB"], 'header');
+    add(["Hora", "Cabina", "X (g)", "Y (g)", "Z (g)", "°C", "H%", "UV (W/m²)", "CO₂ (PPM)", "Lux (lm/m²)", "dB"], 'header');
 
     try {
         const res = await fetch(`http://localhost:5000/api/serial/datos/${cabinaCode}`);
@@ -1409,13 +1410,13 @@ function mostrarNotificacion(
 function getUnidad(medicion) {
     switch (medicion) {
         case "X":
-            return "m";
+            return "g";
         case "T":
             return "°C";
         case "CO2":
             return "ppm";
         case "Y":
-            return "m";
+            return "g";
         case "H":
             return "%";
         case "UV":
@@ -1425,7 +1426,7 @@ function getUnidad(medicion) {
         case "dB":
             return "dB";
         case "Z":
-            return "m";
+            return "g";
         default:
             return "";
     }
@@ -2579,7 +2580,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (isActive) {
                     btn.classList.remove("bg-[#00bf63]");
                     btn.classList.add("bg-[#d9d9d9]");
-                    if (codigo && codigoBoton[codigo]) {
+                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].off,
@@ -2589,20 +2590,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     // FRIO y CALOR son mutuamente exclusivos entre sí.
                     // El resto de controles pueden estar activos simultáneamente.
-                    if (codigo === "FRIO") {
-                        // Desactivar cualquier nivel de calor que esté activo
-                        panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
-                            if (b.classList.contains('bg-[#00bf63]')) {
-                                b.classList.remove('bg-[#00bf63]');
-                                b.classList.add('bg-[#c8c8c8]');
-                                enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, cabinaActiva);
+                    if (codigo === "FRIO" || codigo === "CALOR") {
+                        const codigoOpuesto = codigo === "FRIO" ? "CALOR" : "FRIO";
+                        const btnOpuesto = panel.querySelector(`button[data-codigo="${codigoOpuesto}"]`);
+                        if (btnOpuesto && btnOpuesto.classList.contains('bg-[#00bf63]')) {
+                            btnOpuesto.classList.remove('bg-[#00bf63]');
+                            btnOpuesto.classList.add('bg-[#d9d9d9]');
+                            if (!actuadoresSinTrama.includes(codigoOpuesto)) {
+                                enviarTrama(cabinaPrefijo, codigoBoton[codigoOpuesto].off, cabinaActiva);
                             }
-                        });
+                        }
                     }
 
                     btn.classList.remove("bg-[#d9d9d9]");
                     btn.classList.add("bg-[#00bf63]");
-                    if (codigo && codigoBoton[codigo]) {
+                    if (codigo && codigoBoton[codigo] && !actuadoresSinTrama.includes(codigo)) {
                         enviarTrama(
                             cabinaPrefijo,
                             codigoBoton[codigo].on,
@@ -2610,37 +2612,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                     }
                 }
-            });
-        });
-
-        // Listeners para la matriz 2x2 de calor
-        panel.querySelectorAll('[data-calor-codigo]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const codigo = btn.getAttribute('data-calor-codigo');
-
-                // Si es un nivel activo (no Apagado), desactivar FRIO si estaba activo
-                if (codigo !== '002') {
-                    const btnFrio = panel.querySelector('button[data-codigo="FRIO"]');
-                    if (btnFrio && btnFrio.classList.contains('bg-[#00bf63]')) {
-                        btnFrio.classList.remove('bg-[#00bf63]');
-                        btnFrio.classList.add('bg-[#d9d9d9]');
-                        enviarTrama(cabinaPrefijo, codigoBoton['FRIO'].off, cabinaActiva);
-                    }
-                }
-
-                // Desactivar todos los sub-botones de calor
-                panel.querySelectorAll('[data-calor-codigo]').forEach(b => {
-                    b.classList.remove('bg-[#00bf63]');
-                    b.classList.add('bg-[#c8c8c8]');
-                });
-
-                // Marcar como activo si no es Apagado
-                if (codigo !== '002') {
-                    btn.classList.remove('bg-[#c8c8c8]');
-                    btn.classList.add('bg-[#00bf63]');
-                }
-
-                enviarTrama(cabinaPrefijo, codigo, cabinaActiva);
             });
         });
 
@@ -3040,21 +3011,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (btn.classList.contains("bg-[#00bf63]") && codigo && codigoBoton[codigo]) {
                         btn.classList.remove("bg-[#00bf63]");
                         btn.classList.add("bg-[#d9d9d9]");
-                        const off = codigoBoton[codigo].off;
-                        tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
+                        if (!actuadoresSinTrama.includes(codigo)) {
+                            const off = codigoBoton[codigo].off;
+                            tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, off, true));
+                        }
                     }
                 });
-
-                // Sub-botones de calor → reset visual inmediato + encolar trama OFF si había calor activo
-                let calorActivo = false;
-                panel.querySelectorAll('[data-calor-codigo]:not([data-calor-codigo="002"])').forEach(b => {
-                    if (b.classList.contains('bg-[#00bf63]')) calorActivo = true;
-                    b.classList.remove('bg-[#00bf63]');
-                    b.classList.add('bg-[#c8c8c8]');
-                });
-                if (calorActivo) {
-                    tramasParaEnviar.push(() => enviarTrama(cabinaPrefijo, codigoBoton[`CALOR_${cabinaPrefijo}`].off, true));
-                }
 
                 // Resetear temporizador de humo
                 if (intervalo) {

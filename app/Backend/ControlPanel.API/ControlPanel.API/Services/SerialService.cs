@@ -30,14 +30,23 @@ public class SerialService : ISerialService
     // Historial de tramas crudas (strings) recibidas
     private static readonly Queue<string> HistorialTramas = new();
 
-    // Historial de datos ya parseados a objetos SensorData
-    private static readonly Queue<SensorData> HistorialDatos = new();
+    // Historial de datos ya parseados a objetos SensorData, SEPARADO POR CABINA.
+    // Antes era una única cola compartida entre C1 y C2: si una cabina enviaba
+    // tramas con más frecuencia que la otra, podía desplazar (evict) los datos
+    // de la otra antes de que esta llegara a su propio límite. Con un diccionario
+    // por cabina, cada una conserva su propia ventana de sesión completa
+    // independientemente de cuánto envíe la otra.
+    private static readonly ConcurrentDictionary<string, Queue<SensorData>> HistorialDatosPorCabina =
+        new(StringComparer.OrdinalIgnoreCase);
 
     // Objeto para lock y evitar problemas de concurrencia en colecciones
     private static readonly object LockObj = new();
 
-    // Máximo de tramas/datos que se almacenarán (evita consumo excesivo de memoria)
+    // Máximo de tramas crudas que se almacenarán en total (evita consumo excesivo de memoria)
     private const int MaxTramas = 7200;
+
+    // Máximo de lecturas parseadas que se retienen POR CABINA
+    private const int MaxDatosPorCabina = 7200;
 
     // Parser para interpretar las tramas crudas y convertirlas a SensorData
     private readonly ITramaParser _parser;
@@ -78,11 +87,12 @@ public class SerialService : ISerialService
 
                 lock (LockObj)
                 {
-                    // Guarda los datos parseados en historial (con límite máximo)
+                    // Guarda los datos parseados en el historial de SU PROPIA cabina (con límite máximo por cabina)
                     foreach (var dato in datosParseados)
                     {
-                        if (HistorialDatos.Count >= MaxTramas) HistorialDatos.Dequeue();
-                        HistorialDatos.Enqueue(dato);
+                        var cola = HistorialDatosPorCabina.GetOrAdd(dato.Cabina, _ => new Queue<SensorData>());
+                        if (cola.Count >= MaxDatosPorCabina) cola.Dequeue();
+                        cola.Enqueue(dato);
                     }
 
                     // Guarda la trama cruda en historial
@@ -165,25 +175,46 @@ public class SerialService : ISerialService
     {
         lock (LockObj)
         {
-            return HistorialDatos.Count(d => d.Cabina.Equals(cabina, StringComparison.OrdinalIgnoreCase));
+            return HistorialDatosPorCabina.TryGetValue(cabina, out var cola) ? cola.Count : 0;
         }
     }
 
-    // Devuelve todos los datos parseados (SensorData)
+    // Devuelve todos los datos parseados (SensorData) de todas las cabinas, ordenados por tiempo
     public async Task<List<SensorData>> GetAllDatosAsync()
     {
         lock (LockObj)
         {
-            return HistorialDatos.ToList();
+            return HistorialDatosPorCabina.Values
+                .SelectMany(cola => cola)
+                .OrderBy(d => d.Timestamp)
+                .ToList();
         }
     }
 
-    // Devuelve el último dato válido
+    // Devuelve los datos de una cabina específica, opcionalmente limitados a los últimos "limit" registros
+    public async Task<List<SensorData>> GetDatosPorCabinaAsync(string cabina, int? limit = null)
+    {
+        lock (LockObj)
+        {
+            if (!HistorialDatosPorCabina.TryGetValue(cabina, out var cola))
+                return new List<SensorData>();
+
+            return limit.HasValue && limit.Value > 0
+                ? cola.TakeLast(limit.Value).ToList()
+                : cola.ToList();
+        }
+    }
+
+    // Devuelve el último dato válido (de cualquier cabina)
     public async Task<SensorData?> GetUltimoDatoAsync()
     {
         lock (LockObj)
         {
-            return HistorialDatos.Reverse().FirstOrDefault(d => d.EsValido());
+            return HistorialDatosPorCabina.Values
+                .SelectMany(cola => cola)
+                .Where(d => d.EsValido())
+                .OrderByDescending(d => d.Timestamp)
+                .FirstOrDefault();
         }
     }
 
@@ -192,10 +223,9 @@ public class SerialService : ISerialService
     {
         lock (LockObj)
         {
-            return HistorialDatos
-                .Where(d => d.Cabina.Equals(cabina, StringComparison.OrdinalIgnoreCase))
-                .Reverse()
-                .FirstOrDefault(d => d.EsValido());
+            return HistorialDatosPorCabina.TryGetValue(cabina, out var cola)
+                ? cola.Reverse().FirstOrDefault(d => d.EsValido())
+                : null;
         }
     }
 
@@ -204,9 +234,9 @@ public class SerialService : ISerialService
     {
         lock (LockObj)
         {
-            var datosFiltrados = HistorialDatos
-                .Where(d => d.Cabina.Equals(cabina, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            var datosFiltrados = HistorialDatosPorCabina.TryGetValue(cabina, out var cola)
+                ? cola.ToList()
+                : new List<SensorData>();
 
             return datosFiltrados.Select(d => new
             {
@@ -228,13 +258,13 @@ public class SerialService : ISerialService
         }
     }
 
-    // Limpia los historiales de tramas y datos
+    // Limpia los historiales de tramas y datos de TODAS las cabinas (fin de sesión)
     public async Task LimpiarHistorialAsync()
     {
         lock (LockObj)
         {
             HistorialTramas.Clear();
-            HistorialDatos.Clear();
+            HistorialDatosPorCabina.Clear();
         }
     }
 
